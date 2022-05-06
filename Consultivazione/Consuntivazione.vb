@@ -165,7 +165,7 @@ Public Class Consuntivazione
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consultivazione WHERE DATA='" & giorno & "'"
+        str = "SELECT * FROM Consultivazione WHERE DATA='" & giorno & "' ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -254,12 +254,12 @@ Public Class Consuntivazione
             End If
             Exit Sub
         Else
-            Exit Sub
-        End If
-        If e.ColumnIndex = 2 Then
-            If dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString <> "/" Then
-                Process.Start("https://support.tesisquare.com/mantis/mdev/view.php?id=" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString)
+            If e.ColumnIndex = 2 Then
+                If dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString <> "/" Then
+                    Process.Start("https://support.tesisquare.com/mantis/mdev/view.php?id=" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString)
+                End If
             End If
+            Exit Sub
         End If
     End Sub
     Sub AggiornaConsuntivato(ticket As String, data As String, consuntivato As String)
@@ -296,7 +296,6 @@ Public Class Consuntivazione
         cmbTempo.Text = ""
         txtTicket.Focus()
     End Sub
-
     Private Sub dtpData_ValueChanged(sender As Object, e As EventArgs) Handles dtpData.ValueChanged
         If TimerVisualizzazione.Enabled Then
             Exit Sub
@@ -467,6 +466,8 @@ ore di lavoro
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
+        Dim color As Color
+        Dim converter As System.ComponentModel.TypeConverter = System.ComponentModel.TypeDescriptor.GetConverter(color)
         Dim str As String
         Dim i As Integer
         Dim somma As Double
@@ -493,6 +494,7 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
+        dgvCalendario.RowsDefaultCellStyle.BackColor = converter.ConvertFromString("255; 255; 255")
         lblTempoTot.Text = somma
     End Sub
     Public Function ControlloDoppioniGiornalieri(ticket As String, ByRef duplicato As Boolean, ByRef id As String)
@@ -604,8 +606,8 @@ ore di lavoro
         cn.Close()
 
         Dim cliente As String
-        Dim clientePrec As String
-        Dim ticket As String
+        Dim clientePrec As String = ""
+        Dim ticket As String = ""
         Dim tempo As Double
         Dim tempoTot As Double
 

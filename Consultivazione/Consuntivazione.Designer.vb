@@ -82,9 +82,10 @@ Partial Class Consuntivazione
         Me.btnCarica.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnCarica.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnCarica.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnCarica.Location = New System.Drawing.Point(77, 291)
+        Me.btnCarica.Location = New System.Drawing.Point(68, 291)
         Me.btnCarica.Name = "btnCarica"
-        Me.btnCarica.Size = New System.Drawing.Size(127, 49)
+        Me.btnCarica.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.btnCarica.Size = New System.Drawing.Size(138, 49)
         Me.btnCarica.TabIndex = 5
         Me.btnCarica.Text = "Carica"
         Me.btnCarica.UseVisualStyleBackColor = False
@@ -95,19 +96,20 @@ Partial Class Consuntivazione
         Me.cmbTempo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
         Me.cmbTempo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
         Me.cmbTempo.FormattingEnabled = True
-        Me.cmbTempo.Location = New System.Drawing.Point(121, 213)
+        Me.cmbTempo.Location = New System.Drawing.Point(112, 213)
         Me.cmbTempo.Name = "cmbTempo"
-        Me.cmbTempo.Size = New System.Drawing.Size(100, 25)
+        Me.cmbTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbTempo.Size = New System.Drawing.Size(111, 25)
         Me.cmbTempo.TabIndex = 4
         '
         'cmbCliente
         '
-        Me.cmbCliente.AutoCompleteCustomSource.AddRange(New String() {"Aspi", "Ducati", "Fomas", "MCZ", "Prime Industrie", "Whirlpool", "Ynap"})
         Me.cmbCliente.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
-        Me.cmbCliente.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
-        Me.cmbCliente.Location = New System.Drawing.Point(121, 163)
+        Me.cmbCliente.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cmbCliente.Location = New System.Drawing.Point(112, 163)
         Me.cmbCliente.Name = "cmbCliente"
-        Me.cmbCliente.Size = New System.Drawing.Size(99, 25)
+        Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbCliente.Size = New System.Drawing.Size(110, 25)
         Me.cmbCliente.TabIndex = 3
         '
         'Label3
@@ -115,8 +117,9 @@ Partial Class Consuntivazione
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label3.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.Label3.Location = New System.Drawing.Point(46, 163)
+        Me.Label3.Location = New System.Drawing.Point(37, 163)
         Me.Label3.Name = "Label3"
+        Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label3.Size = New System.Drawing.Size(59, 20)
         Me.Label3.TabIndex = 12
         Me.Label3.Text = "Cliente"
@@ -126,8 +129,9 @@ Partial Class Consuntivazione
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label2.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.Label2.Location = New System.Drawing.Point(46, 213)
+        Me.Label2.Location = New System.Drawing.Point(37, 213)
         Me.Label2.Name = "Label2"
+        Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label2.Size = New System.Drawing.Size(55, 20)
         Me.Label2.TabIndex = 11
         Me.Label2.Text = "Tempo"
@@ -137,8 +141,9 @@ Partial Class Consuntivazione
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.Label1.Location = New System.Drawing.Point(46, 63)
+        Me.Label1.Location = New System.Drawing.Point(37, 63)
         Me.Label1.Name = "Label1"
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label1.Size = New System.Drawing.Size(57, 20)
         Me.Label1.TabIndex = 10
         Me.Label1.Text = "Giorno"
@@ -147,9 +152,10 @@ Partial Class Consuntivazione
         '
         Me.dtpData.CustomFormat = "dd/MM/yyyy"
         Me.dtpData.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtpData.Location = New System.Drawing.Point(121, 63)
+        Me.dtpData.Location = New System.Drawing.Point(112, 63)
         Me.dtpData.Name = "dtpData"
-        Me.dtpData.Size = New System.Drawing.Size(100, 23)
+        Me.dtpData.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.dtpData.Size = New System.Drawing.Size(111, 23)
         Me.dtpData.TabIndex = 10
         '
         'Label4
@@ -157,8 +163,9 @@ Partial Class Consuntivazione
         Me.Label4.AutoSize = True
         Me.Label4.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.Label4.Location = New System.Drawing.Point(46, 113)
+        Me.Label4.Location = New System.Drawing.Point(37, 113)
         Me.Label4.Name = "Label4"
+        Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label4.Size = New System.Drawing.Size(51, 20)
         Me.Label4.TabIndex = 12
         Me.Label4.Text = "Ticket"
@@ -166,9 +173,10 @@ Partial Class Consuntivazione
         'txtTicket
         '
         Me.txtTicket.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtTicket.Location = New System.Drawing.Point(121, 113)
+        Me.txtTicket.Location = New System.Drawing.Point(112, 113)
         Me.txtTicket.Name = "txtTicket"
-        Me.txtTicket.Size = New System.Drawing.Size(100, 23)
+        Me.txtTicket.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.txtTicket.Size = New System.Drawing.Size(111, 23)
         Me.txtTicket.TabIndex = 2
         '
         'TimerVisualizzazione
