@@ -97,11 +97,17 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consuntivazione.vb">
+    <Compile Include="frmConsuntivazione.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Consuntivazione.Designer.vb">
-      <DependentUpon>Consuntivazione.vb</DependentUpon>
+    <Compile Include="frmConsuntivazione.Designer.vb">
+      <DependentUpon>frmConsuntivazione.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmModifica.Designer.vb">
+      <DependentUpon>frmModifica.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmModifica.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -121,8 +127,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Consuntivazione.resx">
-      <DependentUpon>Consuntivazione.vb</DependentUpon>
+    <EmbeddedResource Include="frmConsuntivazione.resx">
+      <DependentUpon>frmConsuntivazione.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmModifica.resx">
+      <DependentUpon>frmModifica.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

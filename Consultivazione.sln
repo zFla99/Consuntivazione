@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30611.23
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Consultivazione", "Consultivazione\Consultivazione.vbproj", "{B41529A7-5D5A-4A31-8B56-68658E572EBB}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Consuntivazione", "Consultivazione\Consuntivazione.vbproj", "{B41529A7-5D5A-4A31-8B56-68658E572EBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
