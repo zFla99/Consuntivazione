@@ -134,7 +134,6 @@ Public Class frmModifica
         Call modificaTutteNote()
         Me.Close()
     End Sub
-    Dim giorno As String = frmConsuntivazione.giornoCondiviso
     Sub modificaTutteNote()
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
@@ -144,6 +143,16 @@ Public Class frmModifica
 
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
         cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT DATA FROM Consultivazione WHERE ID =" & id
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+        Dim giorno As String = tabella.Rows(0).Item("DATA").ToString
+
+
         cn.Open()
         str = "SELECT DATA, NOTA, ID FROM Consultivazione WHERE DATA ='" & giorno & "'"
         cmd = New OleDbCommand(str, cn)
@@ -170,7 +179,6 @@ Public Class frmModifica
 
         For i = 0 To numGiorni
             If tabella.Rows(i).Item("ID") <> id Then
-                cn.Open()
                 If contiene = True Then
                     If vetNota(i).ToString = "" Then
                         dato = "Home"
@@ -186,6 +194,7 @@ Public Class frmModifica
                         dato = vetNota(i).ToString.Replace("Home, ", "")
                     End If
                 End If
+                cn.Open()
                 If dato = "" Then
                     str = "UPDATE Consultivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
                 Else

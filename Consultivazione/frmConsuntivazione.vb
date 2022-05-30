@@ -171,6 +171,7 @@ Public Class frmConsuntivazione
             Exit Sub
         End Try
         cn.Close()
+
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
@@ -316,7 +317,8 @@ Public Class frmConsuntivazione
     End Sub
 
     Sub AggiornaConsuntivato(ticket As String, data As String, consuntivato As String)
-        Dim numTicket As Integer = ticket.Replace("%2C", "").Length / 7
+        Dim vetNumTicket() As String = ticket.Split("%2C")
+        Dim numTicket As Integer = vetNumTicket.Length
         Dim ticketVet(numTicket) As String
         ticketVet = Split(ticket, "%2C")
 
@@ -329,7 +331,11 @@ Public Class frmConsuntivazione
         cn = New OleDbConnection(str)
         For i = 0 To numTicket - 1
             cn.Open()
-            str = "UPDATE Consultivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "'"
+            If ticketVet(i) = "Criticità" Then
+                str = "UPDATE Consultivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "'"
+            Else
+                str = "UPDATE Consultivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "'"
+            End If
             cmd = New OleDbCommand(str, cn)
             Try
                 str = cmd.ExecuteNonQuery
@@ -542,7 +548,11 @@ Public Class frmConsuntivazione
             Else
                 Exit Sub
             End If
-            Call AggiornaDG(giorno, True)
+            If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Mensile)" Then
+                Call AggiornaDGMensile(giorno.Substring(3, 2))
+            Else
+                Call AggiornaDG(giorno, True)
+            End If
             Call PulisciCampi()
             Exit Sub
         End If
@@ -830,7 +840,7 @@ ore di lavoro
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DISTINCT CLIENTE, DATA, NOTA FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
+        str = "SELECT DISTINCT CLIENTE, DATA FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA HAVING (COUNT(CLIENTE)=1 And NOTA LIKE '*Criticità*') Or (NOTA IS NULL Or NOTA In ('Fixed','Formazione','Home'))"
 
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
@@ -839,7 +849,7 @@ ore di lavoro
         cn.Close()
 
         Dim TabellaNoDoppi As Integer = tabella.Rows.Count
-        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
+        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length + 1
 
 
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
@@ -889,7 +899,7 @@ ore di lavoro
                             dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
                             If notaPrec.Contains("Criticità") Then
                                 If notaPrec.Contains("Home") Then
-                                    notaPrec = notaPrec.Remove(4, notaPrec.Length - 4)
+                                    notaPrec = notaPrec.Replace(", Criticità", "")
                                     dgvCalendario.Rows(j).Cells(6).Value = notaPrec
                                 Else
                                     dgvCalendario.Rows(j).Cells(6).Value = ""
@@ -904,9 +914,6 @@ ore di lavoro
 
                             If nota.Contains("Criticità") Then
                                 ticket = "Criticità"
-                                If nota.Contains("Home") Then
-                                    nota = nota.Remove(4, notaPrec.Length - 4)
-                                End If
                             Else
                                 ticket = tabella.Rows(conta).Item("TICKET").ToString
                             End If
@@ -915,9 +922,6 @@ ore di lavoro
                     Else
                         If nota.Contains("Criticità") Then
                             ticket = "Criticità"
-                            If nota.Contains("Home") Then
-                                nota = nota.Remove(4, nota.Length - 4)
-                            End If
                         Else
                             ticket = tabella.Rows(conta).Item("TICKET").ToString
                         End If
@@ -935,7 +939,7 @@ ore di lavoro
                     dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
                     If notaPrec.Contains("Criticità") Then
                         If notaPrec.Contains("Home") Then
-                            notaPrec = notaPrec.Remove(4, notaPrec.Length - 4)
+                            notaPrec = notaPrec.Replace(", Criticità", "")
                             dgvCalendario.Rows(j).Cells(6).Value = notaPrec
                         Else
                             dgvCalendario.Rows(j).Cells(6).Value = ""
@@ -977,6 +981,7 @@ ore di lavoro
             j += 1
             tempoTot = 0
         Next
+        lblRecord.Text = dgvCalendario.RowCount
     End Sub
     Private Sub btnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
         MsgBox("Coming soon")
