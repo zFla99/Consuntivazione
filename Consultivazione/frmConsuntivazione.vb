@@ -177,7 +177,7 @@ Public Class frmConsuntivazione
         Dim str As String
         cn.Open()
         str = "SELECT MAX(ID) AS ID_MAX FROM Consultivazione"
-        cmd = New OleDbCommand(Str, cn)
+        cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
         da.Fill(tabella)
@@ -981,7 +981,6 @@ ore di lavoro
             j += 1
             tempoTot = 0
         Next
-        lblRecord.Text = dgvCalendario.RowCount
     End Sub
     Private Sub btnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
         MsgBox("Coming soon")
