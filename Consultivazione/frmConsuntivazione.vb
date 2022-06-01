@@ -429,11 +429,10 @@ Public Class frmConsuntivazione
                     Case "Acerbis"
                         link += "Cliente=103527&Commessa=20201620&SottComm=CANONE&Fase=&SottoFase="
                     Case "Aspi"
-                        link += "Cliente=102090&Commessa=20170882&SottComm=CANONE"
                         If fixed = True Then
-                            link += "&Fase=ANOMALIE&SottoFase="
+                            link += "Cliente=102090&Commessa=20170882&SottComm=CANONE&Fase=ANOMALIE&SottoFase="
                         Else
-                            link += "&Fase=NON_FATT&SottoFase="
+                            link += "Cliente=102090&Commessa=20191074&SottComm=CANONE&Fase=&SottoFase="
                         End If
                     Case "Barilla"
                         link += "Cliente=101179&Commessa=20211826&SottComm=CANONE"
@@ -502,7 +501,11 @@ Public Class frmConsuntivazione
                             link += "&Fase=AMS&SottoFase="
                         End If
                     Case "Ynap"
-                        link += "Cliente=102090&Commessa=20171266&SottComm=CANONE&Fase=&SottoFase="
+                        If fixed = True Then
+                            link += "Cliente=102090&Commessa=20171266&SottComm=CANONE&Fase=&SottoFase="
+                        Else
+                            link += "Cliente=102090&Commessa=20170301&SottComm=CANONE&Fase=ANOMALIE&SottoFase="
+                        End If
                     Case Else
                         Exit Sub
                 End Select
