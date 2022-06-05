@@ -150,7 +150,7 @@ Public Class frmConsuntivazione
                 End If
             End If
 
-            cn = New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb")
+        cn = New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb")
         Try
             cn.Open()
         Catch ex As Exception
@@ -158,9 +158,9 @@ Public Class frmConsuntivazione
             Exit Sub
         End Try
         If nota = "" Then
-            StrSQL = "INSERT into Consultivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO',NULL)"
+            StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO',NULL)"
         Else
-            StrSQL = "INSERT into Consultivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO','" & nota & "')"
+            StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO','" & nota & "')"
         End If
         cmd = New OleDbCommand(StrSQL, cn)
         Try
@@ -176,7 +176,7 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
         cn.Open()
-        str = "SELECT MAX(ID) AS ID_MAX FROM Consultivazione"
+        str = "SELECT MAX(ID) AS ID_MAX FROM Consuntivazione"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -193,10 +193,10 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DATA, NOTA, ID FROM Consultivazione WHERE DATA ='" & giorno & "'"
+        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA ='" & giorno & "'"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -238,9 +238,9 @@ Public Class frmConsuntivazione
                     End If
                 End If
                 If nota = "" Then
-                    str = "UPDATE Consultivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
+                    str = "UPDATE Consuntivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
                 Else
-                    str = "UPDATE Consultivazione SET NOTA ='" & nota & "' WHERE ID = " & tabella.Rows(i).Item("ID")
+                    str = "UPDATE Consuntivazione SET NOTA ='" & nota & "' WHERE ID = " & tabella.Rows(i).Item("ID")
                 End If
                 cmd = New OleDbCommand(str, cn)
                 Try
@@ -288,10 +288,10 @@ Public Class frmConsuntivazione
         Dim i As Integer
         Dim somma As Double
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consultivazione WHERE DATA='" & giorno & "' ORDER BY ID"
+        str = "SELECT * FROM Consuntivazione WHERE DATA='" & giorno & "' ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -327,14 +327,14 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         For i = 0 To numTicket - 1
             cn.Open()
             If ticketVet(i) = "Criticità" Then
-                str = "UPDATE Consultivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "'"
             Else
-                str = "UPDATE Consultivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "'"
             End If
             cmd = New OleDbCommand(str, cn)
             Try
@@ -409,106 +409,37 @@ Public Class frmConsuntivazione
                 Dim nota As String = dgvCalendario.Rows(e.RowIndex).Cells(6).Value
 
                 Dim home As String = "SEDE"
-                Dim fixed As Boolean = False
-                Dim formazione As Boolean = False
                 If nota.Contains("Home") Then
                     home = "SW"
-                End If
-                If nota.Contains("Formazione") Then
-                    formazione = True
-                ElseIf nota.Contains("Fixed") Then
-                    fixed = True
+                    nota.Replace("Home ,", "")
                 End If
 
                 Dim dataInvertitaMatrice(2) As String
                 dataInvertitaMatrice = data.Split("/")
                 Dim dataInvertita As String = dataInvertitaMatrice(2) & "-" & dataInvertitaMatrice(1) & "-" & dataInvertitaMatrice(0)
-
                 Dim link As String = "http://goldenring.tesisquare.com/client/procedure/ra/fra080formoremese.cfm?"
-                Select Case cliente
-                    Case "Acerbis"
-                        link += "Cliente=103527&Commessa=20201620&SottComm=CANONE&Fase=&SottoFase="
-                    Case "Aspi"
-                        If fixed = True Then
-                            link += "Cliente=102090&Commessa=20170882&SottComm=CANONE&Fase=ANOMALIE&SottoFase="
-                        Else
-                            link += "Cliente=102090&Commessa=20191074&SottComm=CANONE&Fase=&SottoFase="
-                        End If
-                    Case "Barilla"
-                        link += "Cliente=101179&Commessa=20211826&SottComm=CANONE"
-                        If formazione = True Then
-                            link += "&Fase=FORM&SottoFase="
-                        Else
-                            link += "&Fase=AMS_SRM&SottoFase="
-                        End If
-                    Case "Bottega Veneta"
-                        link += "Cliente=101742&Commessa=20190801&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=ANOMALIE&SottoFase="
-                        Else
-                            link += "&Fase=NON_FATT&SottoFase="
-                        End If
-                    Case "Ducati"
-                        link += "Cliente=103086&Commessa=20220410&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=MAINTENANCE&SottoFase="
-                        ElseIf formazione = True Then
-                            link += "&Fase=FORM&SottoFase="
-                        Else
-                            link += "&Fase=AMS&SottoFase="
-                        End If
-                    Case "Fiorentini"
-                        link += "Cliente=101804&Commessa=20190126&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=ANOMALIE&SottoFase="
-                        ElseIf formazione = True Then
-                            link += "&Fase=FORMAZIONE&SottoFase="
-                        Else
-                            link += "&Fase=ANOMALIE&SottoFase="
-                        End If
-                    Case "Fomas"
-                        link += "Cliente=102268&Commessa=20220549&SottComm=CANONE&Fase=&SottoFase="
-                    Case "Leroy Merlin"
-                        link += "Cliente=101656&Commessa=20191124&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=124.01&SottoFase="
-                        ElseIf formazione = True Then
-                            link += "&Fase=124.04%20DOC&SottoFase="
-                        Else
-                            link += "&Fase=124.02&SottoFase="
-                        End If
-                    Case "MCZ"
-                        link += "Cliente=102134&Commessa=20141387&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=ANOMALIE&SottoFase="
-                        Else
-                            link += "&Fase=NON_FATT&SottoFase="
-                        End If
-                    Case "OSN"
-                        link += "Cliente=101941&Commessa=20220648&SottComm=CANONE&Fase=&SottoFase="
-                    Case "Prima Industrie"
-                        link += "Cliente=102778&Commessa=20181062&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=18106202&SottoFase="
-                        Else
-                            link += "&Fase=18106201&SottoFase="
-                        End If
-                    Case "Whirlpool"
-                        link += "Cliente=101050&Commessa=20160029&SottComm=CANONE"
-                        If fixed = True Then
-                            link += "&Fase=ANOMALIE&SottoFase="
-                        Else
-                            link += "&Fase=AMS&SottoFase="
-                        End If
-                    Case "Ynap"
-                        If fixed = True Then
-                            link += "Cliente=102090&Commessa=20171266&SottComm=CANONE&Fase=&SottoFase="
-                        Else
-                            link += "Cliente=102090&Commessa=20170301&SottComm=CANONE&Fase=ANOMALIE&SottoFase="
-                        End If
-                    Case Else
-                        Exit Sub
-                End Select
+
+                Dim cn As OleDbConnection
+                Dim cmd As OleDbCommand
+                Dim da As OleDbDataAdapter
+                Dim tabella As New DataTable
+                Dim str As String
+
+                str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+                cn = New OleDbConnection(str)
+                cn.Open()
+                If nota = "" Or nota = "Home" Then
+                    str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota IS NULL"
+                Else
+                    str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota='" & nota & "'"
+                End If
+                cmd = New OleDbCommand(str, cn)
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+
+                link += tabella.Rows(0).Item("Link").ToString
 
                 link += "&Data=" & data & "&Sede=" & home & "&Ora=" & dataInvertita & "%2000:00:00.0&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo & "&Oreviaggio=0&Indrec=0&Note=" & ticket & "&CentroCosto=&IdProcedura=%20&AnnoRichiesta=0&IDRichiesta=0&OreDiRecupero=0"
                 If home = "SEDE" Then
@@ -628,10 +559,10 @@ Public Class frmConsuntivazione
                 End If
             End If
 
-            str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+            str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
             cn = New OleDbConnection(str)
             cn.Open()
-            str = "UPDATE Consultivazione SET " & colonnaCondivisa & "='" & dato & "' WHERE ID = " & id
+            str = "UPDATE Consuntivazione SET " & colonnaCondivisa & "='" & dato & "' WHERE ID = " & id
             cmd = New OleDbCommand(str, cn)
             Try
                 str = cmd.ExecuteNonQuery
@@ -649,10 +580,10 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "DELETE * FROM Consultivazione WHERE ID =" & id
+        str = "DELETE * FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
         Try
             str = cmd.ExecuteNonQuery
@@ -719,10 +650,10 @@ ore di lavoro
         Dim i As Integer
         Dim somma As Double
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
+        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -761,10 +692,10 @@ ore di lavoro
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
 
-        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consultivazione WHERE ID=" & id
+        str = "SELECT * FROM Consuntivazione WHERE ID=" & id
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -777,10 +708,10 @@ ore di lavoro
             colonna += "_RISOLUZIONE"
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "UPDATE Consultivazione SET " & colonna & "='" & dato + vecchioTempo & "' WHERE ID = " & id
+        str = "UPDATE Consuntivazione SET " & colonna & "='" & dato + vecchioTempo & "' WHERE ID = " & id
         cmd = New OleDbCommand(str, cn)
         Try
             str = cmd.ExecuteNonQuery
@@ -820,10 +751,10 @@ ore di lavoro
             Mese = "0" & Mese
         End If
 
-        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DISTINCT DATA FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
+        str = "SELECT DISTINCT DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -832,6 +763,8 @@ ore di lavoro
 
         If tabella.Rows.Count = 0 Then
             MsgBox("Non c'è niente da dividere")
+            btnDividiXCliente.Text = "Dividi per Cliente"
+            btnConsuntivaTutto.Visible = False
             Exit Sub
         End If
 
@@ -840,10 +773,10 @@ ore di lavoro
             DateLavorative(i) = tabella.Rows(i).Item("DATA").ToString
         Next
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DISTINCT CLIENTE, DATA FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA HAVING (COUNT(CLIENTE)=1 And NOTA LIKE '*Criticità*') Or (NOTA IS NULL Or NOTA In ('Fixed','Formazione','Home'))"
+        str = "SELECT DISTINCT CLIENTE, DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA HAVING (COUNT(CLIENTE)=1 And NOTA LIKE '*Criticità*') Or (NOTA IS NULL Or NOTA In ('Fixed','Formazione','Home'))"
 
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
@@ -852,13 +785,13 @@ ore di lavoro
         cn.Close()
 
         Dim TabellaNoDoppi As Integer = tabella.Rows.Count
-        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length + 1
+        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
 
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consultivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
+        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -985,8 +918,46 @@ ore di lavoro
             tempoTot = 0
         Next
     End Sub
+    Dim vetRConsuntivare() As Integer
+    Dim RDC As Integer = 0
     Private Sub btnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
-        MsgBox("Coming soon")
+        If MsgBox("Sei sicuro di voler consuntivare TUTTE le righe?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        Dim conta As Integer = 0
+        For i = 0 To dgvCalendario.Rows.Count - 1
+            If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
+                conta += 1
+            End If
+        Next
+
+        If conta = 0 Then
+            MsgBox("Non ci sono righe da consuntivare")
+            Exit Sub
+        End If
+
+        ReDim vetRConsuntivare(conta)
+        conta = 0
+        For i = 0 To dgvCalendario.Rows.Count - 1
+            If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
+                vetRConsuntivare(conta) = i
+                conta += 1
+            End If
+        Next
+        RDC = conta
+        TimerConsuntiva.Start()
+    End Sub
+    Dim CCons As Integer = 0
+    Private Sub TimerConsuntiva_Tick(sender As Object, e As EventArgs) Handles TimerConsuntiva.Tick
+        If RDC = CCons Then
+            RDC = 0
+            CCons = 0
+            TimerConsuntiva.Stop()
+            Exit Sub
+        End If
+        clickSinistro(sender, New DataGridViewCellMouseEventArgs(5, vetRConsuntivare(CCons), 0, 0, New MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0)))
+        CCons += 1
     End Sub
 
     Private Sub txtTicket_TextChanged(sender As Object, e As KeyEventArgs) Handles txtTicket.KeyDown
@@ -1013,4 +984,7 @@ ore di lavoro
         rdbFormazione.Checked = False
     End Sub
 
+    Private Sub lblAggiungiCliente_Click(sender As Object, e As EventArgs) Handles lblAggiungiCliente.Click
+        frmInserisciCliente.ShowDialog()
+    End Sub
 End Class

@@ -120,13 +120,13 @@ Public Class frmModifica
             Exit Sub
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
         If dato = "" Then
-            str = "UPDATE Consultivazione SET " & colonna & "= NULL WHERE ID = " & id
+            str = "UPDATE Consuntivazione SET " & colonna & "= NULL WHERE ID = " & id
         Else
-            str = "UPDATE Consultivazione SET " & colonna & "='" & dato & "' WHERE ID = " & id
+            str = "UPDATE Consuntivazione SET " & colonna & "='" & dato & "' WHERE ID = " & id
         End If
         cmd = New OleDbCommand(str, cn)
         str = cmd.ExecuteNonQuery
@@ -141,10 +141,10 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consultivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DATA FROM Consultivazione WHERE ID =" & id
+        str = "SELECT DATA FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -154,7 +154,7 @@ Public Class frmModifica
 
 
         cn.Open()
-        str = "SELECT DATA, NOTA, ID FROM Consultivazione WHERE DATA ='" & giorno & "'"
+        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA ='" & giorno & "'"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -196,9 +196,9 @@ Public Class frmModifica
                 End If
                 cn.Open()
                 If dato = "" Then
-                    str = "UPDATE Consultivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
+                    str = "UPDATE Consuntivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
                 Else
-                    str = "UPDATE Consultivazione SET NOTA ='" & dato & "' WHERE ID = " & tabella.Rows(i).Item("ID")
+                    str = "UPDATE Consuntivazione SET NOTA ='" & dato & "' WHERE ID = " & tabella.Rows(i).Item("ID")
                 End If
                 cmd = New OleDbCommand(str, cn)
                 Try
@@ -223,6 +223,7 @@ Public Class frmModifica
         corretto = True
     End Sub
     Sub datoTempo()
+        dato = cmbTempo.Text
         If IsNumeric(dato) = False Then
             MsgBox("Inserisci un tempo di risoluzione valido")
             corretto = False
