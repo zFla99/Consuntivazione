@@ -143,11 +143,13 @@ Public Class frmInserisciCliente
         da.Fill(tabella)
         cn.Close()
 
-        frmConsuntivazione.cmbCliente.Items.Clear()
         frmModifica.cmbCliente.Items.Clear()
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        frmCommesse.cmbCliente.Items.Clear()
         For i = 0 To tabella.Rows.Count - 1
-            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
     End Sub
     Sub inserisciConfig(cliente As String, nota As String, link As String)

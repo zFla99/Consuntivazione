@@ -35,8 +35,12 @@ Public Class frmModifica
         cn.Close()
 
         cmbCliente.Items.Clear()
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        frmCommesse.cmbCliente.Items.Clear()
         For i = 0 To tabella.Rows.Count - 1
             cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
 
         'Tempo

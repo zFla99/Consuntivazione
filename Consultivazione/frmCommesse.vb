@@ -176,7 +176,7 @@ Public Class frmCommesse
             str = "SELECT * FROM LinkGR WHERE Nota = 'Fixed' ORDER BY Cliente, Nota"
         ElseIf cliente = "" And vuota = False And fixed = True And formazione = True Then
             str = "SELECT * FROM LinkGR WHERE Nota = 'Formazione' OR Nota = 'Fixed' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = True And fixed = False And formazione = True Then
+        ElseIf cliente = "" And vuota = False And fixed = False And formazione = True Then
             str = "SELECT * FROM LinkGR WHERE Nota = 'Formazione' ORDER BY Cliente, Nota"
 
         ElseIf cliente <> "" And vuota = True And fixed = False And formazione = False Then
@@ -189,7 +189,7 @@ Public Class frmCommesse
             str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota = 'Fixed' ORDER BY Cliente, Nota"
         ElseIf cliente <> "" And vuota = False And fixed = True And formazione = True Then
             str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND (Nota = 'Formazione' OR Nota = 'Fixed') ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = True And fixed = False And formazione = True Then
+        ElseIf cliente <> "" And vuota = False And fixed = False And formazione = True Then
             str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota = 'Formazione' ORDER BY Cliente, Nota"
         End If
         cmd = New OleDbCommand(str, cn)
