@@ -21,7 +21,7 @@ Public Class frmInserisciCliente
         Dim fase As String = txtFase.Text
         Dim SottoFase As String = txtSottoFase.Text
         Dim nota As String = ""
-        Dim link As String = "http://goldenring.tesisquare.com/client/procedure/ra/fra080formoremese.cfm?"
+        Dim link As String = ""
 
         If rdbVuota.Checked = True Then
             nota = ""
@@ -104,16 +104,18 @@ Public Class frmInserisciCliente
             MsgBox("Questa configurazione esiste già.")
             Exit Sub
         Else
-            link += "Cliente=" & CodCliente & "&Commessa=" & commessa & "&SottComm=" & SottoCommessa & "&Fase=" & fase & "&SottoFase=" & SottoFase
+            link = "Cliente=" & CodCliente & "&Commessa=" & commessa & "&SottComm=" & SottoCommessa & "&Fase=" & fase & "&SottoFase=" & SottoFase
             inserisciConfig(cliente, nota, link)
         End If
         MsgBox("Il cliente " & cliente & " è la sua commessa è stato aggiunto!")
+
         pulisciCampi()
     End Sub
 
     Sub inserisciCliente(cliente As String)
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
 
@@ -130,6 +132,23 @@ Public Class frmInserisciCliente
             Exit Sub
         End Try
         cn.Close()
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        frmModifica.cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
     End Sub
     Sub inserisciConfig(cliente As String, nota As String, link As String)
         Dim cn As OleDbConnection
@@ -185,5 +204,9 @@ Public Class frmInserisciCliente
 
     Private Sub btnClienti_Click(sender As Object, e As EventArgs) Handles btnClienti.Click
         frmClienti.ShowDialog()
+    End Sub
+
+    Private Sub btnCommesse_Click(sender As Object, e As EventArgs) Handles btnCommesse.Click
+        frmCommesse.ShowDialog()
     End Sub
 End Class

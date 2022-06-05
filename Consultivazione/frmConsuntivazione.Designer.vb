@@ -23,7 +23,7 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
         Me.cmbTempo = New System.Windows.Forms.ComboBox()
@@ -51,8 +51,8 @@ Partial Class frmConsuntivazione
         Me.ckbHome = New System.Windows.Forms.CheckBox()
         Me.rdbFixed = New System.Windows.Forms.RadioButton()
         Me.rdbCriticita = New System.Windows.Forms.RadioButton()
-        Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
         Me.lblAggiungiCliente = New System.Windows.Forms.Label()
+        Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlInserisci.SuspendLayout()
@@ -69,14 +69,14 @@ Partial Class frmConsuntivazione
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle2
         Me.dgvCalendario.Location = New System.Drawing.Point(46, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
@@ -367,7 +367,7 @@ Partial Class frmConsuntivazione
         Me.rdbFormazione.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.rdbFormazione.Location = New System.Drawing.Point(16, 68)
         Me.rdbFormazione.Name = "rdbFormazione"
-        Me.rdbFormazione.Size = New System.Drawing.Size(89, 20)
+        Me.rdbFormazione.Size = New System.Drawing.Size(88, 20)
         Me.rdbFormazione.TabIndex = 14
         Me.rdbFormazione.TabStop = True
         Me.rdbFormazione.Text = "Formazione"
@@ -381,7 +381,7 @@ Partial Class frmConsuntivazione
         Me.ckbHome.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ckbHome.Location = New System.Drawing.Point(138, 43)
         Me.ckbHome.Name = "ckbHome"
-        Me.ckbHome.Size = New System.Drawing.Size(60, 20)
+        Me.ckbHome.Size = New System.Drawing.Size(59, 20)
         Me.ckbHome.TabIndex = 13
         Me.ckbHome.Text = "Home"
         Me.ckbHome.UseVisualStyleBackColor = True
@@ -394,7 +394,7 @@ Partial Class frmConsuntivazione
         Me.rdbFixed.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.rdbFixed.Location = New System.Drawing.Point(16, 42)
         Me.rdbFixed.Name = "rdbFixed"
-        Me.rdbFixed.Size = New System.Drawing.Size(54, 20)
+        Me.rdbFixed.Size = New System.Drawing.Size(53, 20)
         Me.rdbFixed.TabIndex = 14
         Me.rdbFixed.TabStop = True
         Me.rdbFixed.Text = "Fixed"
@@ -408,15 +408,11 @@ Partial Class frmConsuntivazione
         Me.rdbCriticita.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.rdbCriticita.Location = New System.Drawing.Point(16, 16)
         Me.rdbCriticita.Name = "rdbCriticita"
-        Me.rdbCriticita.Size = New System.Drawing.Size(71, 20)
+        Me.rdbCriticita.Size = New System.Drawing.Size(70, 20)
         Me.rdbCriticita.TabIndex = 14
         Me.rdbCriticita.TabStop = True
         Me.rdbCriticita.Text = "Criticità"
         Me.rdbCriticita.UseVisualStyleBackColor = True
-        '
-        'TimerConsuntiva
-        '
-        Me.TimerConsuntiva.Interval = 1500
         '
         'lblAggiungiCliente
         '
@@ -430,6 +426,10 @@ Partial Class frmConsuntivazione
         Me.lblAggiungiCliente.Size = New System.Drawing.Size(19, 20)
         Me.lblAggiungiCliente.TabIndex = 12
         Me.lblAggiungiCliente.Text = "+"
+        '
+        'TimerConsuntiva
+        '
+        Me.TimerConsuntiva.Interval = 1500
         '
         'frmConsuntivazione
         '

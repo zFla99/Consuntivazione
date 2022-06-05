@@ -45,7 +45,7 @@ Partial Class frmInserisciCliente
         Me.gboxNota = New System.Windows.Forms.GroupBox()
         Me.gboxCommessa = New System.Windows.Forms.GroupBox()
         Me.btnClienti = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.btnCommesse = New System.Windows.Forms.Button()
         Me.gboxCliente.SuspendLayout()
         Me.gboxNota.SuspendLayout()
         Me.gboxCommessa.SuspendLayout()
@@ -153,8 +153,9 @@ Partial Class frmInserisciCliente
         '
         'btnInserisci
         '
+        Me.btnInserisci.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnInserisci.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnInserisci.Location = New System.Drawing.Point(290, 242)
+        Me.btnInserisci.Location = New System.Drawing.Point(292, 242)
         Me.btnInserisci.Name = "btnInserisci"
         Me.btnInserisci.Size = New System.Drawing.Size(249, 40)
         Me.btnInserisci.TabIndex = 17
@@ -179,7 +180,7 @@ Partial Class frmInserisciCliente
         Me.rdbFormazione.ForeColor = System.Drawing.Color.Black
         Me.rdbFormazione.Location = New System.Drawing.Point(13, 65)
         Me.rdbFormazione.Name = "rdbFormazione"
-        Me.rdbFormazione.Size = New System.Drawing.Size(89, 20)
+        Me.rdbFormazione.Size = New System.Drawing.Size(88, 20)
         Me.rdbFormazione.TabIndex = 18
         Me.rdbFormazione.Text = "Formazione"
         Me.rdbFormazione.UseVisualStyleBackColor = True
@@ -192,7 +193,7 @@ Partial Class frmInserisciCliente
         Me.rdbFixed.ForeColor = System.Drawing.Color.Black
         Me.rdbFixed.Location = New System.Drawing.Point(13, 39)
         Me.rdbFixed.Name = "rdbFixed"
-        Me.rdbFixed.Size = New System.Drawing.Size(54, 20)
+        Me.rdbFixed.Size = New System.Drawing.Size(53, 20)
         Me.rdbFixed.TabIndex = 19
         Me.rdbFixed.Text = "Fixed"
         Me.rdbFixed.UseVisualStyleBackColor = True
@@ -206,7 +207,7 @@ Partial Class frmInserisciCliente
         Me.rdbVuota.ForeColor = System.Drawing.Color.Black
         Me.rdbVuota.Location = New System.Drawing.Point(13, 13)
         Me.rdbVuota.Name = "rdbVuota"
-        Me.rdbVuota.Size = New System.Drawing.Size(59, 20)
+        Me.rdbVuota.Size = New System.Drawing.Size(58, 20)
         Me.rdbVuota.TabIndex = 19
         Me.rdbVuota.TabStop = True
         Me.rdbVuota.Text = "Vuota"
@@ -236,6 +237,7 @@ Partial Class frmInserisciCliente
         '
         'gboxCliente
         '
+        Me.gboxCliente.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.gboxCliente.Controls.Add(Me.rdbConfig)
         Me.gboxCliente.Controls.Add(Me.rdbCliente)
         Me.gboxCliente.Controls.Add(Me.txtCodCliente)
@@ -243,7 +245,7 @@ Partial Class frmInserisciCliente
         Me.gboxCliente.Controls.Add(Me.txtCliente)
         Me.gboxCliente.Controls.Add(Me.Label6)
         Me.gboxCliente.Controls.Add(Me.Label3)
-        Me.gboxCliente.Location = New System.Drawing.Point(24, 7)
+        Me.gboxCliente.Location = New System.Drawing.Point(26, 7)
         Me.gboxCliente.Name = "gboxCliente"
         Me.gboxCliente.Size = New System.Drawing.Size(388, 98)
         Me.gboxCliente.TabIndex = 20
@@ -257,7 +259,7 @@ Partial Class frmInserisciCliente
         Me.rdbConfig.ForeColor = System.Drawing.Color.Black
         Me.rdbConfig.Location = New System.Drawing.Point(266, 65)
         Me.rdbConfig.Name = "rdbConfig"
-        Me.rdbConfig.Size = New System.Drawing.Size(90, 20)
+        Me.rdbConfig.Size = New System.Drawing.Size(89, 20)
         Me.rdbConfig.TabIndex = 18
         Me.rdbConfig.Text = "Solo Config"
         Me.rdbConfig.UseVisualStyleBackColor = True
@@ -270,7 +272,7 @@ Partial Class frmInserisciCliente
         Me.rdbCliente.ForeColor = System.Drawing.Color.Black
         Me.rdbCliente.Location = New System.Drawing.Point(266, 39)
         Me.rdbCliente.Name = "rdbCliente"
-        Me.rdbCliente.Size = New System.Drawing.Size(92, 20)
+        Me.rdbCliente.Size = New System.Drawing.Size(91, 20)
         Me.rdbCliente.TabIndex = 18
         Me.rdbCliente.Text = "Solo Cliente"
         Me.rdbCliente.UseVisualStyleBackColor = True
@@ -284,7 +286,7 @@ Partial Class frmInserisciCliente
         Me.rdbClienteConfig.ForeColor = System.Drawing.Color.Black
         Me.rdbClienteConfig.Location = New System.Drawing.Point(266, 13)
         Me.rdbClienteConfig.Name = "rdbClienteConfig"
-        Me.rdbClienteConfig.Size = New System.Drawing.Size(116, 20)
+        Me.rdbClienteConfig.Size = New System.Drawing.Size(115, 20)
         Me.rdbClienteConfig.TabIndex = 19
         Me.rdbClienteConfig.TabStop = True
         Me.rdbClienteConfig.Text = "Cliente + Config"
@@ -292,10 +294,11 @@ Partial Class frmInserisciCliente
         '
         'gboxNota
         '
+        Me.gboxNota.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.gboxNota.Controls.Add(Me.rdbFormazione)
         Me.gboxNota.Controls.Add(Me.rdbVuota)
         Me.gboxNota.Controls.Add(Me.rdbFixed)
-        Me.gboxNota.Location = New System.Drawing.Point(418, 7)
+        Me.gboxNota.Location = New System.Drawing.Point(420, 7)
         Me.gboxNota.Name = "gboxNota"
         Me.gboxNota.Size = New System.Drawing.Size(150, 99)
         Me.gboxNota.TabIndex = 21
@@ -303,6 +306,7 @@ Partial Class frmInserisciCliente
         '
         'gboxCommessa
         '
+        Me.gboxCommessa.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.gboxCommessa.Controls.Add(Me.txtSottoFase)
         Me.gboxCommessa.Controls.Add(Me.txtSottoCommessa)
         Me.gboxCommessa.Controls.Add(Me.txtFase)
@@ -311,7 +315,7 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa.Controls.Add(Me.Label2)
         Me.gboxCommessa.Controls.Add(Me.Label1)
         Me.gboxCommessa.Controls.Add(Me.Label4)
-        Me.gboxCommessa.Location = New System.Drawing.Point(24, 119)
+        Me.gboxCommessa.Location = New System.Drawing.Point(26, 119)
         Me.gboxCommessa.Name = "gboxCommessa"
         Me.gboxCommessa.Size = New System.Drawing.Size(544, 106)
         Me.gboxCommessa.TabIndex = 22
@@ -319,35 +323,39 @@ Partial Class frmInserisciCliente
         '
         'btnClienti
         '
+        Me.btnClienti.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnClienti.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnClienti.Location = New System.Drawing.Point(24, 242)
+        Me.btnClienti.Location = New System.Drawing.Point(26, 242)
         Me.btnClienti.Name = "btnClienti"
         Me.btnClienti.Size = New System.Drawing.Size(71, 40)
         Me.btnClienti.TabIndex = 17
         Me.btnClienti.Text = "Clienti"
         Me.btnClienti.UseVisualStyleBackColor = True
         '
-        'Button2
+        'btnCommesse
         '
-        Me.Button2.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.Button2.Location = New System.Drawing.Point(101, 242)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(107, 40)
-        Me.Button2.TabIndex = 17
-        Me.Button2.Text = "Commesse"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnCommesse.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.btnCommesse.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
+        Me.btnCommesse.Location = New System.Drawing.Point(103, 242)
+        Me.btnCommesse.Name = "btnCommesse"
+        Me.btnCommesse.Size = New System.Drawing.Size(107, 40)
+        Me.btnCommesse.TabIndex = 17
+        Me.btnCommesse.Text = "Commesse"
+        Me.btnCommesse.UseVisualStyleBackColor = True
         '
         'frmInserisciCliente
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(592, 309)
-        Me.Controls.Add(Me.Button2)
+        Me.ClientSize = New System.Drawing.Size(594, 309)
+        Me.Controls.Add(Me.btnCommesse)
         Me.Controls.Add(Me.btnClienti)
         Me.Controls.Add(Me.btnInserisci)
         Me.Controls.Add(Me.gboxCommessa)
         Me.Controls.Add(Me.gboxNota)
         Me.Controls.Add(Me.gboxCliente)
+        Me.MaximumSize = New System.Drawing.Size(610, 348)
+        Me.MinimumSize = New System.Drawing.Size(610, 348)
         Me.Name = "frmInserisciCliente"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "frmInserisciCliente"
@@ -384,5 +392,5 @@ Partial Class frmInserisciCliente
     Friend WithEvents rdbClienteConfig As RadioButton
     Friend WithEvents rdbConfig As RadioButton
     Friend WithEvents btnClienti As Button
-    Friend WithEvents Button2 As Button
+    Friend WithEvents btnCommesse As Button
 End Class

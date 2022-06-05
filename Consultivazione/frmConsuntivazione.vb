@@ -21,21 +21,29 @@ Public Class frmConsuntivazione
     End Sub
     Sub caricaClientiTempo()
         'Clienti
-        cmbCliente.Items.Add("Acerbis")
-        cmbCliente.Items.Add("Aspi")
-        cmbCliente.Items.Add("Barilla")
-        cmbCliente.Items.Add("Bottega Veneta")
-        cmbCliente.Items.Add("Ducati")
-        cmbCliente.Items.Add("Fiorentini")
-        cmbCliente.Items.Add("Fomas")
-        cmbCliente.Items.Add("Leroy Merlin")
-        cmbCliente.Items.Add("MCZ")
-        cmbCliente.Items.Add("OSN")
-        cmbCliente.Items.Add("Prima Industrie")
-        cmbCliente.Items.Add("Whirlpool")
-        cmbCliente.Items.Add("Ynap")
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
+            cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
 
         'Tempo
+        cmbTempo.Items.Clear()
         cmbTempo.Items.Add("0,25")
         cmbTempo.Items.Add("0,5")
         cmbTempo.Items.Add("0,75")
@@ -103,6 +111,9 @@ Public Class frmConsuntivazione
     Sub InserisciTicket()
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
         Dim nRighe As Integer
         Dim StrSQL As String
         Dim duplicato As Boolean = False
@@ -116,6 +127,22 @@ Public Class frmConsuntivazione
             End If
         End If
 
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim vetCommNota(tabella.Rows.Count) As String
+        For i = 0 To tabella.Rows.Count - 1
+            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
+        Next
+
+        Dim conta As Integer = 0
         If ckbHome.Checked = True Then
             nota = "Home"
         Else
@@ -123,32 +150,62 @@ Public Class frmConsuntivazione
         End If
 
         If rdbCriticita.Checked = True Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
+                MsgBox("Questo cliente non ha la commessa standard")
+                Exit Sub
+            End If
             If nota = "" Then
                 nota = "Criticità"
             Else
                 nota += ", Criticità"
             End If
         ElseIf rdbFixed.Checked = True Then
-            If cliente = "Acerbis" Or cliente = "Barilla" Or cliente = "Fomas" Or cliente = "OSN" Or cliente = "Ynap" Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Fixed" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
                 MsgBox("Questo cliente non ha la commessa per il Bug Fix")
                 Exit Sub
             End If
+
             If nota = "" Then
                 nota = "Fixed"
             Else
                 nota += ", Fixed"
             End If
         ElseIf rdbFormazione.Checked = True Then
-            If cliente = "Aspi" Or cliente = "Bottega Veneta" Or cliente = "MCZ" Or cliente = "Prima Industrie" Or cliente = "Whirlpool" Or cliente = "Acerbis" Or cliente = "Fomas" Or cliente = "OSN" Or cliente = "Ynap" Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Formazione" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
                 MsgBox("Questo cliente non ha la commessa per la Formazione")
                 Exit Sub
             End If
             If nota = "" Then
-                    nota = "Formazione"
-                Else
-                    nota += ", Formazione"
-                End If
+                nota = "Formazione"
+            Else
+                nota += ", Formazione"
             End If
+        Else
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
+                MsgBox("Questo cliente non ha la commessa standard")
+                Exit Sub
+            End If
+        End If
 
         cn = New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb")
         Try
@@ -172,9 +229,6 @@ Public Class frmConsuntivazione
         End Try
         cn.Close()
 
-        Dim da As OleDbDataAdapter
-        Dim tabella As New DataTable
-        Dim str As String
         cn.Open()
         str = "SELECT MAX(ID) AS ID_MAX FROM Consuntivazione"
         cmd = New OleDbCommand(str, cn)
@@ -486,8 +540,8 @@ Public Class frmConsuntivazione
                 Call AggiornaDGMensile(giorno.Substring(3, 2))
             Else
                 Call AggiornaDG(giorno, True)
+                Call PulisciCampi()
             End If
-            Call PulisciCampi()
             Exit Sub
         End If
 
@@ -527,6 +581,7 @@ Public Class frmConsuntivazione
         End If
     End Sub
 
+    Public Shared tabellaCondivisa As String
     Public Shared colonnaCondivisa As String
     Public Shared clienteCondiviso As String
     Public Shared giornoCondiviso As String
@@ -537,6 +592,7 @@ Public Class frmConsuntivazione
         Dim cmd As OleDbCommand
         Dim tabella As New DataTable
         Dim str As String
+        tabellaCondivisa = "Consuntivazione"
         colonnaCondivisa = dgvCalendario.Columns(c).HeaderText
         clienteCondiviso = dgvCalendario.Rows(r).Cells(2).Value
         idCondiviso = id
@@ -776,8 +832,7 @@ ore di lavoro
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT DISTINCT CLIENTE, DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA HAVING (COUNT(CLIENTE)=1 And NOTA LIKE '*Criticità*') Or (NOTA IS NULL Or NOTA In ('Fixed','Formazione','Home'))"
-
+        str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -785,8 +840,28 @@ ore di lavoro
         cn.Close()
 
         Dim TabellaNoDoppi As Integer = tabella.Rows.Count
-        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
+        Dim cliente As String
+        Dim clientePrec As String = ""
+        Dim data As String
+        Dim dataPrec As String = ""
+        Dim nota As String
 
+        For i = 0 To tabella.Rows.Count - 1
+            cliente = tabella.Rows(i).Item("CLIENTE").ToString
+            data = tabella.Rows(i).Item("DATA").ToString
+            nota = tabella.Rows(i).Item("NOTA").ToString
+
+            If i > 0 Then
+                If cliente = clientePrec And data = dataPrec And nota.Contains("Criticità") = True Then
+                    TabellaNoDoppi -= 1
+                End If
+            End If
+
+            clientePrec = cliente
+            dataPrec = data
+        Next
+
+        dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
 
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
@@ -798,9 +873,9 @@ ore di lavoro
         da.Fill(tabella)
         cn.Close()
 
-        Dim cliente As String
-        Dim clientePrec As String = ""
-        Dim nota As String
+        cliente = ""
+        clientePrec = ""
+        nota = ""
         Dim notaPrec As String = ""
         Dim ticket As String = ""
         Dim tempo As Double
@@ -812,12 +887,12 @@ ore di lavoro
         For i = 0 To DateLavorative.Length - 2
             Do
                 conta += 1
-                If conta <= tabella.Rows.Count - 1 Then
+                If conta <= tabella.Rows.Count - 1 Then 'AndAlso DateLavorative(i) <> tabella.Rows(conta).Item("DATA").ToString
 
                     cliente = tabella.Rows(conta).Item("CLIENTE").ToString
                     nota = tabella.Rows(conta).Item("NOTA").ToString
                     If conta <> 0 Then
-                        If cliente = clientePrec And (nota = notaPrec Or nota.Contains("Criticità")) Then
+                        If cliente = clientePrec And (nota = notaPrec Or nota.Contains("Criticità")) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString Then
                             If nota.Contains("Criticità") Then
                                 ticket += "," & "Criticità"
                                 If nota.Contains("Home") Then

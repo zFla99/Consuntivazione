@@ -255,6 +255,8 @@ Partial Class frmModifica
         Me.Controls.Add(Me.gboxTempo)
         Me.Controls.Add(Me.gboxCliente)
         Me.Controls.Add(Me.gboxNota)
+        Me.MaximumSize = New System.Drawing.Size(280, 230)
+        Me.MinimumSize = New System.Drawing.Size(280, 230)
         Me.Name = "frmModifica"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Modifica"

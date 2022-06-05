@@ -148,6 +148,9 @@
     <EmbeddedResource Include="frmClienti.resx">
       <DependentUpon>frmClienti.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmCommesse.resx">
+      <DependentUpon>frmCommesse.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmConsuntivazione.resx">
       <DependentUpon>frmConsuntivazione.vb</DependentUpon>
     </EmbeddedResource>

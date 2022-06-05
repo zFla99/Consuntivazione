@@ -1,8 +1,10 @@
 ﻿Imports System.Data.OleDb
 Public Class frmModifica
+    Dim tabellaDB As String
     Dim colonna As String
     Dim id As String
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
         id = frmConsuntivazione.idCondiviso
         caricaClientiTempo()
@@ -16,21 +18,29 @@ Public Class frmModifica
     End Sub
     Sub caricaClientiTempo()
         'Clienti
-        cmbCliente.Items.Add("Acerbis")
-        cmbCliente.Items.Add("Aspi")
-        cmbCliente.Items.Add("Barilla")
-        cmbCliente.Items.Add("Bottega Veneta")
-        cmbCliente.Items.Add("Ducati")
-        cmbCliente.Items.Add("Fiorentini")
-        cmbCliente.Items.Add("Fomas")
-        cmbCliente.Items.Add("Leroy Merlin")
-        cmbCliente.Items.Add("MCZ")
-        cmbCliente.Items.Add("OSN")
-        cmbCliente.Items.Add("Prima Industrie")
-        cmbCliente.Items.Add("Whirlpool")
-        cmbCliente.Items.Add("Ynap")
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
+            cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
 
         'Tempo
+        cmbTempo.Items.Clear()
         cmbTempo.Items.Add("0,25")
         cmbTempo.Items.Add("0,5")
         cmbTempo.Items.Add("0,75")
@@ -77,6 +87,13 @@ Public Class frmModifica
                 gboxData.Left = 20
 
             Case "NOTA"
+                If tabellaDB = "LinkGR" Then
+                    ckbHome.Enabled = False
+                    rdbCriticita.Enabled = False
+                Else
+                    ckbHome.Enabled = True
+                    rdbCriticita.Enabled = True
+                End If
                 gboxNota.Visible = True
                 gboxNota.Left = 20
         End Select
@@ -124,14 +141,16 @@ Public Class frmModifica
         cn = New OleDbConnection(str)
         cn.Open()
         If dato = "" Then
-            str = "UPDATE Consuntivazione SET " & colonna & "= NULL WHERE ID = " & id
+            str = "UPDATE " & tabellaDB & " SET " & colonna & "= NULL WHERE ID = " & id
         Else
-            str = "UPDATE Consuntivazione SET " & colonna & "='" & dato & "' WHERE ID = " & id
+            str = "UPDATE " & tabellaDB & " SET " & colonna & "='" & dato & "' WHERE ID = " & id
         End If
         cmd = New OleDbCommand(str, cn)
         str = cmd.ExecuteNonQuery
         cn.Close()
-        Call modificaTutteNote()
+        If tabellaDB = "Consuntivazione" Then
+            Call modificaTutteNote()
+        End If
         Me.Close()
     End Sub
     Sub modificaTutteNote()
@@ -238,6 +257,28 @@ Public Class frmModifica
     End Sub
     Dim cliente As String = frmConsuntivazione.clienteCondiviso
     Sub datoNota()
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim vetCommNota(tabella.Rows.Count) As String
+        For i = 0 To tabella.Rows.Count - 1
+            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
+        Next
+
+        Dim conta As Integer = 0
         If ckbHome.Checked = True Then
             dato = "Home"
         Else
@@ -245,24 +286,45 @@ Public Class frmModifica
         End If
 
         If rdbCriticita.Checked = True Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
+                MsgBox("Questo cliente non ha la commessa standard")
+                corretto = False
+                Exit Sub
+            End If
             If dato = "" Then
                 dato = "Criticità"
             Else
                 dato += ", Criticità"
             End If
         ElseIf rdbFixed.Checked = True Then
-            If cliente = "Acerbis" Or cliente = "Barilla" Or cliente = "Fomas" Or cliente = "OSN" Or cliente = "Ynap" Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Fixed" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
                 MsgBox("Questo cliente non ha la commessa per il Bug Fix")
                 corretto = False
                 Exit Sub
             End If
+
             If dato = "" Then
                 dato = "Fixed"
             Else
                 dato += ", Fixed"
             End If
         ElseIf rdbFormazione.Checked = True Then
-            If cliente = "Aspi" Or cliente = "Bottega Veneta" Or cliente = "MCZ" Or cliente = "Prima Industrie" Or cliente = "Whirlpool" Or cliente = "Acerbis" Or cliente = "Fomas" Or cliente = "OSN" Or cliente = "Ynap" Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Formazione" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
                 MsgBox("Questo cliente non ha la commessa per la Formazione")
                 corretto = False
                 Exit Sub
@@ -271,6 +333,17 @@ Public Class frmModifica
                 dato = "Formazione"
             Else
                 dato += ", Formazione"
+            End If
+        Else
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "" Then
+                    conta += 1
+                End If
+            Next
+            If conta = 0 Then
+                MsgBox("Questo cliente non ha la commessa standard")
+                corretto = False
+                Exit Sub
             End If
         End If
         corretto = True
