@@ -608,8 +608,11 @@ Public Class frmConsuntivazione
             Dim dato As String
             If colonnaCondivisa = "TICKET" Then
                 dato = InputBox("Inserisci un numero ticket")
-                annulla = True
-                Exit Sub
+                If dato = "" Then
+                    MsgBox("Ticket non valido")
+                    annulla = True
+                    Exit Sub
+                End If
             Else
                 dato = dgvCalendario.Rows(r).Cells(c).Value
                 If dato = "NO" Then
