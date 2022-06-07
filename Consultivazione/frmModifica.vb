@@ -3,10 +3,12 @@ Public Class frmModifica
     Dim tabellaDB As String
     Dim colonna As String
     Dim id As String
+    Dim cliente As String = frmConsuntivazione.clienteCondiviso
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
         id = frmConsuntivazione.idCondiviso
+        cliente = frmConsuntivazione.clienteCondiviso
         caricaClientiTempo()
         impostaTabModifica()
     End Sub
@@ -259,7 +261,6 @@ Public Class frmModifica
         dato = dtpData.Text
         corretto = True
     End Sub
-    Dim cliente As String = frmConsuntivazione.clienteCondiviso
     Sub datoNota()
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
