@@ -111,6 +111,19 @@ Public Class frmModifica
         PulisciCampi()
         Me.Close()
     End Sub
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub cmbTempo_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbTempo.KeyPress
+        If (Not Char.IsControl(e.KeyChar) _
+                     AndAlso (Not Char.IsDigit(e.KeyChar) _
+                     AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "." AndAlso e.KeyChar <> ",") Then
+            e.Handled = True
+        End If
+    End Sub
 
     Dim dato As String = ""
     Dim corretto As Boolean = False

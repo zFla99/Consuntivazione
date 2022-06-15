@@ -85,8 +85,9 @@ Public Class frmClienti
                 End If
 
                 Dim cliente As String = InputBox("Inserisci un cliente:")
-                If cliente = "" Then
-                    MsgBox("Nome Cliente non valido")
+                cliente = cliente.Replace("'", "")
+                If cliente = "" Or cliente.Length > frmConsuntivazione.cmbCliente.MaxLength Then
+                    MsgBox("Nome Cliente non valido (Max " & frmConsuntivazione.cmbCliente.MaxLength & " car.)")
                     Exit Sub
                 End If
 

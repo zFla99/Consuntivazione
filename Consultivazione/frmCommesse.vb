@@ -62,6 +62,12 @@ Public Class frmCommesse
             dgvCommesse.Rows(i + 1).Cells(8).Value = tabella.Rows(i).Item("ID").ToString
         Next
     End Sub
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
     Sub modificaCommessa(dato As String, r As Integer, c As Integer)
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
@@ -136,9 +142,15 @@ Public Class frmCommesse
                 frmModifica.ShowDialog()
             Else
                 Dim dato As String = InputBox("Modifica la " & dgvCommesse.Columns(e.ColumnIndex).HeaderText)
+                dato = dato.Replace("'", "")
                 If dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COD.CLIENTE" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COMMESSA" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "SOTT.COMMESSA" Then
-                    If dato = "" Then
-                        MsgBox("Dato inserito non valido")
+                    If dato = "" Or dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
+                        MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
+                        Exit Sub
+                    End If
+                Else
+                    If dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
+                        MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
                         Exit Sub
                     End If
                 End If

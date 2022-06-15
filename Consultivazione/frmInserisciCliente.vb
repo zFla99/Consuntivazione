@@ -13,6 +13,42 @@ Public Class frmInserisciCliente
         rdbClienteConfig.Checked = True
         rdbVuota.Checked = True
     End Sub
+    Private Sub txtCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCliente.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub txtCodCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCodCliente.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub txtCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCommessa.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub txtSottoCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtSottoCommessa.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub txtFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtFase.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub txtSottoFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtSottoFase.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
     Private Sub btnInserisci_Click(sender As Object, e As EventArgs) Handles btnInserisci.Click
         Dim cliente As String = txtCliente.Text
         Dim CodCliente As String = txtCodCliente.Text

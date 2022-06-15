@@ -629,8 +629,9 @@ Public Class frmConsuntivazione
             Dim dato As String
             If colonnaCondivisa = "TICKET" Then
                 dato = InputBox("Inserisci un numero ticket")
-                If dato = "" Then
-                    MsgBox("Ticket non valido")
+                dato = dato.Replace("'", "")
+                If dato = "" Or dato.Length > txtTicket.MaxLength Then
+                    MsgBox("Ticket non valido (Max " & txtTicket.MaxLength & " car.)")
                     annulla = True
                     Exit Sub
                 End If
