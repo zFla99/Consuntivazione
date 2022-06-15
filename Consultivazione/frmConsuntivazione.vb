@@ -66,6 +66,27 @@ Public Class frmConsuntivazione
     Dim cliente As String
     Dim nota As String
     Dim tempo As Double
+    Private Sub txtTicket_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtTicket.KeyPress
+        If (Not Char.IsControl(e.KeyChar) _
+                     AndAlso (Not Char.IsDigit(e.KeyChar) _
+                     AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "/") Then
+            e.Handled = True
+        End If
+    End Sub
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress
+        If e.KeyChar = "'" Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
+    Private Sub cmbTempo_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbTempo.KeyPress
+        If (Not Char.IsControl(e.KeyChar) _
+                     AndAlso (Not Char.IsDigit(e.KeyChar) _
+                     AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "." AndAlso e.KeyChar <> ",") Then
+            e.Handled = True
+        End If
+    End Sub
+
     Private Sub btnCarica_Click(sender As Object, e As EventArgs) Handles btnCarica.Click
         If txtTicket.Text = "" Then
             MsgBox("Inserisci un Ticket")
@@ -86,8 +107,8 @@ Public Class frmConsuntivazione
             Exit Sub
         End If
 
-        ticket = txtTicket.Text
-        cliente = cmbCliente.Text
+        ticket = txtTicket.Text.Replace("'", "")
+        cliente = cmbCliente.Text.Replace("'", "")
         tempo = cmbTempo.Text.Replace(".", ",")
         giorno = dtpData.Text
 
@@ -523,7 +544,7 @@ Public Class frmConsuntivazione
         r = e.RowIndex
         c = e.ColumnIndex
 
-        If dgvCalendario.Rows(r).Cells(1).Value = "" Then
+        If r = -1 OrElse dgvCalendario.Rows(r).Cells(1).Value = "" Then
             Exit Sub
         Else
             giorno = dgvCalendario.Rows(r).Cells(4).Value
