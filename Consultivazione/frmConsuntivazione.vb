@@ -490,7 +490,7 @@ Public Class frmConsuntivazione
                 Dim home As String = "SEDE"
                 If nota.Contains("Home") Then
                     home = "SW"
-                    nota.Replace("Home ,", "")
+                    nota = nota.Replace("Home, ", "")
                 End If
 
                 Dim dataInvertitaMatrice(2) As String
