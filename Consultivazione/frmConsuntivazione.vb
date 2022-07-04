@@ -87,6 +87,7 @@ Public Class frmConsuntivazione
         End If
     End Sub
 
+    Dim notaExtra As String = ""
     Private Sub btnCarica_Click(sender As Object, e As EventArgs) Handles btnCarica.Click
         If txtTicket.Text = "" Then
             MsgBox("Inserisci un Ticket")
@@ -112,6 +113,20 @@ Public Class frmConsuntivazione
         tempo = cmbTempo.Text.Replace(".", ",")
         giorno = dtpData.Text
 
+        If tempo + CDbl(lblTempoTot.Text) > 8 Then
+            Dim tempo1 As Double = 8 - CDbl(lblTempoTot.Text)
+            Dim tempo2 As Double = tempo - tempo1
+            For i = 1 To dgvCalendario.Rows.Count - 1
+                Dim notaRiga As String = dgvCalendario.Rows(i).Cells(6).Value
+                If notaRiga.ToLower.Contains("extra") Then
+                    Dim indice As Integer = notaRiga.IndexOf("(") + 1
+                    notaRiga = notaRiga.Replace(")", "")
+                    tempo2 -= CDbl(notaRiga.Substring(indice, notaRiga.Length - indice))
+                End If
+            Next
+            notaExtra = "Extra(" & tempo2 & ")"
+        End If
+
         Call InserisciTicket()
         Call AggiornaDG(giorno, True)
         Call PulisciCampi()
@@ -124,12 +139,19 @@ Public Class frmConsuntivazione
         dgvCalendario.Columns(7).Visible = False
 
         dgvCalendario.Columns(1).HeaderText() = "TICKET"
+        dgvCalendario.Columns(1).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(2).HeaderText() = "CLIENTE"
+        dgvCalendario.Columns(2).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(3).HeaderText() = "TEMPO"
+        dgvCalendario.Columns(3).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(4).HeaderText() = "DATA"
+        dgvCalendario.Columns(4).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(5).HeaderText() = "CONSUNTIVATO"
+        dgvCalendario.Columns(5).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(6).HeaderText() = "NOTA"
+        dgvCalendario.Columns(6).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(7).HeaderText() = "ID_RIGA"
+        dgvCalendario.Columns(7).SortMode = DataGridViewColumnSortMode.NotSortable
 
         Call AggiornaDG(giornoOggi, False)
     End Sub
@@ -230,6 +252,44 @@ Public Class frmConsuntivazione
                 MsgBox("Questo cliente non ha la commessa standard")
                 Exit Sub
             End If
+        End If
+
+        If ckbAltro.Checked = True Then
+            Dim notaInput As String
+            notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+
+            If notaInput.Length > 150 Then
+                MsgBox("Nota non valida (Max 150 car.)")
+                Exit Sub
+            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
+                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                Exit Sub
+            ElseIf notaInput.ToLower.Contains("extra") Then
+                MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)")
+                Exit Sub
+            End If
+            If nota = "" Then
+                nota = notaInput
+            Else
+                nota += ", " & notaInput
+            End If
+        End If
+
+        If notaExtra <> "" Then
+            Dim tempoExtra As String
+            Dim vetDividiNota() As String
+            If nota.ToLower.Contains("extra(") Then
+                vetDividiNota = nota.Split("(")
+                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                nota = nota.Replace("Extra(" & tempoExtra & ")", "")
+            End If
+            If nota = "" Then
+                nota = notaExtra
+            Else
+                nota += ", " + notaExtra
+            End If
+            notaExtra = ""
         End If
 
         cn = New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb")
@@ -493,7 +553,27 @@ Public Class frmConsuntivazione
                     nota = nota.Replace("Home, ", "")
                 End If
 
-                Dim dataInvertitaMatrice(2) As String
+                Dim extra As Boolean = False
+                Dim tempoExtra As String
+                Dim vetDividiNota() As String
+                If nota.ToLower.Contains("extra(") Then
+                    vetDividiNota = nota.Split("(")
+                    tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                    nota = nota.Replace("Extra(" & tempoExtra & ")", "")
+                    tempoExtra = tempoExtra.Replace(",", ".")
+                    extra = True
+                End If
+
+                Dim vetNota() = nota.Split(",")
+                For i = 0 To vetNota.Length - 1
+                    If vetNota(i).ToLower.Trim = "fixed" Then
+                        nota = "Fixed"
+                    ElseIf vetNota(i).ToLower.Trim = "formazione" Then
+                        nota = "Formazione"
+                    End If
+                Next
+
+                Dim dataInvertitaMatrice() As String
                 dataInvertitaMatrice = data.Split("/")
                 Dim dataInvertita As String = dataInvertitaMatrice(2) & "-" & dataInvertitaMatrice(1) & "-" & dataInvertitaMatrice(0)
                 Dim link As String = "http://goldenring.tesisquare.com/client/procedure/ra/fra080formoremese.cfm?"
@@ -520,16 +600,25 @@ Public Class frmConsuntivazione
 
                 link += tabella.Rows(0).Item("Link").ToString
 
-                link += "&Data=" & data & "&Sede=" & home & "&Ora=" & dataInvertita & "%2000:00:00.0&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo & "&Oreviaggio=0&Indrec=0&Note=" & ticket & "&CentroCosto=&IdProcedura=%20&AnnoRichiesta=0&IDRichiesta=0&OreDiRecupero=0"
+                link += "&Data=" & data & "&Sede=" & home & "&Ora=" & dataInvertita & "%2000:00:00.0&Oreviaggio=0&Indrec=0&Note=" & ticket & "&CentroCosto=&IdProcedura=%20&AnnoRichiesta=0&IDRichiesta=0&OreDiRecupero=0"
+
+                If extra = True And tempoExtra = tempo Then
+                    link += "&Orelav=" & tempoExtra & "&OreStra=" & tempoExtra & "&OreOrd=0"
+                ElseIf extra = True And tempoExtra <> tempo Then
+                    link += "&Orelav=" & tempo & "&OreStra=" & tempoExtra & "&OreOrd=" & tempo - tempoExtra
+                Else
+                    link += "&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo
+                End If
+
                 If home = "SEDE" Then
                     link += "&flag_lavorodacasa=N"
                 Else
                     link += "&flag_lavorodacasa=Y"
+                    End If
+                    Process.Start(link)
+                    Call AggiornaConsuntivato(ticket, data, consuntivato)
                 End If
-                Process.Start(link)
-                Call AggiornaConsuntivato(ticket, data, consuntivato)
-            End If
-        Else
+            Else
             If e.ColumnIndex = 1 Then
                 If dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString <> "/" Then
                     Process.Start("https://support.tesisquare.com/mantis/mdev/view.php?id=" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString)
@@ -580,6 +669,15 @@ Public Class frmConsuntivazione
             Else
                 Exit Sub
             End If
+        ElseIf lblResoconto.Visible = True And dgvCalendario.Columns(e.ColumnIndex).HeaderText() = "TEMPO" Then
+            If MsgBox("Qui non puoi modificare. Vuoi essere reindirizzato al giorno?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
+                lblGiorno_Mese_Click(sender, e)
+                dtpData.Text = giorno
+                Call AggiornaDG(giorno, False)
+                Exit Sub
+            Else
+                Exit Sub
+            End If
         End If
 
         Dim colonna As String = dgvCalendario.Columns(c).HeaderText
@@ -610,6 +708,7 @@ Public Class frmConsuntivazione
     Public Shared colonnaCondivisa As String
     Public Shared clienteCondiviso As String
     Public Shared giornoCondiviso As String
+    Public Shared rigaCondivisa As Integer
     Public Shared idCondiviso As String
     Public Shared annulla As Boolean = False
     Sub ModificaRiga(c As Integer, r As Integer, id As Integer)
@@ -620,6 +719,7 @@ Public Class frmConsuntivazione
         tabellaCondivisa = "Consuntivazione"
         colonnaCondivisa = dgvCalendario.Columns(c).HeaderText
         clienteCondiviso = dgvCalendario.Rows(r).Cells(2).Value
+        rigaCondivisa = r
         idCondiviso = id
 
         If colonnaCondivisa <> "TICKET" And colonnaCondivisa <> "CONSUNTIVATO" Then
@@ -691,6 +791,7 @@ ore di lavoro
             Call PulisciCampi()
             pnlInserisci.Visible = False
             lblSfondoBlu.Visible = False
+            lblDocumentazione.Visible = False
             lstMesi.Visible = True
             lblMesi.Visible = True
             lblResoconto.Visible = True
@@ -714,6 +815,7 @@ ore di lavoro
 (Giornaliero)"
             pnlInserisci.Visible = True
             lblSfondoBlu.Visible = True
+            lblDocumentazione.Visible = True
             lstMesi.Visible = False
             lblMesi.Visible = False
             lblResoconto.Visible = False
@@ -738,7 +840,7 @@ ore di lavoro
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
+        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -861,6 +963,23 @@ ore di lavoro
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
+        str = "SELECT Cliente, Nota FROM LinkGR ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim vetClienteComm(tabella.Rows.Count) As String
+        Dim vetNotaComm(tabella.Rows.Count) As String
+        For i = 0 To tabella.Rows.Count - 1
+            vetClienteComm(i) = tabella.Rows(i).Item("Cliente").ToString
+            vetNotaComm(i) = tabella.Rows(i).Item("Nota").ToString
+        Next
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
         str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
@@ -880,8 +999,19 @@ ore di lavoro
             data = tabella.Rows(i).Item("DATA").ToString
             nota = tabella.Rows(i).Item("NOTA").ToString
 
+            Dim comm As Boolean = False
+            For k = 0 To vetClienteComm.Length - 2
+                If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
+                    If vetNotaComm(k) = "" And nota = "" Then
+                        comm = True
+                    ElseIf vetNotaComm(k) <> "" Then
+                        comm = True
+                    End If
+                End If
+            Next
+
             If i > 0 Then
-                If cliente = clientePrec And data = dataPrec And nota.Contains("Criticità") = True Then
+                If cliente = clientePrec And data = dataPrec And comm = False Then
                     TabellaNoDoppi -= 1
                 End If
             End If
@@ -902,13 +1032,14 @@ ore di lavoro
         da.Fill(tabella)
         cn.Close()
 
-        cliente = ""
         clientePrec = ""
-        nota = ""
         Dim notaPrec As String = ""
         Dim ticket As String = ""
         Dim tempo As Double
         Dim tempoTot As Double
+        Dim sommaTempoExtra As Double
+        Dim notaExtra As String = ""
+        Dim notaExtraBoolean As Boolean = False
 
         Dim conta As Integer = -1
         Dim j As Integer = 1
@@ -920,12 +1051,32 @@ ore di lavoro
 
                     cliente = tabella.Rows(conta).Item("CLIENTE").ToString
                     nota = tabella.Rows(conta).Item("NOTA").ToString
+                    Dim comm As Boolean = False
+                    For k = 0 To vetClienteComm.Length - 2
+                        If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
+                            If vetNotaComm(k) = "" And nota = "" Then
+                                comm = True
+                            ElseIf vetNotaComm(k) <> "" Then
+                                comm = True
+                            End If
+                        End If
+                    Next
                     If conta <> 0 Then
-                        If cliente = clientePrec And (nota = notaPrec Or nota.Contains("Criticità")) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString Then
+                        If cliente = clientePrec And (nota = notaPrec Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString Then
+                            If nota.ToLower.Contains("extra(") Then
+                                Dim tempoExtra As String
+                                Dim vetDividiNota() As String
+                                vetDividiNota = nota.Split("(")
+                                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                                sommaTempoExtra += tempoExtra
+                                notaExtra = "Extra(" & sommaTempoExtra & ")"
+                                nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
+                                notaExtraBoolean = True
+                            End If
                             If nota.Contains("Criticità") Then
                                 ticket += "," & "Criticità"
                                 If nota.Contains("Home") Then
-                                    nota = nota.Remove(4, nota.Length - 4)
+                                    nota = nota.Replace("Home", "")
                                 End If
                             Else
                                 ticket += "," & tabella.Rows(conta).Item("TICKET").ToString
@@ -937,6 +1088,7 @@ ore di lavoro
                             dgvCalendario.Rows(j).Cells(3).Value = tempo
                             dgvCalendario.Rows(j).Cells(4).Value = DateLavorative(i)
                             dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
+
                             If notaPrec.Contains("Criticità") Then
                                 If notaPrec.Contains("Home") Then
                                     notaPrec = notaPrec.Replace(", Criticità", "")
@@ -944,8 +1096,21 @@ ore di lavoro
                                 Else
                                     dgvCalendario.Rows(j).Cells(6).Value = ""
                                 End If
-                            Else
+                            ElseIf notaPrec.ToLower.Contains("extra") = False Then
                                 dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                            End If
+                            If notaExtraBoolean = True Then
+                                notaExtraBoolean = False
+                                If notaPrec.ToLower.Contains("extra") Then
+                                    Dim indice As Integer = notaPrec.IndexOf("(") + 1
+                                    Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
+                                    notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
+                                End If
+                                If notaPrec = "" Then
+                                    dgvCalendario.Rows(j).Cells(6).Value = notaExtra
+                                Else
+                                    dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                                End If
                             End If
 
                             tempoTot += tempo
@@ -984,8 +1149,21 @@ ore di lavoro
                         Else
                             dgvCalendario.Rows(j).Cells(6).Value = ""
                         End If
-                    Else
+                    ElseIf notaPrec.ToLower.Contains("extra") = False Then
                         dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                    End If
+                    If notaExtraBoolean = True Then
+                        notaExtraBoolean = False
+                        If notaPrec.ToLower.Contains("extra") Then
+                            Dim indice As Integer = notaPrec.IndexOf("(") + 1
+                            Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
+                            notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
+                        End If
+                        If notaPrec = "" Then
+                            dgvCalendario.Rows(j).Cells(6).Value = notaExtra
+                        Else
+                            dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                        End If
                     End If
 
                     tempoTot += tempo
@@ -1086,9 +1264,16 @@ ore di lavoro
         rdbCriticita.Checked = False
         rdbFixed.Checked = False
         rdbFormazione.Checked = False
+        ckbAltro.Checked = False
     End Sub
 
     Private Sub lblAggiungiCliente_Click(sender As Object, e As EventArgs) Handles lblAggiungiCliente.Click
         frmInserisciCliente.ShowDialog()
+    End Sub
+
+    Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click
+        Dim path As String = Application.StartupPath
+        path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
+        Process.Start(path)
     End Sub
 End Class

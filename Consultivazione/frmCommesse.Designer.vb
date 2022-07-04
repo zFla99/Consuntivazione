@@ -80,7 +80,7 @@ Partial Class frmCommesse
         Me.cmbCliente.Name = "cmbCliente"
         Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmbCliente.Size = New System.Drawing.Size(110, 21)
-        Me.cmbCliente.TabIndex = 20
+        Me.cmbCliente.TabIndex = 1
         '
         'ckbVuota
         '
@@ -90,7 +90,7 @@ Partial Class frmCommesse
         Me.ckbVuota.Location = New System.Drawing.Point(301, 282)
         Me.ckbVuota.Name = "ckbVuota"
         Me.ckbVuota.Size = New System.Drawing.Size(59, 20)
-        Me.ckbVuota.TabIndex = 22
+        Me.ckbVuota.TabIndex = 3
         Me.ckbVuota.Text = "Vuota"
         Me.ckbVuota.UseVisualStyleBackColor = True
         '
@@ -102,7 +102,7 @@ Partial Class frmCommesse
         Me.ckbFixed.Location = New System.Drawing.Point(366, 282)
         Me.ckbFixed.Name = "ckbFixed"
         Me.ckbFixed.Size = New System.Drawing.Size(54, 20)
-        Me.ckbFixed.TabIndex = 22
+        Me.ckbFixed.TabIndex = 3
         Me.ckbFixed.Text = "Fixed"
         Me.ckbFixed.UseVisualStyleBackColor = True
         '
@@ -114,7 +114,7 @@ Partial Class frmCommesse
         Me.ckbFormazione.Location = New System.Drawing.Point(426, 282)
         Me.ckbFormazione.Name = "ckbFormazione"
         Me.ckbFormazione.Size = New System.Drawing.Size(89, 20)
-        Me.ckbFormazione.TabIndex = 22
+        Me.ckbFormazione.TabIndex = 3
         Me.ckbFormazione.Text = "Formazione"
         Me.ckbFormazione.UseVisualStyleBackColor = True
         '
@@ -125,7 +125,7 @@ Partial Class frmCommesse
         Me.btnCerca.Location = New System.Drawing.Point(581, 269)
         Me.btnCerca.Name = "btnCerca"
         Me.btnCerca.Size = New System.Drawing.Size(107, 40)
-        Me.btnCerca.TabIndex = 23
+        Me.btnCerca.TabIndex = 2
         Me.btnCerca.Text = "Cerca"
         Me.btnCerca.UseVisualStyleBackColor = True
         '

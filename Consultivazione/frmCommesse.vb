@@ -240,4 +240,10 @@ Public Class frmCommesse
             dgvCommesse.Rows(i + 1).Cells(8).Value = tabella.Rows(i).Item("ID").ToString
         Next
     End Sub
+
+    Private Sub cmbCliente_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnCerca_Click(sender, e)
+        End If
+    End Sub
 End Class

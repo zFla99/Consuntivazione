@@ -24,6 +24,7 @@ Partial Class frmModifica
     Private Sub InitializeComponent()
         Me.gboxNota = New System.Windows.Forms.GroupBox()
         Me.rdbFormazione = New System.Windows.Forms.RadioButton()
+        Me.ckbAltro = New System.Windows.Forms.CheckBox()
         Me.ckbHome = New System.Windows.Forms.CheckBox()
         Me.rdbFixed = New System.Windows.Forms.RadioButton()
         Me.rdbVuota = New System.Windows.Forms.RadioButton()
@@ -49,6 +50,7 @@ Partial Class frmModifica
         '
         Me.gboxNota.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.gboxNota.Controls.Add(Me.rdbFormazione)
+        Me.gboxNota.Controls.Add(Me.ckbAltro)
         Me.gboxNota.Controls.Add(Me.ckbHome)
         Me.gboxNota.Controls.Add(Me.rdbFixed)
         Me.gboxNota.Controls.Add(Me.rdbVuota)
@@ -56,7 +58,7 @@ Partial Class frmModifica
         Me.gboxNota.Location = New System.Drawing.Point(765, 18)
         Me.gboxNota.Name = "gboxNota"
         Me.gboxNota.Size = New System.Drawing.Size(220, 120)
-        Me.gboxNota.TabIndex = 16
+        Me.gboxNota.TabIndex = 1
         Me.gboxNota.TabStop = False
         '
         'rdbFormazione
@@ -71,13 +73,26 @@ Partial Class frmModifica
         Me.rdbFormazione.Text = "Formazione"
         Me.rdbFormazione.UseVisualStyleBackColor = True
         '
+        'ckbAltro
+        '
+        Me.ckbAltro.AutoSize = True
+        Me.ckbAltro.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.ckbAltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
+        Me.ckbAltro.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.ckbAltro.Location = New System.Drawing.Point(144, 89)
+        Me.ckbAltro.Name = "ckbAltro"
+        Me.ckbAltro.Size = New System.Drawing.Size(54, 20)
+        Me.ckbAltro.TabIndex = 13
+        Me.ckbAltro.Text = "Altro"
+        Me.ckbAltro.UseVisualStyleBackColor = True
+        '
         'ckbHome
         '
         Me.ckbHome.AutoSize = True
         Me.ckbHome.Cursor = System.Windows.Forms.Cursors.Hand
         Me.ckbHome.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
         Me.ckbHome.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.ckbHome.Location = New System.Drawing.Point(138, 64)
+        Me.ckbHome.Location = New System.Drawing.Point(144, 38)
         Me.ckbHome.Name = "ckbHome"
         Me.ckbHome.Size = New System.Drawing.Size(59, 20)
         Me.ckbHome.TabIndex = 13
@@ -130,7 +145,7 @@ Partial Class frmModifica
         Me.gboxTempo.Location = New System.Drawing.Point(264, 18)
         Me.gboxTempo.Name = "gboxTempo"
         Me.gboxTempo.Size = New System.Drawing.Size(220, 75)
-        Me.gboxTempo.TabIndex = 16
+        Me.gboxTempo.TabIndex = 2
         Me.gboxTempo.TabStop = False
         '
         'cmbTempo
@@ -144,7 +159,7 @@ Partial Class frmModifica
         Me.cmbTempo.Name = "cmbTempo"
         Me.cmbTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmbTempo.Size = New System.Drawing.Size(110, 21)
-        Me.cmbTempo.TabIndex = 16
+        Me.cmbTempo.TabIndex = 2
         '
         'Label2
         '
@@ -166,7 +181,7 @@ Partial Class frmModifica
         Me.gboxData.Location = New System.Drawing.Point(513, 18)
         Me.gboxData.Name = "gboxData"
         Me.gboxData.Size = New System.Drawing.Size(220, 75)
-        Me.gboxData.TabIndex = 16
+        Me.gboxData.TabIndex = 3
         Me.gboxData.TabStop = False
         '
         'Label1
@@ -188,7 +203,7 @@ Partial Class frmModifica
         Me.dtpData.Location = New System.Drawing.Point(103, 29)
         Me.dtpData.Name = "dtpData"
         Me.dtpData.Size = New System.Drawing.Size(89, 20)
-        Me.dtpData.TabIndex = 17
+        Me.dtpData.TabIndex = 3
         '
         'gboxCliente
         '
@@ -198,7 +213,7 @@ Partial Class frmModifica
         Me.gboxCliente.Location = New System.Drawing.Point(20, 18)
         Me.gboxCliente.Name = "gboxCliente"
         Me.gboxCliente.Size = New System.Drawing.Size(220, 75)
-        Me.gboxCliente.TabIndex = 16
+        Me.gboxCliente.TabIndex = 1
         Me.gboxCliente.TabStop = False
         '
         'Label3
@@ -222,7 +237,7 @@ Partial Class frmModifica
         Me.cmbCliente.Name = "cmbCliente"
         Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmbCliente.Size = New System.Drawing.Size(110, 21)
-        Me.cmbCliente.TabIndex = 16
+        Me.cmbCliente.TabIndex = 1
         '
         'btnModifica
         '
@@ -230,7 +245,7 @@ Partial Class frmModifica
         Me.btnModifica.Location = New System.Drawing.Point(37, 143)
         Me.btnModifica.Name = "btnModifica"
         Me.btnModifica.Size = New System.Drawing.Size(88, 25)
-        Me.btnModifica.TabIndex = 1
+        Me.btnModifica.TabIndex = 4
         Me.btnModifica.Text = "Modifica"
         Me.btnModifica.UseVisualStyleBackColor = True
         '
@@ -240,7 +255,7 @@ Partial Class frmModifica
         Me.btnAnnulla.Location = New System.Drawing.Point(141, 143)
         Me.btnAnnulla.Name = "btnAnnulla"
         Me.btnAnnulla.Size = New System.Drawing.Size(88, 25)
-        Me.btnAnnulla.TabIndex = 2
+        Me.btnAnnulla.TabIndex = 5
         Me.btnAnnulla.Text = "Annulla"
         Me.btnAnnulla.UseVisualStyleBackColor = True
         '
@@ -289,4 +304,5 @@ Partial Class frmModifica
     Friend WithEvents dtpData As DateTimePicker
     Friend WithEvents btnModifica As Button
     Friend WithEvents btnAnnulla As Button
+    Friend WithEvents ckbAltro As CheckBox
 End Class

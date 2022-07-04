@@ -23,7 +23,7 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
         Me.cmbTempo = New System.Windows.Forms.ComboBox()
@@ -48,11 +48,13 @@ Partial Class frmConsuntivazione
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.btnCancellaFiltri = New System.Windows.Forms.Button()
         Me.rdbFormazione = New System.Windows.Forms.RadioButton()
+        Me.ckbAltro = New System.Windows.Forms.CheckBox()
         Me.ckbHome = New System.Windows.Forms.CheckBox()
         Me.rdbFixed = New System.Windows.Forms.RadioButton()
         Me.rdbCriticita = New System.Windows.Forms.RadioButton()
         Me.lblAggiungiCliente = New System.Windows.Forms.Label()
         Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
+        Me.lblDocumentazione = New System.Windows.Forms.Label()
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlInserisci.SuspendLayout()
@@ -69,14 +71,14 @@ Partial Class frmConsuntivazione
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle5
         Me.dgvCalendario.Location = New System.Drawing.Point(46, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
@@ -333,29 +335,30 @@ Partial Class frmConsuntivazione
         Me.pnlInserisci.Controls.Add(Me.Label2)
         Me.pnlInserisci.Location = New System.Drawing.Point(35, 55)
         Me.pnlInserisci.Name = "pnlInserisci"
-        Me.pnlInserisci.Size = New System.Drawing.Size(265, 475)
+        Me.pnlInserisci.Size = New System.Drawing.Size(265, 482)
         Me.pnlInserisci.TabIndex = 22
         '
         'GroupBox1
         '
         Me.GroupBox1.Controls.Add(Me.btnCancellaFiltri)
         Me.GroupBox1.Controls.Add(Me.rdbFormazione)
+        Me.GroupBox1.Controls.Add(Me.ckbAltro)
         Me.GroupBox1.Controls.Add(Me.ckbHome)
         Me.GroupBox1.Controls.Add(Me.rdbFixed)
         Me.GroupBox1.Controls.Add(Me.rdbCriticita)
         Me.GroupBox1.Location = New System.Drawing.Point(25, 319)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(221, 128)
+        Me.GroupBox1.Size = New System.Drawing.Size(221, 155)
         Me.GroupBox1.TabIndex = 15
         Me.GroupBox1.TabStop = False
         '
         'btnCancellaFiltri
         '
         Me.btnCancellaFiltri.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCancellaFiltri.Location = New System.Drawing.Point(16, 94)
+        Me.btnCancellaFiltri.Location = New System.Drawing.Point(16, 120)
         Me.btnCancellaFiltri.Name = "btnCancellaFiltri"
         Me.btnCancellaFiltri.Size = New System.Drawing.Size(181, 25)
-        Me.btnCancellaFiltri.TabIndex = 15
+        Me.btnCancellaFiltri.TabIndex = 6
         Me.btnCancellaFiltri.Text = "Cancella Filtri"
         Me.btnCancellaFiltri.UseVisualStyleBackColor = True
         '
@@ -373,16 +376,29 @@ Partial Class frmConsuntivazione
         Me.rdbFormazione.Text = "Formazione"
         Me.rdbFormazione.UseVisualStyleBackColor = True
         '
+        'ckbAltro
+        '
+        Me.ckbAltro.AutoSize = True
+        Me.ckbAltro.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.ckbAltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
+        Me.ckbAltro.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ckbAltro.Location = New System.Drawing.Point(16, 94)
+        Me.ckbAltro.Name = "ckbAltro"
+        Me.ckbAltro.Size = New System.Drawing.Size(54, 20)
+        Me.ckbAltro.TabIndex = 14
+        Me.ckbAltro.Text = "Altro"
+        Me.ckbAltro.UseVisualStyleBackColor = True
+        '
         'ckbHome
         '
         Me.ckbHome.AutoSize = True
         Me.ckbHome.Cursor = System.Windows.Forms.Cursors.Hand
         Me.ckbHome.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
         Me.ckbHome.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ckbHome.Location = New System.Drawing.Point(138, 43)
+        Me.ckbHome.Location = New System.Drawing.Point(138, 58)
         Me.ckbHome.Name = "ckbHome"
         Me.ckbHome.Size = New System.Drawing.Size(59, 20)
-        Me.ckbHome.TabIndex = 13
+        Me.ckbHome.TabIndex = 14
         Me.ckbHome.Text = "Home"
         Me.ckbHome.UseVisualStyleBackColor = True
         '
@@ -431,6 +447,20 @@ Partial Class frmConsuntivazione
         '
         Me.TimerConsuntiva.Interval = 1500
         '
+        'lblDocumentazione
+        '
+        Me.lblDocumentazione.AutoSize = True
+        Me.lblDocumentazione.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
+        Me.lblDocumentazione.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblDocumentazione.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDocumentazione.ForeColor = System.Drawing.Color.White
+        Me.lblDocumentazione.Location = New System.Drawing.Point(4, 1)
+        Me.lblDocumentazione.Name = "lblDocumentazione"
+        Me.lblDocumentazione.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblDocumentazione.Size = New System.Drawing.Size(21, 26)
+        Me.lblDocumentazione.TabIndex = 12
+        Me.lblDocumentazione.Text = "?"
+        '
         'frmConsuntivazione
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
@@ -439,6 +469,7 @@ Partial Class frmConsuntivazione
         Me.ClientSize = New System.Drawing.Size(1104, 581)
         Me.Controls.Add(Me.pnlInserisci)
         Me.Controls.Add(Me.pnlMensile)
+        Me.Controls.Add(Me.lblDocumentazione)
         Me.Controls.Add(Me.lblSfondoBlu)
         Me.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
         Me.MinimumSize = New System.Drawing.Size(1120, 620)
@@ -453,6 +484,7 @@ Partial Class frmConsuntivazione
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -485,4 +517,6 @@ Partial Class frmConsuntivazione
     Friend WithEvents btnCancellaFiltri As Button
     Friend WithEvents TimerConsuntiva As Timer
     Friend WithEvents lblAggiungiCliente As Label
+    Friend WithEvents ckbAltro As CheckBox
+    Friend WithEvents lblDocumentazione As Label
 End Class
