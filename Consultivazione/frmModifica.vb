@@ -10,7 +10,9 @@ Public Class frmModifica
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
         riga = frmConsuntivazione.rigaCondivisa
-        nota = frmConsuntivazione.dgvCalendario.Rows(riga).Cells(6).Value
+        If tabellaDB <> "LinkGR" Then
+            nota = frmConsuntivazione.dgvCalendario.Rows(riga).Cells(6).Value
+        End If
         id = frmConsuntivazione.idCondiviso
         cliente = frmConsuntivazione.clienteCondiviso
         caricaClientiTempo()
@@ -178,7 +180,11 @@ Public Class frmModifica
                 datoData()
 
             Case "NOTA"
-                datoNota()
+                If tabellaDB = "LinkGR" Then
+                    datoNotaCommesse()
+                Else
+                    datoNota()
+                End If
         End Select
 
         If corretto = False Then
@@ -549,6 +555,83 @@ Public Class frmModifica
         End If
         corretto = True
     End Sub
+    Sub datoNotaCommesse()
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+        cliente = frmCommesse.dgvCommesse.Rows(riga).Cells(1).Value
+
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim vetCommNota(tabella.Rows.Count) As String
+        For i = 0 To tabella.Rows.Count - 1
+            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
+        Next
+
+        Dim conta As Integer = 0
+        If rdbVuota.Checked = True Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "" Then
+                    conta += 1
+                End If
+            Next
+            dato = ""
+        ElseIf rdbFixed.Checked = True Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Fixed" Then
+                    conta += 1
+                End If
+            Next
+            dato = "Fixed"
+        ElseIf rdbFormazione.Checked = True Then
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = "Formazione" Then
+                    conta += 1
+                End If
+            Next
+            dato = "Formazione"
+        ElseIf ckbAltro.Checked = True Then
+            Dim notaInput As String
+            notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+
+            If notaInput.Length > 150 Then
+                MsgBox("Nota non valida (Max 150 car.)")
+                corretto = False
+                Exit Sub
+            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
+                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                corretto = False
+                Exit Sub
+            ElseIf notaInput.ToLower.Contains("extra") Then
+                MsgBox("Non puoi inserire questa commessa")
+                Exit Sub
+                corretto = False
+            End If
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i).ToLower = notaInput Then
+                    conta += 1
+                End If
+            Next
+            dato = notaInput
+        End If
+        If conta > 0 Then
+            MsgBox("Questa commessa è gia presente")
+            corretto = False
+            Exit Sub
+        End If
+        corretto = True
+    End Sub
 
     Private Sub dtpData_KeyDown(sender As Object, e As KeyEventArgs) Handles dtpData.KeyDown
         If e.KeyCode = Keys.Enter Then
@@ -563,6 +646,24 @@ Public Class frmModifica
     Private Sub cmbCliente_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
         If e.KeyCode = Keys.Enter Then
             btnModifica_Click(sender, e)
+        End If
+    End Sub
+
+    Private Sub ckbAltro_CheckedChanged(sender As Object, e As EventArgs) Handles ckbAltro.CheckedChanged
+        If ckbAltro.Checked = True Then
+            rdbVuota.Checked = False
+            rdbFixed.Checked = False
+            rdbFormazione.Checked = False
+            rdbVuota.Enabled = False
+            rdbFixed.Enabled = False
+            rdbFormazione.Enabled = False
+        Else
+            rdbVuota.Checked = True
+            rdbFixed.Checked = False
+            rdbFormazione.Checked = False
+            rdbVuota.Enabled = True
+            rdbFixed.Enabled = True
+            rdbFormazione.Enabled = True
         End If
     End Sub
 End Class

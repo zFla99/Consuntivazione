@@ -1,7 +1,7 @@
 ﻿Imports System.Data.OleDb
 
 Public Class frmConsuntivazione
-    Dim giornoOggi As String = Now.ToShortDateString
+    ReadOnly giornoOggi As String = Now.ToShortDateString
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Call caricaClientiTempo()
         Call DataGrid()
@@ -437,7 +437,7 @@ Public Class frmConsuntivazione
         da.Fill(tabella)
         cn.Close()
 
-        Dim ticketLink As DataGridViewLinkCell = New DataGridViewLinkCell
+        Dim ticketLink As New DataGridViewLinkCell
         dgvCalendario.RowCount = 1
         dgvCalendario.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
@@ -458,7 +458,7 @@ Public Class frmConsuntivazione
     Sub AggiornaConsuntivato(ticket As String, data As String, consuntivato As String)
         Dim vetNumTicket() As String = ticket.Split("%2C")
         Dim numTicket As Integer = vetNumTicket.Length
-        Dim ticketVet(numTicket) As String
+        Dim ticketVet() As String
         ticketVet = Split(ticket, "%2C")
 
         Dim cn As OleDbConnection
@@ -554,7 +554,7 @@ Public Class frmConsuntivazione
                 End If
 
                 Dim extra As Boolean = False
-                Dim tempoExtra As String
+                Dim tempoExtra As String = ""
                 Dim vetDividiNota() As String
                 If nota.ToLower.Contains("extra(") Then
                     vetDividiNota = nota.Split("(")
@@ -963,7 +963,7 @@ ore di lavoro
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
-        str = "SELECT Cliente, Nota FROM LinkGR ORDER BY Cliente"
+        str = "SELECT Cliente, Nota FROM LinkGR WHERE Nota IS NOT NULL ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -993,13 +993,14 @@ ore di lavoro
         Dim data As String
         Dim dataPrec As String = ""
         Dim nota As String
+        Dim comm As Boolean = False
 
         For i = 0 To tabella.Rows.Count - 1
             cliente = tabella.Rows(i).Item("CLIENTE").ToString
             data = tabella.Rows(i).Item("DATA").ToString
             nota = tabella.Rows(i).Item("NOTA").ToString
 
-            Dim comm As Boolean = False
+            comm = False
             For k = 0 To vetClienteComm.Length - 2
                 If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
                     If vetNotaComm(k) = "" And nota = "" Then
@@ -1022,15 +1023,21 @@ ore di lavoro
 
         dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
 
+        Dim nuovaTabella As New DataTable
+
         str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
+        nuovaTabella.Clear()
         tabella.Clear()
         da.Fill(tabella)
+        da.Fill(nuovaTabella)
         cn.Close()
+
+        Call controllaNota(tabella, nuovaTabella)
 
         clientePrec = ""
         Dim notaPrec As String = ""
@@ -1040,6 +1047,7 @@ ore di lavoro
         Dim sommaTempoExtra As Double
         Dim notaExtra As String = ""
         Dim notaExtraBoolean As Boolean = False
+        Dim commPrec As Boolean = False
 
         Dim conta As Integer = -1
         Dim j As Integer = 1
@@ -1051,7 +1059,7 @@ ore di lavoro
 
                     cliente = tabella.Rows(conta).Item("CLIENTE").ToString
                     nota = tabella.Rows(conta).Item("NOTA").ToString
-                    Dim comm As Boolean = False
+                    comm = False
                     For k = 0 To vetClienteComm.Length - 2
                         If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
                             If vetNotaComm(k) = "" And nota = "" Then
@@ -1097,9 +1105,13 @@ ore di lavoro
                                     dgvCalendario.Rows(j).Cells(6).Value = ""
                                 End If
                             ElseIf notaPrec.ToLower.Contains("extra") = False Then
-                                dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                                If notaPrec.Contains("Home") Or commPrec = True Then
+                                    dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                                Else
+                                    dgvCalendario.Rows(j).Cells(6).Value = ""
+                                End If
                             End If
-                            If notaExtraBoolean = True Then
+                                If notaExtraBoolean = True Then
                                 notaExtraBoolean = False
                                 If notaPrec.ToLower.Contains("extra") Then
                                     Dim indice As Integer = notaPrec.IndexOf("(") + 1
@@ -1133,7 +1145,16 @@ ore di lavoro
                         tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
                     End If
 
-
+                    commPrec = False
+                    For k = 0 To vetClienteComm.Length - 2
+                        If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
+                            If vetNotaComm(k) = "" And nota = "" Then
+                                commPrec = True
+                            ElseIf vetNotaComm(k) <> "" Then
+                                commPrec = True
+                            End If
+                        End If
+                    Next
                     clientePrec = tabella.Rows(conta).Item("CLIENTE").ToString
                     notaPrec = tabella.Rows(conta).Item("NOTA").ToString
                 Else
@@ -1150,7 +1171,11 @@ ore di lavoro
                             dgvCalendario.Rows(j).Cells(6).Value = ""
                         End If
                     ElseIf notaPrec.ToLower.Contains("extra") = False Then
-                        dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                        If notaPrec.Contains("Home") Or comm = True Then
+                            dgvCalendario.Rows(j).Cells(6).Value = notaPrec
+                        Else
+                            dgvCalendario.Rows(j).Cells(6).Value = ""
+                        End If
                     End If
                     If notaExtraBoolean = True Then
                         notaExtraBoolean = False
@@ -1202,6 +1227,121 @@ ore di lavoro
     End Sub
     Dim vetRConsuntivare() As Integer
     Dim RDC As Integer = 0
+    Sub controllaNota(ByRef tabella As DataTable, nuovaTabella As DataTable)
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tab As New DataTable
+
+        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        cn = New OleDbConnection(str)
+        cn.Open()
+        str = "SELECT DISTINCT Nota FROM LinkGR WHERE Nota IS NOT NULL"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tab.Clear()
+        da.Fill(tab)
+        cn.Close()
+
+        Dim rTab As Integer = tab.Rows.Count - 1
+        Dim vetNote(rTab) As String
+
+        For i = 0 To rTab
+            vetNote(i) = tab.Rows(i).Item("Nota").ToString
+        Next
+
+        Dim rTabella As Integer = tabella.Rows.Count - 1
+        Dim rInserite As Integer = 0
+        Dim rDaInserire As String = ""
+        Dim daInserire As Boolean = False
+        Dim c As String = tabella.Rows(0).Item("CLIENTE").ToString
+        Dim d As String = tabella.Rows(0).Item("DATA").ToString
+        Dim n As String = tabella.Rows(0).Item("NOTA").ToString
+
+        For i = 0 To rTabella
+            If c = tabella.Rows(i).Item("CLIENTE").ToString And d = tabella.Rows(i).Item("DATA").ToString Then
+                For j = 0 To rTab
+                    If tabella.Rows(i).Item("NOTA").ToString.Contains(vetNote(j)) Then
+                        If rDaInserire = "" Then
+                            rDaInserire = i
+                        Else
+                            rDaInserire += "," & i
+                        End If
+                        daInserire = True
+                    End If
+                Next
+                If daInserire = False Then
+                    nuovaTabella.Rows(rInserite).Item("ID") = tabella.Rows(i).Item("ID")
+                    nuovaTabella.Rows(rInserite).Item("TICKET") = tabella.Rows(i).Item("TICKET")
+                    nuovaTabella.Rows(rInserite).Item("CLIENTE") = tabella.Rows(i).Item("CLIENTE")
+                    nuovaTabella.Rows(rInserite).Item("TEMPO_RISOLUZIONE") = tabella.Rows(i).Item("TEMPO_RISOLUZIONE")
+                    nuovaTabella.Rows(rInserite).Item("DATA") = tabella.Rows(i).Item("DATA")
+                    nuovaTabella.Rows(rInserite).Item("CONSUNTIVATO") = tabella.Rows(i).Item("CONSUNTIVATO")
+                    nuovaTabella.Rows(rInserite).Item("NOTA") = tabella.Rows(i).Item("NOTA")
+
+                    rInserite += 1
+                End If
+                daInserire = False
+            Else
+                If rDaInserire <> "" Then
+                    Dim vetRDaInserire() As String
+                    vetRDaInserire = rDaInserire.Split(",")
+                    For k = 0 To vetRDaInserire.Length - 1
+                        nuovaTabella.Rows(rInserite).Item("ID") = tabella.Rows(vetRDaInserire(k)).Item("ID")
+                        nuovaTabella.Rows(rInserite).Item("TICKET") = tabella.Rows(vetRDaInserire(k)).Item("TICKET")
+                        nuovaTabella.Rows(rInserite).Item("CLIENTE") = tabella.Rows(vetRDaInserire(k)).Item("CLIENTE")
+                        nuovaTabella.Rows(rInserite).Item("TEMPO_RISOLUZIONE") = tabella.Rows(vetRDaInserire(k)).Item("TEMPO_RISOLUZIONE")
+                        nuovaTabella.Rows(rInserite).Item("DATA") = tabella.Rows(vetRDaInserire(k)).Item("DATA")
+                        nuovaTabella.Rows(rInserite).Item("CONSUNTIVATO") = tabella.Rows(vetRDaInserire(k)).Item("CONSUNTIVATO")
+                        nuovaTabella.Rows(rInserite).Item("NOTA") = tabella.Rows(vetRDaInserire(k)).Item("NOTA")
+                        rInserite += 1
+                    Next
+                End If
+                c = tabella.Rows(i).Item("CLIENTE").ToString
+                d = tabella.Rows(i).Item("DATA").ToString
+                rDaInserire = ""
+                For j = 0 To rTab
+                    If tabella.Rows(i).Item("NOTA").ToString.Contains(vetNote(j)) Then
+                        If rDaInserire = "" Then
+                            rDaInserire = i
+                        Else
+                            rDaInserire += "," & i
+                        End If
+                        daInserire = True
+                    End If
+                Next
+                If daInserire = False Then
+                    nuovaTabella.Rows(rInserite).Item("ID") = tabella.Rows(i).Item("ID")
+                    nuovaTabella.Rows(rInserite).Item("TICKET") = tabella.Rows(i).Item("TICKET")
+                    nuovaTabella.Rows(rInserite).Item("CLIENTE") = tabella.Rows(i).Item("CLIENTE")
+                    nuovaTabella.Rows(rInserite).Item("TEMPO_RISOLUZIONE") = tabella.Rows(i).Item("TEMPO_RISOLUZIONE")
+                    nuovaTabella.Rows(rInserite).Item("DATA") = tabella.Rows(i).Item("DATA")
+                    nuovaTabella.Rows(rInserite).Item("CONSUNTIVATO") = tabella.Rows(i).Item("CONSUNTIVATO")
+                    nuovaTabella.Rows(rInserite).Item("NOTA") = tabella.Rows(i).Item("NOTA")
+
+                    rInserite += 1
+                End If
+                daInserire = False
+            End If
+        Next
+        If rDaInserire <> "" Then
+            Dim vetRDaInserire() As String
+            vetRDaInserire = rDaInserire.Split(",")
+            For k = 0 To vetRDaInserire.Length - 1
+                nuovaTabella.Rows(rInserite).Item("ID") = tabella.Rows(vetRDaInserire(k)).Item("ID")
+                nuovaTabella.Rows(rInserite).Item("TICKET") = tabella.Rows(vetRDaInserire(k)).Item("TICKET")
+                nuovaTabella.Rows(rInserite).Item("CLIENTE") = tabella.Rows(vetRDaInserire(k)).Item("CLIENTE")
+                nuovaTabella.Rows(rInserite).Item("TEMPO_RISOLUZIONE") = tabella.Rows(vetRDaInserire(k)).Item("TEMPO_RISOLUZIONE")
+                nuovaTabella.Rows(rInserite).Item("DATA") = tabella.Rows(vetRDaInserire(k)).Item("DATA")
+                nuovaTabella.Rows(rInserite).Item("CONSUNTIVATO") = tabella.Rows(vetRDaInserire(k)).Item("CONSUNTIVATO")
+                nuovaTabella.Rows(rInserite).Item("NOTA") = tabella.Rows(vetRDaInserire(k)).Item("NOTA")
+                rInserite += 1
+            Next
+        End If
+        tabella = nuovaTabella
+
+    End Sub
+
     Private Sub btnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
         If MsgBox("Sei sicuro di voler consuntivare TUTTE le righe?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
             Exit Sub

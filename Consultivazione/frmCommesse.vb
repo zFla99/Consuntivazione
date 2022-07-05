@@ -139,6 +139,7 @@ Public Class frmCommesse
                 frmConsuntivazione.tabellaCondivisa = "LinkGR"
                 frmConsuntivazione.colonnaCondivisa = dgvCommesse.Columns(e.ColumnIndex).HeaderText
                 frmConsuntivazione.idCondiviso = dgvCommesse.Rows(e.RowIndex).Cells(8).Value
+                frmConsuntivazione.rigaCondivisa = e.RowIndex
                 frmModifica.ShowDialog()
             Else
                 Dim dato As String = InputBox("Modifica la " & dgvCommesse.Columns(e.ColumnIndex).HeaderText)
