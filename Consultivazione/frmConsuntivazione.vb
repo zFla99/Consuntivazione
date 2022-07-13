@@ -540,7 +540,7 @@ Public Class frmConsuntivazione
                     End If
                     Exit Sub
                 ElseIf consuntivato = "NO" Then
-                    consuntivato = "NO"
+                    consuntivato = "SI"
                 Else
                     Exit Sub
                 End If
