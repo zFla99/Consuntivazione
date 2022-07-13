@@ -23,7 +23,8 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConsuntivazione))
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
         Me.cmbTempo = New System.Windows.Forms.ComboBox()
@@ -71,14 +72,14 @@ Partial Class frmConsuntivazione
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle1
         Me.dgvCalendario.Location = New System.Drawing.Point(46, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
@@ -472,6 +473,7 @@ Partial Class frmConsuntivazione
         Me.Controls.Add(Me.lblDocumentazione)
         Me.Controls.Add(Me.lblSfondoBlu)
         Me.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MinimumSize = New System.Drawing.Size(1120, 620)
         Me.Name = "frmConsuntivazione"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

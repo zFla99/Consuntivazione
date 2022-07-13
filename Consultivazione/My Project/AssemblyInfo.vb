@@ -8,7 +8,7 @@ Imports System.Runtime.InteropServices
 
 ' Controllare i valori degli attributi degli assembly
 
-<Assembly: AssemblyTitle("Consultivazione")>
+<Assembly: AssemblyTitle("Consuntivazione")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
 <Assembly: AssemblyProduct("Consultivazione")>
