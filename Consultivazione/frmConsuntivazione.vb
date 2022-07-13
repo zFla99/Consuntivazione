@@ -1415,7 +1415,11 @@ ore di lavoro
 
     Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click
         Dim path As String = Application.StartupPath
-        path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
+        If path.Contains("bin\Debug") Then
+            path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
+        Else
+        End If
+        path = System.IO.Path.GetDirectoryName(path)
         Process.Start(path)
     End Sub
 End Class
