@@ -455,7 +455,7 @@ Public Class frmConsuntivazione
         Call RedimDGV()
     End Sub
 
-    Sub AggiornaConsuntivato(ticket As String, data As String, consuntivato As String)
+    Sub AggiornaConsuntivato(cliente As String, ticket As String, data As String, consuntivato As String)
         Dim vetNumTicket() As String = ticket.Split("%2C")
         Dim numTicket As Integer = vetNumTicket.Length
         Dim ticketVet() As String
@@ -471,9 +471,9 @@ Public Class frmConsuntivazione
         For i = 0 To numTicket - 1
             cn.Open()
             If ticketVet(i) = "Criticità" Then
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "' AND CLIENTE = '" & cliente & "'"
             Else
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "' AND CLIENTE = '" & cliente & "'"
             End If
             cmd = New OleDbCommand(str, cn)
             Try
@@ -527,6 +527,7 @@ Public Class frmConsuntivazione
         If btnDividiXCliente.Text = "Ritorna al Mese" Then
             If e.ColumnIndex = 5 Then
                 Dim ticket As String = dgvCalendario.Rows(e.RowIndex).Cells(1).Value
+                Dim cliente As String = dgvCalendario.Rows(e.RowIndex).Cells(2).Value
                 ticket = ticket.Replace(",", "%2C")
                 Dim data As String = dgvCalendario.Rows(e.RowIndex).Cells(4).Value
                 Dim consuntivato As String = dgvCalendario.Rows(e.RowIndex).Cells(5).Value
@@ -534,16 +535,15 @@ Public Class frmConsuntivazione
                 If consuntivato = "SI" Then
                     If MsgBox("Risulta gia consuntivato. Vuoi rimettere a 'NO'?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                         consuntivato = "NO"
-                        Call AggiornaConsuntivato(ticket, data, consuntivato)
+                        Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
                         Exit Sub
                     End If
                     Exit Sub
                 ElseIf consuntivato = "NO" Then
-                    consuntivato = "SI"
+                    consuntivato = "NO"
                 Else
                     Exit Sub
                 End If
-                Dim cliente As String = dgvCalendario.Rows(e.RowIndex).Cells(2).Value
                 Dim tempo As String = dgvCalendario.Rows(e.RowIndex).Cells(3).Value.ToString.Replace(",", ".")
                 Dim nota As String = dgvCalendario.Rows(e.RowIndex).Cells(6).Value
 
@@ -614,11 +614,11 @@ Public Class frmConsuntivazione
                     link += "&flag_lavorodacasa=N"
                 Else
                     link += "&flag_lavorodacasa=Y"
-                    End If
-                    Process.Start(link)
-                    Call AggiornaConsuntivato(ticket, data, consuntivato)
                 End If
-            Else
+                Process.Start(link)
+                Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
+            End If
+        Else
             If e.ColumnIndex = 1 Then
                 If dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString <> "/" Then
                     Process.Start("https://support.tesisquare.com/mantis/mdev/view.php?id=" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString)
@@ -1415,14 +1415,7 @@ ore di lavoro
 
     Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click
         Dim path As String = Application.StartupPath
-        If path.Contains("bin\Debug") Then
-            path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
-        Else
-        End If
-        path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
-        Dim i As Integer
-        i = path.Count
-        path = path.Substring(6, i - 6)
-        Process.Start(path)
+        path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
+            Process.Start(path)
     End Sub
 End Class
