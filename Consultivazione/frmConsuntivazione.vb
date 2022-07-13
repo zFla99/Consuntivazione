@@ -1125,6 +1125,7 @@ ore di lavoro
                                 End If
                             End If
 
+                            sommaTempoExtra = 0
                             tempoTot += tempo
                             tempo = 0
                             j += 1
@@ -1191,6 +1192,7 @@ ore di lavoro
                         End If
                     End If
 
+                    sommaTempoExtra = 0
                     tempoTot += tempo
                     tempo = 0
                     j += 1

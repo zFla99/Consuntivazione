@@ -650,17 +650,23 @@ Public Class frmModifica
     End Sub
 
     Private Sub ckbAltro_CheckedChanged(sender As Object, e As EventArgs) Handles ckbAltro.CheckedChanged
-        If ckbAltro.Checked = True Then
-            rdbVuota.Checked = False
-            rdbFixed.Checked = False
-            rdbFormazione.Checked = False
-            rdbVuota.Enabled = False
-            rdbFixed.Enabled = False
-            rdbFormazione.Enabled = False
+        If tabellaDB = "LinkGR" Then
+            If ckbAltro.Checked = True Then
+                rdbVuota.Checked = False
+                rdbFixed.Checked = False
+                rdbFormazione.Checked = False
+                rdbVuota.Enabled = False
+                rdbFixed.Enabled = False
+                rdbFormazione.Enabled = False
+            Else
+                rdbVuota.Checked = True
+                rdbFixed.Checked = False
+                rdbFormazione.Checked = False
+                rdbVuota.Enabled = True
+                rdbFixed.Enabled = True
+                rdbFormazione.Enabled = True
+            End If
         Else
-            rdbVuota.Checked = True
-            rdbFixed.Checked = False
-            rdbFormazione.Checked = False
             rdbVuota.Enabled = True
             rdbFixed.Enabled = True
             rdbFormazione.Enabled = True
