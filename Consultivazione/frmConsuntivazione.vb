@@ -1419,7 +1419,10 @@ ore di lavoro
             path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
         Else
         End If
-        path = System.IO.Path.GetDirectoryName(path)
+        path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
+        Dim i As Integer
+        i = path.Count
+        path = path.Substring(6, i - 6)
         Process.Start(path)
     End Sub
 End Class
