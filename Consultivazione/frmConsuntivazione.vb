@@ -1,9 +1,11 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.IO
+Imports System.Data.OleDb
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=C:\Users\flavi\Desktop\AutoUpdater\Consuntivazione\published\Consuntivazione.accdb"
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Deployment.Application.ApplicationDeployment.CurrentDeployment.DataDirectory
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        MsgBox(strConn)
         Call caricaClientiTempo()
         Call DataGrid()
         dgvCalendario.ClearSelection()
