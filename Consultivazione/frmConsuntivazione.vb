@@ -5,12 +5,24 @@ Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
     ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        MsgBox(strConn)
+        If controlloPath() = False Then
+            Me.Close()
+            Exit Sub
+        End If
         Call caricaClientiTempo()
         Call DataGrid()
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
     End Sub
+    Function controlloPath() As Boolean
+        Dim pathFile As String
+        pathFile = strConn.Substring(47, strConn.Length - 47)
+        If File.Exists(pathFile) = False Then
+            MsgBox("La cartella del programma non esiste o non è presente nella /Documenti. (../Documenti/Consuntivazione/..)")
+            Return False
+        End If
+        Return True
+    End Function
     Private Sub Consuntivazione_Resize(sender As Object, e As EventArgs) Handles Me.Resize
         lblSfondoBlu.Width = 265 + pnlInserisci.Location.X + 20
     End Sub

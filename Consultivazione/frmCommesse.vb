@@ -1,5 +1,6 @@
 ﻿Imports System.Data.OleDb
 Public Class frmCommesse
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmCommesse_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         dgvCommesse.RowCount = 2
         dgvCommesse.ColumnCount = 9
@@ -22,8 +23,8 @@ Public Class frmCommesse
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM LinkGR ORDER BY Cliente, Nota"
         cmd = New OleDbCommand(str, cn)
@@ -92,8 +93,8 @@ Public Class frmCommesse
             link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & dato
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "UPDATE LinkGR SET Link = '" & link & "' WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
         cmd = New OleDbCommand(str, cn)
@@ -110,8 +111,8 @@ Public Class frmCommesse
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "DELETE * FROM LinkGR WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
         cmd = New OleDbCommand(str, cn)
@@ -172,8 +173,8 @@ Public Class frmCommesse
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         If cliente = "" And ((vuota = True And fixed = True And formazione = True) Or (vuota = False And fixed = False And formazione = False)) Then
             str = "SELECT * FROM LinkGR ORDER BY Cliente, Nota"

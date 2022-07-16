@@ -1,5 +1,6 @@
 ﻿Imports System.Data.OleDb
 Public Class frmInserisciCliente
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmInserisciCliente_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         pulisciCampi()
     End Sub
@@ -92,8 +93,8 @@ Public Class frmInserisciCliente
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
 
         cn.Open()
         str = "SELECT Cliente FROM Clienti WHERE Cliente = '" & cliente & "'"
@@ -155,8 +156,8 @@ Public Class frmInserisciCliente
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "INSERT into Clienti (Cliente) VALUES ('" & cliente & "')"
         cmd = New OleDbCommand(str, cn)
@@ -169,8 +170,8 @@ Public Class frmInserisciCliente
         End Try
         cn.Close()
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
@@ -194,8 +195,8 @@ Public Class frmInserisciCliente
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         If nota = "" Then
             str = "INSERT into LinkGR (Cliente, Nota, Link) VALUES ('" & cliente & "',NULL,'" & link & "')"

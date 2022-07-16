@@ -6,6 +6,7 @@ Public Class frmModifica
     Dim nota As String
     Dim id As String
     Dim cliente As String = frmConsuntivazione.clienteCondiviso
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
@@ -32,8 +33,8 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
@@ -192,8 +193,8 @@ Public Class frmModifica
             Exit Sub
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         If dato = "" Then
             str = "UPDATE " & tabellaDB & " SET " & colonna & "= NULL WHERE ID = " & id
@@ -222,8 +223,8 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DATA FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
@@ -364,8 +365,8 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DATA FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
@@ -430,8 +431,8 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
         cmd = New OleDbCommand(str, cn)
@@ -563,8 +564,8 @@ Public Class frmModifica
         Dim str As String
         cliente = frmCommesse.dgvCommesse.Rows(riga).Cells(1).Value
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
         cmd = New OleDbCommand(str, cn)

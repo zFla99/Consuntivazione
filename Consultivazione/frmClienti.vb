@@ -1,5 +1,6 @@
 ﻿Imports System.Data.OleDb
 Public Class frmClienti
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmClienti_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         dgvClienti.RowCount = 2
         dgvClienti.ColumnCount = 3
@@ -15,8 +16,8 @@ Public Class frmClienti
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM Clienti ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
@@ -36,8 +37,8 @@ Public Class frmClienti
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "UPDATE Clienti SET Cliente = '" & cliente & "' WHERE ID = " & dgvClienti.Rows(r).Cells(2).Value
         cmd = New OleDbCommand(str, cn)
@@ -54,8 +55,8 @@ Public Class frmClienti
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim str As String
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "DELETE * FROM Clienti WHERE ID = " & dgvClienti.Rows(r).Cells(2).Value
         cmd = New OleDbCommand(str, cn)
