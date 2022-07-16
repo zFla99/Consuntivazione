@@ -427,7 +427,7 @@ Public Class frmConsuntivazione
         Dim i As Integer
         Dim somma As Double
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
+        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=|DataDirectory|\Consuntivazione.accdb"
         cn = New OleDbConnection(str)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE DATA='" & giorno & "' ORDER BY ID"
