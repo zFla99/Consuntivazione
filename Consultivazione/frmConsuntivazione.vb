@@ -2,6 +2,7 @@
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=C:\Users\flavi\Desktop\AutoUpdater\Consuntivazione\published\Consuntivazione.accdb"
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Call caricaClientiTempo()
         Call DataGrid()
@@ -27,8 +28,8 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
@@ -174,8 +175,8 @@ Public Class frmConsuntivazione
             End If
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
         cmd = New OleDbCommand(str, cn)
@@ -292,7 +293,7 @@ Public Class frmConsuntivazione
             notaExtra = ""
         End If
 
-        cn = New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb")
+        cn = New OleDbConnection(strConn)
         Try
             cn.Open()
         Catch ex As Exception
@@ -332,8 +333,8 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA ='" & giorno & "'"
         cmd = New OleDbCommand(str, cn)
@@ -427,8 +428,7 @@ Public Class frmConsuntivazione
         Dim i As Integer
         Dim somma As Double
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=|DataDirectory|\Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE DATA='" & giorno & "' ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
@@ -466,8 +466,8 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         For i = 0 To numTicket - 1
             cn.Open()
             If ticketVet(i) = "Criticità" Then
@@ -584,8 +584,8 @@ Public Class frmConsuntivazione
                 Dim tabella As New DataTable
                 Dim str As String
 
-                str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-                cn = New OleDbConnection(str)
+
+                cn = New OleDbConnection(strConn)
                 cn.Open()
                 If nota = "" Or nota = "Home" Then
                     str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota IS NULL"
@@ -744,8 +744,8 @@ Public Class frmConsuntivazione
                 End If
             End If
 
-            str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-            cn = New OleDbConnection(str)
+
+            cn = New OleDbConnection(strConn)
             cn.Open()
             str = "UPDATE Consuntivazione SET " & colonnaCondivisa & "='" & dato & "' WHERE ID = " & id
             cmd = New OleDbCommand(str, cn)
@@ -765,8 +765,8 @@ Public Class frmConsuntivazione
         Dim tabella As New DataTable
         Dim str As String
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "DELETE * FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
@@ -837,8 +837,8 @@ ore di lavoro
         Dim i As Integer
         Dim somma As Double
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
@@ -878,9 +878,9 @@ ore di lavoro
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
+        Dim str As String
 
-        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE ID=" & id
         cmd = New OleDbCommand(str, cn)
@@ -895,8 +895,8 @@ ore di lavoro
             colonna += "_RISOLUZIONE"
         End If
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "UPDATE Consuntivazione SET " & colonna & "='" & dato + vecchioTempo & "' WHERE ID = " & id
         cmd = New OleDbCommand(str, cn)
@@ -933,13 +933,13 @@ ore di lavoro
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
+        Dim str As String
         Dim Mese As String = lstMesi.SelectedIndex + 1
         If lstMesi.SelectedIndex < 10 Then
             Mese = "0" & Mese
         End If
 
-        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DISTINCT DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
@@ -960,8 +960,8 @@ ore di lavoro
             DateLavorative(i) = tabella.Rows(i).Item("DATA").ToString
         Next
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT Cliente, Nota FROM LinkGR WHERE Nota IS NOT NULL ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
@@ -977,8 +977,8 @@ ore di lavoro
             vetNotaComm(i) = tabella.Rows(i).Item("Nota").ToString
         Next
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
@@ -1025,8 +1025,8 @@ ore di lavoro
 
         Dim nuovaTabella As New DataTable
 
-        str = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
@@ -1234,9 +1234,9 @@ ore di lavoro
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tab As New DataTable
+        Dim str As String
 
-        Dim str As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath & "/Consuntivazione.accdb"
-        cn = New OleDbConnection(str)
+        cn = New OleDbConnection(strConn)
         cn.Open()
         str = "SELECT DISTINCT Nota FROM LinkGR WHERE Nota IS NOT NULL"
         cmd = New OleDbCommand(str, cn)
