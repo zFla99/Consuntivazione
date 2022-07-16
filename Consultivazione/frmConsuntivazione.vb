@@ -3,7 +3,7 @@ Imports System.Data.OleDb
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" ' & Deployment.Application.
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.CurrentDirectory & "'"
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         MsgBox(strConn)
         Call caricaClientiTempo()
