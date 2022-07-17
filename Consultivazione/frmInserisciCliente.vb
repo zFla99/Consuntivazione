@@ -58,14 +58,57 @@ Public Class frmInserisciCliente
         Dim fase As String = txtFase.Text
         Dim SottoFase As String = txtSottoFase.Text
         Dim nota As String = ""
-        Dim link As String = ""
+        Dim link As String
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
 
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim vetCommNota(tabella.Rows.Count) As String
+        For i = 0 To tabella.Rows.Count - 1
+            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
+        Next
+
+        Dim conta As Integer = 0
+        Dim notaInput As String
         If rdbVuota.Checked = True Then
             nota = ""
         ElseIf rdbFixed.Checked = True Then
             nota = "Fixed"
         ElseIf rdbFormazione.Checked = True Then
             nota = "Formazione"
+        ElseIf rdbAltro.Checked = True Then
+            notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+
+            If notaInput.Length > 150 Then
+                MsgBox("Nota non valida (Max 150 car.)")
+                Exit Sub
+            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Or notaInput.ToLower.Contains("extra") Then
+                MsgBox("Nota non valida (non puoi inserire questa commessa)")
+                Exit Sub
+            End If
+            nota = notaInput
+        End If
+        For i = 0 To tabella.Rows.Count - 1
+            If vetCommNota(i).ToLower = nota.ToLower Then
+                conta += 1
+            End If
+        Next
+
+        If conta > 0 Then
+            MsgBox("Questa commessa è gia presente per questo cliente")
+            Exit Sub
         End If
 
         If cliente = "" Then
@@ -87,15 +130,7 @@ Public Class frmInserisciCliente
             End If
         End If
 
-        Dim cn As OleDbConnection
-        Dim cmd As OleDbCommand
-        Dim da As OleDbDataAdapter
-        Dim tabella As New DataTable
-        Dim str As String
-
-
         cn = New OleDbConnection(strConn)
-
         cn.Open()
         str = "SELECT Cliente FROM Clienti WHERE Cliente = '" & cliente & "'"
         cmd = New OleDbCommand(str, cn)
@@ -125,25 +160,8 @@ Public Class frmInserisciCliente
             End If
         End If
 
-        cn.Open()
-        If nota = "" Then
-            str = "SELECT Cliente FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota IS NULL"
-        Else
-            str = "SELECT Cliente FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota = '" & nota & "'"
-        End If
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
-
-        If tabella.Rows.Count = 1 Then
-            MsgBox("Questa configurazione esiste già.")
-            Exit Sub
-        Else
-            link = "Cliente=" & CodCliente & "&Commessa=" & commessa & "&SottComm=" & SottoCommessa & "&Fase=" & fase & "&SottoFase=" & SottoFase
-            inserisciConfig(cliente, nota, link)
-        End If
+        link = "Cliente=" & CodCliente & "&Commessa=" & commessa & "&SottComm=" & SottoCommessa & "&Fase=" & fase & "&SottoFase=" & SottoFase
+        inserisciConfig(cliente, nota, link)
         MsgBox("Il cliente " & cliente & " è la sua commessa è stato aggiunto!")
 
         pulisciCampi()
@@ -240,7 +258,6 @@ Public Class frmInserisciCliente
             btnInserisci.Text = "Inserisci Commessa"
         End If
     End Sub
-
     Private Sub btnClienti_Click(sender As Object, e As EventArgs) Handles btnClienti.Click
         frmClienti.ShowDialog()
     End Sub

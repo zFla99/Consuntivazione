@@ -3,7 +3,7 @@ Imports System.Data.OleDb
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If controlloPath() = False Then
             Me.Close()
@@ -18,7 +18,7 @@ Public Class frmConsuntivazione
         Dim pathFile As String
         pathFile = strConn.Substring(47, strConn.Length - 47)
         If File.Exists(pathFile) = False Then
-            MsgBox("La cartella del programma non esiste o non è presente nella /Documenti. (../Documenti/Consuntivazione/..)")
+            MsgBox("La cartella del programma non esiste o non è presente nella /Documenti. (../Documenti/Altro/Consuntivazione/..)")
             Return False
         End If
         Return True
