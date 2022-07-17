@@ -665,7 +665,7 @@ Public Class frmConsuntivazione
                 Exit Sub
             End If
             If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Mensile)" Then
-                Call AggiornaDGMensile(giorno.Substring(3, 2))
+                Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
             Else
                 Call AggiornaDG(giorno, True)
                 Call PulisciCampi()
@@ -711,7 +711,7 @@ Public Class frmConsuntivazione
             Exit Sub
         End If
         If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Mensile)" Then
-            Call AggiornaDGMensile(giorno.Substring(3, 2))
+            Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
         Else
             Call AggiornaDG(giorno, True)
             Call PulisciCampi()
@@ -808,6 +808,9 @@ ore di lavoro
             lblDocumentazione.Visible = False
             lstMesi.Visible = True
             lblMesi.Visible = True
+            lblAnno.Visible = True
+            nudAnno.Visible = True
+            nudAnno.Enabled = True
             lblResoconto.Visible = True
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = True
@@ -816,13 +819,17 @@ ore di lavoro
             pnlMensile.Width = pnlMensile.Parent.Width
             'pnlMensile.Left = (pnlMensile.Parent.Width \ 2) - (pnlMensile.Width \ 2)
             Dim Mese As String
+            Dim Anno As Integer
             If resoconto = False Then
                 Mese = giornoOggi.Substring(3, 2)
+                Anno = giornoOggi.Substring(6, 4)
             Else
                 Mese = giorno.Substring(3, 2)
+                Anno = giorno.Substring(6, 4)
             End If
             lstMesi.SelectedIndex = Mese.Replace(0, "") - 1
-            Call AggiornaDGMensile(Mese)
+            nudAnno.Value = Anno
+            Call AggiornaDGMensile(Mese, Anno)
         Else
             lblGiorno_Mese.Text = "Totale 
 ore di lavoro
@@ -832,6 +839,9 @@ ore di lavoro
             lblDocumentazione.Visible = True
             lstMesi.Visible = False
             lblMesi.Visible = False
+            lblAnno.Visible = False
+            nudAnno.Visible = False
+            nudAnno.Enabled = False
             lblResoconto.Visible = False
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
@@ -842,7 +852,7 @@ ore di lavoro
             pnlMensile.Width = 750
         End If
     End Sub
-    Sub AggiornaDGMensile(Mese As String)
+    Sub AggiornaDGMensile(Mese As String, Anno As String)
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
@@ -854,7 +864,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
+        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -925,11 +935,24 @@ ore di lavoro
     End Sub
 
     Private Sub lstMesi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstMesi.SelectedIndexChanged
+        Dim Anno As Integer = nudAnno.Value
         Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
         If Mese.Length = 1 Then
             Mese = "0" + Mese
         End If
-        Call AggiornaDGMensile(Mese)
+        Call AggiornaDGMensile(Mese, Anno)
+    End Sub
+
+    Private Sub nudAnno_ValueChanged(sender As Object, e As EventArgs) Handles nudAnno.ValueChanged
+        If nudAnno.Enabled = False Then
+            Exit Sub
+        End If
+        Dim Anno As Integer = nudAnno.Value
+        Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
+        If Mese.Length = 1 Then
+            Mese = "0" + Mese
+        End If
+        Call AggiornaDGMensile(Mese, Anno)
     End Sub
 
     Private Sub btnDividiXCliente_Click(sender As Object, e As EventArgs) Handles btnDividiXCliente.Click
@@ -948,6 +971,7 @@ ore di lavoro
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
+        Dim Anno As Integer = nudAnno.Value
         Dim Mese As String = lstMesi.SelectedIndex + 1
         If lstMesi.SelectedIndex < 10 Then
             Mese = "0" & Mese
@@ -955,7 +979,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT DISTINCT DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA"
+        str = "SELECT DISTINCT DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -994,7 +1018,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
+        str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -1042,7 +1066,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/%' ORDER BY DATA, CLIENTE, NOTA"
+        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         nuovaTabella.Clear()
@@ -1125,7 +1149,7 @@ ore di lavoro
                                     dgvCalendario.Rows(j).Cells(6).Value = ""
                                 End If
                             End If
-                                If notaExtraBoolean = True Then
+                            If notaExtraBoolean = True Then
                                 notaExtraBoolean = False
                                 If notaPrec.ToLower.Contains("extra") Then
                                     Dim indice As Integer = notaPrec.IndexOf("(") + 1

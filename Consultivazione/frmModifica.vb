@@ -206,7 +206,7 @@ Public Class frmModifica
             str = "UPDATE " & tabellaDB & " SET " & colonna & "='" & dato & "' WHERE ID = " & id
         End If
         cmd = New OleDbCommand(str, cn)
-        str = cmd.ExecuteNonQuery
+        cmd.ExecuteNonQuery()
         cn.Close()
         If tabellaDB = "Consuntivazione" Then
             Call modificaTutteNote()

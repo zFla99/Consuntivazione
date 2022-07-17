@@ -172,7 +172,7 @@ Public Class frmCommesse
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
-        Dim str As String
+        Dim str As String = ""
 
         cn = New OleDbConnection(strConn)
         cn.Open()

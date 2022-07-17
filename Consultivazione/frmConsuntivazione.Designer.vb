@@ -23,7 +23,7 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConsuntivazione))
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
@@ -39,8 +39,10 @@ Partial Class frmConsuntivazione
         Me.lblTempoTot = New System.Windows.Forms.Label()
         Me.lblGiorno_Mese = New System.Windows.Forms.Label()
         Me.pnlMensile = New System.Windows.Forms.Panel()
+        Me.nudAnno = New System.Windows.Forms.NumericUpDown()
         Me.lstMesi = New System.Windows.Forms.ListBox()
         Me.lblResoconto = New System.Windows.Forms.Label()
+        Me.lblAnno = New System.Windows.Forms.Label()
         Me.lblMesi = New System.Windows.Forms.Label()
         Me.btnConsuntivaTutto = New System.Windows.Forms.Button()
         Me.btnDividiXCliente = New System.Windows.Forms.Button()
@@ -58,6 +60,7 @@ Partial Class frmConsuntivazione
         Me.lblDocumentazione = New System.Windows.Forms.Label()
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
+        CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlInserisci.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
@@ -72,14 +75,14 @@ Partial Class frmConsuntivazione
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle1
         Me.dgvCalendario.Location = New System.Drawing.Point(46, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
@@ -222,8 +225,10 @@ Partial Class frmConsuntivazione
         'pnlMensile
         '
         Me.pnlMensile.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.pnlMensile.Controls.Add(Me.nudAnno)
         Me.pnlMensile.Controls.Add(Me.lstMesi)
         Me.pnlMensile.Controls.Add(Me.lblResoconto)
+        Me.pnlMensile.Controls.Add(Me.lblAnno)
         Me.pnlMensile.Controls.Add(Me.lblMesi)
         Me.pnlMensile.Controls.Add(Me.lblGiorno_Mese)
         Me.pnlMensile.Controls.Add(Me.lblTempoTot)
@@ -234,6 +239,21 @@ Partial Class frmConsuntivazione
         Me.pnlMensile.Name = "pnlMensile"
         Me.pnlMensile.Size = New System.Drawing.Size(750, 550)
         Me.pnlMensile.TabIndex = 19
+        '
+        'nudAnno
+        '
+        Me.nudAnno.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.nudAnno.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.nudAnno.Enabled = False
+        Me.nudAnno.ImeMode = System.Windows.Forms.ImeMode.NoControl
+        Me.nudAnno.Location = New System.Drawing.Point(215, 17)
+        Me.nudAnno.Maximum = New Decimal(New Integer() {2999, 0, 0, 0})
+        Me.nudAnno.Minimum = New Decimal(New Integer() {2022, 0, 0, 0})
+        Me.nudAnno.Name = "nudAnno"
+        Me.nudAnno.Size = New System.Drawing.Size(55, 23)
+        Me.nudAnno.TabIndex = 23
+        Me.nudAnno.Value = New Decimal(New Integer() {2022, 0, 0, 0})
+        Me.nudAnno.Visible = False
         '
         'lstMesi
         '
@@ -261,6 +281,19 @@ Partial Class frmConsuntivazione
         Me.lblResoconto.TabIndex = 21
         Me.lblResoconto.Text = "Resoconto"
         Me.lblResoconto.Visible = False
+        '
+        'lblAnno
+        '
+        Me.lblAnno.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.lblAnno.AutoSize = True
+        Me.lblAnno.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblAnno.Location = New System.Drawing.Point(160, 20)
+        Me.lblAnno.Name = "lblAnno"
+        Me.lblAnno.Size = New System.Drawing.Size(49, 20)
+        Me.lblAnno.TabIndex = 22
+        Me.lblAnno.Text = "Anno:"
+        Me.lblAnno.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.lblAnno.Visible = False
         '
         'lblMesi
         '
@@ -481,6 +514,7 @@ Partial Class frmConsuntivazione
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlMensile.ResumeLayout(False)
         Me.pnlMensile.PerformLayout()
+        CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlInserisci.ResumeLayout(False)
         Me.pnlInserisci.PerformLayout()
         Me.GroupBox1.ResumeLayout(False)
@@ -521,4 +555,6 @@ Partial Class frmConsuntivazione
     Friend WithEvents lblAggiungiCliente As Label
     Friend WithEvents ckbAltro As CheckBox
     Friend WithEvents lblDocumentazione As Label
+    Friend WithEvents nudAnno As NumericUpDown
+    Friend WithEvents lblAnno As Label
 End Class
