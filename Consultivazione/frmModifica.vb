@@ -6,7 +6,7 @@ Public Class frmModifica
     Dim nota As String
     Dim id As String
     Dim cliente As String = frmConsuntivazione.clienteCondiviso
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa

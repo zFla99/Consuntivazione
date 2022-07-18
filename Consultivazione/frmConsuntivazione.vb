@@ -24,7 +24,7 @@ Public Class frmConsuntivazione
         Return True
     End Function
     Private Sub Consuntivazione_Resize(sender As Object, e As EventArgs) Handles Me.Resize
-        lblSfondoBlu.Width = 265 + pnlInserisci.Location.X + 20
+        'lblSfondoBlu.Width = 265 + pnlInserisci.Location.X + 20
     End Sub
     Private Sub Consuntivazione_Click(sender As Object, e As EventArgs) Handles Me.Click
         dgvCalendario.ClearSelection()
@@ -847,9 +847,9 @@ ore di lavoro
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = False
 
-            pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 40, (pnlMensile.Parent.Height \ 2) - (pnlMensile.Height \ 2) - 20)
+            pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, (pnlMensile.Parent.Height \ 2) - (pnlMensile.Height \ 2) - 20)
             Call AggiornaDG(giornoOggi, False)
-            pnlMensile.Width = 750
+            pnlMensile.Width = Me.Width - lblSfondoBlu.Width - 50
         End If
     End Sub
     Sub AggiornaDGMensile(Mese As String, Anno As String)

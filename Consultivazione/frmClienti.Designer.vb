@@ -57,6 +57,7 @@ Partial Class frmClienti
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(250, 286)
         Me.Controls.Add(Me.dgvClienti)
+        Me.MaximumSize = New System.Drawing.Size(266, 325)
         Me.MinimumSize = New System.Drawing.Size(266, 325)
         Me.Name = "frmClienti"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent

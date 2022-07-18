@@ -1,6 +1,6 @@
 ﻿Imports System.Data.OleDb
 Public Class frmClienti
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Consuntivazione\published\Database\Consuntivazione.accdb"
+    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmClienti_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         dgvClienti.RowCount = 2
         dgvClienti.ColumnCount = 3

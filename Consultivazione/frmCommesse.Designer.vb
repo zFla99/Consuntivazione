@@ -141,6 +141,7 @@ Partial Class frmCommesse
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.cmbCliente)
         Me.Controls.Add(Me.dgvCommesse)
+        Me.MaximumSize = New System.Drawing.Size(789, 379)
         Me.MinimumSize = New System.Drawing.Size(789, 379)
         Me.Name = "frmCommesse"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent

@@ -83,7 +83,7 @@ Partial Class frmConsuntivazione
         DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle1
-        Me.dgvCalendario.Location = New System.Drawing.Point(46, 46)
+        Me.dgvCalendario.Location = New System.Drawing.Point(45, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
         Me.dgvCalendario.ReadOnly = True
@@ -204,7 +204,7 @@ Partial Class frmConsuntivazione
         '
         Me.lblTempoTot.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblTempoTot.AutoSize = True
-        Me.lblTempoTot.Location = New System.Drawing.Point(666, 505)
+        Me.lblTempoTot.Location = New System.Drawing.Point(665, 505)
         Me.lblTempoTot.Name = "lblTempoTot"
         Me.lblTempoTot.Size = New System.Drawing.Size(15, 17)
         Me.lblTempoTot.TabIndex = 18
@@ -215,7 +215,7 @@ Partial Class frmConsuntivazione
         Me.lblGiorno_Mese.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblGiorno_Mese.AutoSize = True
         Me.lblGiorno_Mese.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.lblGiorno_Mese.Location = New System.Drawing.Point(567, 488)
+        Me.lblGiorno_Mese.Location = New System.Drawing.Point(566, 488)
         Me.lblGiorno_Mese.Name = "lblGiorno_Mese"
         Me.lblGiorno_Mese.Size = New System.Drawing.Size(84, 51)
         Me.lblGiorno_Mese.TabIndex = 18
@@ -224,7 +224,9 @@ Partial Class frmConsuntivazione
         '
         'pnlMensile
         '
-        Me.pnlMensile.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.pnlMensile.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlMensile.Controls.Add(Me.nudAnno)
         Me.pnlMensile.Controls.Add(Me.lstMesi)
         Me.pnlMensile.Controls.Add(Me.lblResoconto)
@@ -242,11 +244,11 @@ Partial Class frmConsuntivazione
         '
         'nudAnno
         '
-        Me.nudAnno.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.nudAnno.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.nudAnno.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.nudAnno.Enabled = False
         Me.nudAnno.ImeMode = System.Windows.Forms.ImeMode.NoControl
-        Me.nudAnno.Location = New System.Drawing.Point(215, 17)
+        Me.nudAnno.Location = New System.Drawing.Point(214, 17)
         Me.nudAnno.Maximum = New Decimal(New Integer() {2999, 0, 0, 0})
         Me.nudAnno.Minimum = New Decimal(New Integer() {2022, 0, 0, 0})
         Me.nudAnno.Name = "nudAnno"
@@ -257,14 +259,14 @@ Partial Class frmConsuntivazione
         '
         'lstMesi
         '
-        Me.lstMesi.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.lstMesi.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lstMesi.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lstMesi.ColumnWidth = 30
         Me.lstMesi.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lstMesi.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lstMesi.ItemHeight = 17
         Me.lstMesi.Items.AddRange(New Object() {"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8", "   9", "  10", "  11", "  12"})
-        Me.lstMesi.Location = New System.Drawing.Point(335, 22)
+        Me.lstMesi.Location = New System.Drawing.Point(334, 22)
         Me.lstMesi.MultiColumn = True
         Me.lstMesi.Name = "lstMesi"
         Me.lstMesi.Size = New System.Drawing.Size(365, 19)
@@ -275,7 +277,7 @@ Partial Class frmConsuntivazione
         '
         Me.lblResoconto.AutoSize = True
         Me.lblResoconto.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 15.0!, System.Drawing.FontStyle.Bold)
-        Me.lblResoconto.Location = New System.Drawing.Point(40, 14)
+        Me.lblResoconto.Location = New System.Drawing.Point(39, 14)
         Me.lblResoconto.Name = "lblResoconto"
         Me.lblResoconto.Size = New System.Drawing.Size(109, 27)
         Me.lblResoconto.TabIndex = 21
@@ -284,10 +286,10 @@ Partial Class frmConsuntivazione
         '
         'lblAnno
         '
-        Me.lblAnno.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.lblAnno.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblAnno.AutoSize = True
         Me.lblAnno.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblAnno.Location = New System.Drawing.Point(160, 20)
+        Me.lblAnno.Location = New System.Drawing.Point(159, 20)
         Me.lblAnno.Name = "lblAnno"
         Me.lblAnno.Size = New System.Drawing.Size(49, 20)
         Me.lblAnno.TabIndex = 22
@@ -297,10 +299,10 @@ Partial Class frmConsuntivazione
         '
         'lblMesi
         '
-        Me.lblMesi.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.lblMesi.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblMesi.AutoSize = True
         Me.lblMesi.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblMesi.Location = New System.Drawing.Point(280, 20)
+        Me.lblMesi.Location = New System.Drawing.Point(279, 20)
         Me.lblMesi.Name = "lblMesi"
         Me.lblMesi.Size = New System.Drawing.Size(49, 20)
         Me.lblMesi.TabIndex = 22
@@ -316,7 +318,7 @@ Partial Class frmConsuntivazione
         Me.btnConsuntivaTutto.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnConsuntivaTutto.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnConsuntivaTutto.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(313, 488)
+        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(312, 488)
         Me.btnConsuntivaTutto.Name = "btnConsuntivaTutto"
         Me.btnConsuntivaTutto.Size = New System.Drawing.Size(147, 51)
         Me.btnConsuntivaTutto.TabIndex = 5
@@ -332,7 +334,7 @@ Partial Class frmConsuntivazione
         Me.btnDividiXCliente.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnDividiXCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnDividiXCliente.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnDividiXCliente.Location = New System.Drawing.Point(65, 488)
+        Me.btnDividiXCliente.Location = New System.Drawing.Point(64, 488)
         Me.btnDividiXCliente.Name = "btnDividiXCliente"
         Me.btnDividiXCliente.Size = New System.Drawing.Size(153, 51)
         Me.btnDividiXCliente.TabIndex = 5
@@ -342,9 +344,8 @@ Partial Class frmConsuntivazione
         '
         'lblSfondoBlu
         '
-        Me.lblSfondoBlu.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblSfondoBlu.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.lblSfondoBlu.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
         Me.lblSfondoBlu.Location = New System.Drawing.Point(-1, -1)
         Me.lblSfondoBlu.Margin = New System.Windows.Forms.Padding(3)
@@ -354,7 +355,7 @@ Partial Class frmConsuntivazione
         '
         'pnlInserisci
         '
-        Me.pnlInserisci.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.pnlInserisci.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.pnlInserisci.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
         Me.pnlInserisci.Controls.Add(Me.GroupBox1)
         Me.pnlInserisci.Controls.Add(Me.Label1)
