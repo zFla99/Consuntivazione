@@ -13,6 +13,7 @@ Public Class frmInserisciCliente
         txtSottoFase.Text = ""
         rdbClienteConfig.Checked = True
         rdbVuota.Checked = True
+        ckbCommesseMassive.Checked = False
     End Sub
     Private Sub txtCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCliente.KeyPress
         If e.KeyChar = "'" Then
@@ -51,12 +52,37 @@ Public Class frmInserisciCliente
         End If
     End Sub
     Private Sub btnInserisci_Click(sender As Object, e As EventArgs) Handles btnInserisci.Click
+        If btnInserisci.Text = "Inserimento Massivo" Then
+            Call InserisciMassivamente()
+            Exit Sub
+        End If
+
         Dim cliente As String = txtCliente.Text
         Dim CodCliente As String = txtCodCliente.Text
         Dim commessa As String = txtCommessa.Text
         Dim SottoCommessa As String = txtSottoCommessa.Text
         Dim fase As String = txtFase.Text
         Dim SottoFase As String = txtSottoFase.Text
+
+        If cliente = "" Then
+            MsgBox("Inserisci un cliente")
+            Exit Sub
+        End If
+        If btnInserisci.Text <> "Inserisci Cliente" Then
+            If CodCliente = "" Then
+                MsgBox("Inserisci un codice cliente")
+                Exit Sub
+            End If
+            If commessa = "" Then
+                MsgBox("Inserisci una commessa")
+                Exit Sub
+            End If
+            If SottoCommessa = "" Then
+                MsgBox("Inserisci una sotto commessa")
+                Exit Sub
+            End If
+        End If
+
         Dim nota As String = ""
         Dim link As String
         Dim cn As OleDbConnection
@@ -100,6 +126,7 @@ Public Class frmInserisciCliente
             End If
             nota = notaInput
         End If
+
         For i = 0 To tabella.Rows.Count - 1
             If vetCommNota(i).ToLower = nota.ToLower Then
                 conta += 1
@@ -109,25 +136,6 @@ Public Class frmInserisciCliente
         If conta > 0 Then
             MsgBox("Questa commessa è gia presente per questo cliente")
             Exit Sub
-        End If
-
-        If cliente = "" Then
-            MsgBox("Inserisci un cliente")
-            Exit Sub
-        End If
-        If btnInserisci.Text <> "Inserisci Cliente" Then
-            If CodCliente = "" Then
-                MsgBox("Inserisci un codice cliente")
-                Exit Sub
-            End If
-            If commessa = "" Then
-                MsgBox("Inserisci una commessa")
-                Exit Sub
-            End If
-            If SottoCommessa = "" Then
-                MsgBox("Inserisci una sotto commessa")
-                Exit Sub
-            End If
         End If
 
         cn = New OleDbConnection(strConn)
@@ -184,6 +192,7 @@ Public Class frmInserisciCliente
         Catch ex As Exception
             MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
             cn.Close()
+            inserito = False
             Exit Sub
         End Try
         cn.Close()
@@ -231,7 +240,272 @@ Public Class frmInserisciCliente
         End Try
         cn.Close()
     End Sub
+    Dim clientiDaInserire As String = ""
+    Dim inserito As Boolean
+    Dim rigaExcel As Integer = 0
+    Dim errore As String = ""
+    Sub InserisciMassivamente()
+        Dim msgResult As MsgBoxResult = MsgBox("Vuoi scaricare il Template per l'inserimento massivo?", MsgBoxStyle.YesNoCancel)
+        If msgResult = MsgBoxResult.Yes Then
+            Call scaricaTemplate()
+            Exit Sub
+        ElseIf msgResult = MsgBoxResult.Cancel Then
+            Exit Sub
+        End If
+        ofdFile.ShowDialog()
 
+        Dim filePath As String = ofdFile.FileName
+
+        If filePath.EndsWith("Template_Commesse.xlsx") = False Then
+            MsgBox("Seleziona il template scaricato", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
+
+        Dim cnStr As String
+        Dim cn As OleDbConnection
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+
+        cnStr = String.Format("Provider=Microsoft.Ace.Oledb.12.0;Data Source={0};Extended Properties='Excel 8.0;HDR=yes'", filePath)
+        cn = New OleDbConnection(cnStr)
+        cn.Open()
+        da = New OleDbDataAdapter("SELECT * FROM [Commesse$] WHERE CLIENTE IS NOT NULL AND 'COD.CLIENTE' IS NOT NULL AND COMMESSA IS NOT NULL AND 'SOTT.COMMESSA' IS NOT NULL", cn)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        If tabella.Rows.Count = 0 Then
+            MsgBox("Il template è vuoto")
+            Exit Sub
+        End If
+
+        Dim cmd As OleDbCommand
+        Dim str As String
+        Dim tabellaClientiDB As New DataTable
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabellaClientiDB.Clear()
+        da.Fill(tabellaClientiDB)
+        cn.Close()
+
+        Dim tabellaClientiExcel As New DataTable
+
+        cn = New OleDbConnection(cnStr)
+        cn.Open()
+        da = New OleDbDataAdapter("SELECT DISTINCT CLIENTE FROM [Commesse$] WHERE CLIENTE IS NOT NULL", cn)
+        tabellaClientiExcel.Clear()
+        da.Fill(tabellaClientiExcel)
+        cn.Close()
+
+        Dim presente As Boolean = False
+        For i = 0 To tabellaClientiExcel.Rows.Count - 1
+            For j = 0 To tabellaClientiDB.Rows.Count - 1
+                If tabellaClientiExcel.Rows(i).Item("CLIENTE") = tabellaClientiDB.Rows(j).Item("Cliente") Then
+                    presente = True
+                End If
+            Next
+            If presente = False Then
+                clientiDaInserire += tabellaClientiExcel.Rows(i).Item("CLIENTE").ToString & ";"
+            End If
+        Next
+
+        Call uploadTemplate(tabella)
+        If inserito = False Then
+            MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
+            Exit Sub
+        End If
+        MsgBox("Le commesse sono state inserite correttamente", MsgBoxStyle.Information)
+        ckbCommesseMassive.Checked = False
+    End Sub
+    Sub scaricaTemplate()
+        Dim path As String = Application.StartupPath
+        If path.Contains("bin\Debug") Then
+            path = path.Replace("bin\Debug", "Template\Template_Commesse.xlsx")
+        Else
+            path += "\Template\Template_Commesse.xlsx"
+        End If
+        Try
+            My.Computer.FileSystem.CopyFile(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "/Template_Commesse.xlsx")
+        Catch ex As Exception
+            MsgBox("Il template è gia sul Desktop", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End Try
+        MsgBox("Il template è stato salvato sul Desktop con il nome di 'Template_Commesse'. Completalo e fai l'upload", MsgBoxStyle.Information)
+    End Sub
+    Sub uploadTemplate(tabellaExcel As DataTable)
+        If clientiDaInserire <> "" Then
+            clientiDaInserire = clientiDaInserire.Substring(0, clientiDaInserire.Length - 1)
+            Dim vetClienti() As String = clientiDaInserire.Split(";")
+            Call InserisciClienteMassivamente(vetClienti)
+            If inserito = False Then
+                MsgBox(errore)
+                rigaExcel = 0
+                Exit Sub
+            End If
+        End If
+        Call InserisciCommesseMassivamente(tabellaExcel)
+    End Sub
+    Sub InserisciClienteMassivamente(vetClienti() As String)
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim nRighe As Integer
+        Dim strSQL As String = ""
+
+        For i = 0 To vetClienti.Length - 1
+            strSQL += "INSERT into Clienti (Cliente) VALUES ('" & vetClienti(i) & "');"
+        Next
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        strSQL = strSQL.Substring(0, strSQL.Length - 1)
+        Dim vetStrSQL() As String = StrSQL.Split(";")
+        For i = 0 To vetStrSQL.Length - 1
+            cmd = New OleDbCommand(vetStrSQL(i), cn)
+            Try
+                nRighe = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                cn.Close()
+                errore = "Il cliente " & vetClienti(i) & " non è stato inserito correttamente. Codice errore: " & ex.Message
+                inserito = False
+                Exit Sub
+            End Try
+        Next
+
+        strSQL = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(strSQL, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        frmModifica.cmbCliente.Items.Clear()
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        frmCommesse.cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
+            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
+    End Sub
+    Sub InserisciCommesseMassivamente(tabellaExcel As DataTable)
+        Dim cliente As String
+        Dim CodCliente As String
+        Dim commessa As String
+        Dim SottoCommessa As String
+        Dim fase As String
+        Dim SottoFase As String
+        Dim nota As String
+        Dim link As String
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim nRighe As Integer
+        Dim str As String
+        Dim strSQL As String = ""
+
+        For i = 0 To tabellaExcel.Rows.Count - 1
+            inserito = False
+            cliente = tabellaExcel.Rows(i).Item("CLIENTE").ToString
+            nota = tabellaExcel.Rows(i).Item("NOTA").ToString
+            CodCliente = tabellaExcel.Rows(i).Item("COD#CLIENTE").ToString
+            commessa = tabellaExcel.Rows(i).Item("COMMESSA").ToString
+            SottoCommessa = tabellaExcel.Rows(i).Item("SOTT#COMMESSA").ToString
+            fase = tabellaExcel.Rows(i).Item("FASE").ToString
+            SottoFase = tabellaExcel.Rows(i).Item("SOTT#FASE").ToString
+
+            cn = New OleDbConnection(strConn)
+            cn.Open()
+            str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+            cmd = New OleDbCommand(str, cn)
+            da = New OleDbDataAdapter(cmd)
+            tabella.Clear()
+            da.Fill(tabella)
+            cn.Close()
+
+            Dim vetCommNota(tabella.Rows.Count) As String
+            For j = 0 To tabella.Rows.Count - 1
+                vetCommNota(j) = tabella.Rows(j).Item("Nota").ToString
+            Next
+
+            Dim conta As Integer = 0
+            If nota.Contains("Criticità") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "" Then
+                        conta += 1
+                    End If
+                Next
+                If conta <> 0 Then
+                    errore = "Il cliente " & cliente & " ha già la commessa standard"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            ElseIf nota.Contains("Fixed") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "Fixed" Then
+                        conta += 1
+                    End If
+                Next
+                If conta <> 0 Then
+                    errore = "Il cliente " & cliente & " ha già la commessa per il Bug Fix"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            ElseIf nota.Contains("Formazione") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "Formazione" Then
+                        conta += 1
+                    End If
+                Next
+                If conta <> 0 Then
+                    errore = "Il cliente " & cliente & " ha già la commessa per la Formazione"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            ElseIf nota = "" Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "" Then
+                        conta += 1
+                    End If
+                Next
+                If conta <> 0 Then
+                    errore = "Il cliente " & cliente & " ha già la commessa standard"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            End If
+            link = "Cliente=" & CodCliente & "&Commessa=" & commessa & "&SottComm=" & SottoCommessa & "&Fase=" & fase & "&SottoFase=" & SottoFase
+            If nota = "" Then
+                strSQL += "INSERT into LinkGR (Cliente, Nota, Link) VALUES ('" & cliente & "',NULL,'" & link & "');"
+            Else
+                strSQL += "INSERT into LinkGR (Cliente, Nota, Link) VALUES ('" & cliente & "','" & nota & "','" & link & "');"
+            End If
+        Next
+
+        strSQL = strSQL.Substring(0, strSQL.Length - 1)
+        Dim vetStrSQL() As String = strSQL.Split(";")
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        For i = 0 To vetStrSQL.Length - 1
+            cmd = New OleDbCommand(vetStrSQL(i), cn)
+            Try
+                nRighe = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                inserito = False
+                Exit Sub
+            End Try
+        Next
+        cn.Close()
+        inserito = True
+    End Sub
     Private Sub rdbCliente_CheckedChanged(sender As Object, e As EventArgs) Handles rdbCliente.CheckedChanged
         If rdbCliente.Checked = True Then
             txtCodCliente.Enabled = False
@@ -264,5 +538,20 @@ Public Class frmInserisciCliente
 
     Private Sub btnCommesse_Click(sender As Object, e As EventArgs) Handles btnCommesse.Click
         frmCommesse.ShowDialog()
+    End Sub
+
+    Private Sub ckbCommesseMassive_CheckedChanged(sender As Object, e As EventArgs) Handles ckbCommesseMassive.CheckedChanged
+        If ckbCommesseMassive.Checked = True Then
+            gboxCliente.Enabled = False
+            gboxNota.Enabled = False
+            gboxCommessa.Enabled = False
+            btnInserisci.Text = "Inserimento Massivo"
+        Else
+            gboxCliente.Enabled = True
+            rdbClienteConfig.Checked = True
+            gboxNota.Enabled = True
+            gboxCommessa.Enabled = True
+            btnInserisci.Text = "Inserisci Cliente e Commessa"
+        End If
     End Sub
 End Class

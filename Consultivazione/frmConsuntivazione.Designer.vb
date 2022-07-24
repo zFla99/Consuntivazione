@@ -23,7 +23,7 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConsuntivazione))
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
@@ -55,9 +55,11 @@ Partial Class frmConsuntivazione
         Me.ckbHome = New System.Windows.Forms.CheckBox()
         Me.rdbFixed = New System.Windows.Forms.RadioButton()
         Me.rdbCriticita = New System.Windows.Forms.RadioButton()
+        Me.lblTicketMssivi = New System.Windows.Forms.Label()
         Me.lblAggiungiCliente = New System.Windows.Forms.Label()
         Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
         Me.lblDocumentazione = New System.Windows.Forms.Label()
+        Me.ofdFile = New System.Windows.Forms.OpenFileDialog()
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -75,19 +77,19 @@ Partial Class frmConsuntivazione
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle4
         Me.dgvCalendario.Location = New System.Drawing.Point(45, 46)
         Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
         Me.dgvCalendario.Name = "dgvCalendario"
         Me.dgvCalendario.ReadOnly = True
-        Me.dgvCalendario.Size = New System.Drawing.Size(660, 426)
+        Me.dgvCalendario.Size = New System.Drawing.Size(680, 426)
         Me.dgvCalendario.TabIndex = 17
         '
         'btnCarica
@@ -204,7 +206,7 @@ Partial Class frmConsuntivazione
         '
         Me.lblTempoTot.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblTempoTot.AutoSize = True
-        Me.lblTempoTot.Location = New System.Drawing.Point(665, 505)
+        Me.lblTempoTot.Location = New System.Drawing.Point(685, 505)
         Me.lblTempoTot.Name = "lblTempoTot"
         Me.lblTempoTot.Size = New System.Drawing.Size(15, 17)
         Me.lblTempoTot.TabIndex = 18
@@ -215,7 +217,7 @@ Partial Class frmConsuntivazione
         Me.lblGiorno_Mese.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblGiorno_Mese.AutoSize = True
         Me.lblGiorno_Mese.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.lblGiorno_Mese.Location = New System.Drawing.Point(566, 488)
+        Me.lblGiorno_Mese.Location = New System.Drawing.Point(586, 488)
         Me.lblGiorno_Mese.Name = "lblGiorno_Mese"
         Me.lblGiorno_Mese.Size = New System.Drawing.Size(84, 51)
         Me.lblGiorno_Mese.TabIndex = 18
@@ -239,7 +241,7 @@ Partial Class frmConsuntivazione
         Me.pnlMensile.Controls.Add(Me.btnDividiXCliente)
         Me.pnlMensile.Location = New System.Drawing.Point(327, 15)
         Me.pnlMensile.Name = "pnlMensile"
-        Me.pnlMensile.Size = New System.Drawing.Size(750, 550)
+        Me.pnlMensile.Size = New System.Drawing.Size(770, 550)
         Me.pnlMensile.TabIndex = 19
         '
         'nudAnno
@@ -248,7 +250,7 @@ Partial Class frmConsuntivazione
         Me.nudAnno.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.nudAnno.Enabled = False
         Me.nudAnno.ImeMode = System.Windows.Forms.ImeMode.NoControl
-        Me.nudAnno.Location = New System.Drawing.Point(214, 17)
+        Me.nudAnno.Location = New System.Drawing.Point(234, 17)
         Me.nudAnno.Maximum = New Decimal(New Integer() {2999, 0, 0, 0})
         Me.nudAnno.Minimum = New Decimal(New Integer() {2022, 0, 0, 0})
         Me.nudAnno.Name = "nudAnno"
@@ -266,7 +268,7 @@ Partial Class frmConsuntivazione
         Me.lstMesi.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lstMesi.ItemHeight = 17
         Me.lstMesi.Items.AddRange(New Object() {"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8", "   9", "  10", "  11", "  12"})
-        Me.lstMesi.Location = New System.Drawing.Point(334, 22)
+        Me.lstMesi.Location = New System.Drawing.Point(354, 22)
         Me.lstMesi.MultiColumn = True
         Me.lstMesi.Name = "lstMesi"
         Me.lstMesi.Size = New System.Drawing.Size(365, 19)
@@ -289,7 +291,7 @@ Partial Class frmConsuntivazione
         Me.lblAnno.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblAnno.AutoSize = True
         Me.lblAnno.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblAnno.Location = New System.Drawing.Point(159, 20)
+        Me.lblAnno.Location = New System.Drawing.Point(179, 20)
         Me.lblAnno.Name = "lblAnno"
         Me.lblAnno.Size = New System.Drawing.Size(49, 20)
         Me.lblAnno.TabIndex = 22
@@ -302,7 +304,7 @@ Partial Class frmConsuntivazione
         Me.lblMesi.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblMesi.AutoSize = True
         Me.lblMesi.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblMesi.Location = New System.Drawing.Point(279, 20)
+        Me.lblMesi.Location = New System.Drawing.Point(299, 20)
         Me.lblMesi.Name = "lblMesi"
         Me.lblMesi.Size = New System.Drawing.Size(49, 20)
         Me.lblMesi.TabIndex = 22
@@ -318,7 +320,7 @@ Partial Class frmConsuntivazione
         Me.btnConsuntivaTutto.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnConsuntivaTutto.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnConsuntivaTutto.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(312, 488)
+        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(322, 488)
         Me.btnConsuntivaTutto.Name = "btnConsuntivaTutto"
         Me.btnConsuntivaTutto.Size = New System.Drawing.Size(147, 51)
         Me.btnConsuntivaTutto.TabIndex = 5
@@ -362,6 +364,7 @@ Partial Class frmConsuntivazione
         Me.pnlInserisci.Controls.Add(Me.txtTicket)
         Me.pnlInserisci.Controls.Add(Me.Label4)
         Me.pnlInserisci.Controls.Add(Me.dtpData)
+        Me.pnlInserisci.Controls.Add(Me.lblTicketMssivi)
         Me.pnlInserisci.Controls.Add(Me.lblAggiungiCliente)
         Me.pnlInserisci.Controls.Add(Me.Label3)
         Me.pnlInserisci.Controls.Add(Me.btnCarica)
@@ -465,6 +468,19 @@ Partial Class frmConsuntivazione
         Me.rdbCriticita.Text = "Criticità"
         Me.rdbCriticita.UseVisualStyleBackColor = True
         '
+        'lblTicketMssivi
+        '
+        Me.lblTicketMssivi.AutoSize = True
+        Me.lblTicketMssivi.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblTicketMssivi.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTicketMssivi.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.lblTicketMssivi.Location = New System.Drawing.Point(225, 87)
+        Me.lblTicketMssivi.Name = "lblTicketMssivi"
+        Me.lblTicketMssivi.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblTicketMssivi.Size = New System.Drawing.Size(19, 20)
+        Me.lblTicketMssivi.TabIndex = 12
+        Me.lblTicketMssivi.Text = "+"
+        '
         'lblAggiungiCliente
         '
         Me.lblAggiungiCliente.AutoSize = True
@@ -495,6 +511,11 @@ Partial Class frmConsuntivazione
         Me.lblDocumentazione.Size = New System.Drawing.Size(21, 26)
         Me.lblDocumentazione.TabIndex = 12
         Me.lblDocumentazione.Text = "?"
+        '
+        'ofdFile
+        '
+        Me.ofdFile.DefaultExt = "*.xlsx"
+        Me.ofdFile.InitialDirectory = "Desktop"
         '
         'frmConsuntivazione
         '
@@ -558,4 +579,6 @@ Partial Class frmConsuntivazione
     Friend WithEvents lblDocumentazione As Label
     Friend WithEvents nudAnno As NumericUpDown
     Friend WithEvents lblAnno As Label
+    Friend WithEvents lblTicketMssivi As Label
+    Friend WithEvents ofdFile As OpenFileDialog
 End Class

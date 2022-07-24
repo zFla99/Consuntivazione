@@ -816,7 +816,7 @@ ore di lavoro
             btnDividiXCliente.Visible = True
 
             pnlMensile.Left = 0
-            pnlMensile.Width = pnlMensile.Parent.Width
+            pnlMensile.Width = Me.Width - 15
             'pnlMensile.Left = (pnlMensile.Parent.Width \ 2) - (pnlMensile.Width \ 2)
             Dim Mese As String
             Dim Anno As Integer
@@ -849,7 +849,7 @@ ore di lavoro
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, (pnlMensile.Parent.Height \ 2) - (pnlMensile.Height \ 2) - 20)
             Call AggiornaDG(giornoOggi, False)
-            pnlMensile.Width = Me.Width - lblSfondoBlu.Width - 50
+            pnlMensile.Width = Me.Width - lblSfondoBlu.Width - 35
         End If
     End Sub
     Sub AggiornaDGMensile(Mese As String, Anno As String)
@@ -1459,5 +1459,211 @@ ore di lavoro
             path += "\Documentazione\documentazione.html"
         End If
         Process.Start(path)
+    End Sub
+
+    Private Sub lblTicketMssivi_Click(sender As Object, e As EventArgs) Handles lblTicketMssivi.Click
+        Dim msgResult As MsgBoxResult = MsgBox("Vuoi scaricare il Template per l'inserimento massivo?", MsgBoxStyle.YesNoCancel)
+        If msgResult = MsgBoxResult.Yes Then
+            Call scaricaTemplate()
+            Exit Sub
+        ElseIf msgResult = MsgBoxResult.Cancel Then
+            Exit Sub
+        End If
+        ofdFile.ShowDialog()
+
+        Dim filePath As String = ofdFile.FileName
+
+        If filePath.EndsWith("Template_Ticket.xlsx") = False Then
+            MsgBox("Seleziona il template scaricato", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
+
+        Dim cnStr As String
+        Dim cn As OleDbConnection
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+
+        cnStr = String.Format("Provider=Microsoft.Ace.Oledb.12.0;Data Source={0};Extended Properties='Excel 8.0;HDR=yes'", filePath)
+        cn = New OleDbConnection(cnStr)
+        cn.Open()
+        da = New OleDbDataAdapter("SELECT * FROM [Ticket$] WHERE TICKET IS NOT NULL 
+                                                            AND CLIENTE IS NOT NULL 
+                                                            AND TEMPO IS NOT NULL 
+                                                            AND DATA IS NOT NULL
+                                                            AND CONSUNTIVATO IS NOT NULL", cn)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        If tabella.Rows.Count = 0 Then
+            MsgBox("Il template è vuoto")
+            Exit Sub
+        End If
+
+        Dim cmd As OleDbCommand
+        Dim str As String
+        Dim tabellaClientiDB As New DataTable
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabellaClientiDB.Clear()
+        da.Fill(tabellaClientiDB)
+        cn.Close()
+
+        Dim tabellaClientiExcel As New DataTable
+
+        cn = New OleDbConnection(cnStr)
+        cn.Open()
+        da = New OleDbDataAdapter("SELECT DISTINCT CLIENTE FROM [Ticket$] WHERE CLIENTE IS NOT NULL", cn)
+        tabellaClientiExcel.Clear()
+        da.Fill(tabellaClientiExcel)
+        cn.Close()
+
+        Dim presente As Boolean = False
+        For i = 0 To tabellaClientiExcel.Rows.Count - 1
+            For j = 0 To tabellaClientiDB.Rows.Count - 1
+                If tabellaClientiExcel.Rows(i).Item("CLIENTE") = tabellaClientiDB.Rows(j).Item("Cliente") Then
+                    presente = True
+                End If
+            Next
+            If presente = False Then
+                MsgBox("Il cliente " & tabellaClientiExcel.Rows(i).Item("CLIENTE") & " non è presente a sistema. Importazione interrotta", MsgBoxStyle.Exclamation)
+                Exit Sub
+            End If
+        Next
+
+        Call uploadTemplate(tabella)
+        If inserito = False Then
+            MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
+            Exit Sub
+        End If
+        Call AggiornaDG(giornoOggi, False)
+        MsgBox("I ticket sono stati inseriti correttamente", MsgBoxStyle.Information)
+    End Sub
+    Sub scaricaTemplate()
+        Dim path As String = Application.StartupPath
+        If path.Contains("bin\Debug") Then
+            path = path.Replace("bin\Debug", "Template\Template_Ticket.xlsx")
+        Else
+            path += "\Template\Template_Ticket.xlsx"
+        End If
+        Try
+            My.Computer.FileSystem.CopyFile(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "/Template_Ticket.xlsx")
+        Catch ex As Exception
+            MsgBox("Il template è gia sul Desktop", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End Try
+        MsgBox("Il template è stato salvato sul Desktop con il nome di 'Template_Ticket'. Completalo e fai l'upload", MsgBoxStyle.Information)
+    End Sub
+    Dim inserito As Boolean
+    Dim rigaExcel As Integer = 0
+    Dim errore As String = ""
+    Sub uploadTemplate(tabellaExcel As DataTable)
+        Dim cn As OleDbConnection
+        Dim cmd As New OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+        Dim nRighe As Integer
+        Dim StrSQL As String = ""
+        Dim consuntivato As String
+
+        For i = 0 To tabellaExcel.Rows.Count - 1
+            inserito = False
+            ticket = tabellaExcel.Rows(i).Item("TICKET")
+            cliente = tabellaExcel.Rows(i).Item("CLIENTE")
+            tempo = tabellaExcel.Rows(i).Item("TEMPO")
+            giorno = tabellaExcel.Rows(i).Item("DATA")
+            consuntivato = tabellaExcel.Rows(i).Item("CONSUNTIVATO")
+            nota = tabellaExcel.Rows(i).Item("NOTA").ToString
+
+            cn = New OleDbConnection(strConn)
+            cn.Open()
+            str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+            cmd = New OleDbCommand(str, cn)
+            da = New OleDbDataAdapter(cmd)
+            tabella.Clear()
+            da.Fill(tabella)
+            cn.Close()
+
+            Dim vetCommNota(tabella.Rows.Count) As String
+            For j = 0 To tabella.Rows.Count - 1
+                vetCommNota(j) = tabella.Rows(j).Item("Nota").ToString
+            Next
+
+            Dim conta As Integer = 0
+            If nota.Contains("Criticità") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "" Then
+                        conta += 1
+                    End If
+                Next
+                If conta = 0 Then
+                    errore = "Il cliente " & cliente & " non ha la commessa standard"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            ElseIf nota.Contains("Fixed") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "Fixed" Then
+                        conta += 1
+                    End If
+                Next
+                If conta = 0 Then
+                    errore = "Il cliente " & cliente & " non ha la commessa per il Bug Fix"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            ElseIf nota.Contains("Formazione") Then
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "Formazione" Then
+                        conta += 1
+                    End If
+                Next
+                If conta = 0 Then
+                    errore = "Il cliente " & cliente & " non ha la commessa per la Formazione"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            Else
+                For j = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(j) = "" Then
+                        conta += 1
+                    End If
+                Next
+                If conta = 0 Then
+                    errore = "Il cliente " & cliente & " non ha la commessa standard"
+                    rigaExcel = i
+                    Exit Sub
+                End If
+            End If
+            If nota = "" Then
+                StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "',NULL);"
+            Else
+                StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "','" & nota & "');"
+            End If
+            inserito = True
+        Next
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        StrSQL = StrSQL.Substring(0, StrSQL.Length - 1)
+        Dim vetStrSQL() As String = StrSQL.Split(";")
+        For i = 0 To vetStrSQL.Length - 1
+            cmd = New OleDbCommand(vetStrSQL(i), cn)
+            Try
+                nRighe = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                inserito = False
+                Exit Sub
+            End Try
+        Next
+        cn.Close()
+        inserito = True
     End Sub
 End Class

@@ -47,6 +47,8 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa = New System.Windows.Forms.GroupBox()
         Me.btnClienti = New System.Windows.Forms.Button()
         Me.btnCommesse = New System.Windows.Forms.Button()
+        Me.ckbCommesseMassive = New System.Windows.Forms.CheckBox()
+        Me.ofdFile = New System.Windows.Forms.OpenFileDialog()
         Me.gboxCliente.SuspendLayout()
         Me.gboxNota.SuspendLayout()
         Me.gboxCommessa.SuspendLayout()
@@ -156,7 +158,7 @@ Partial Class frmInserisciCliente
         '
         Me.btnInserisci.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnInserisci.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnInserisci.Location = New System.Drawing.Point(313, 242)
+        Me.btnInserisci.Location = New System.Drawing.Point(263, 242)
         Me.btnInserisci.Name = "btnInserisci"
         Me.btnInserisci.Size = New System.Drawing.Size(249, 40)
         Me.btnInserisci.TabIndex = 7
@@ -340,7 +342,7 @@ Partial Class frmInserisciCliente
         '
         Me.btnClienti.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnClienti.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnClienti.Location = New System.Drawing.Point(47, 242)
+        Me.btnClienti.Location = New System.Drawing.Point(26, 242)
         Me.btnClienti.Name = "btnClienti"
         Me.btnClienti.Size = New System.Drawing.Size(71, 40)
         Me.btnClienti.TabIndex = 8
@@ -351,18 +353,35 @@ Partial Class frmInserisciCliente
         '
         Me.btnCommesse.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnCommesse.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnCommesse.Location = New System.Drawing.Point(124, 242)
+        Me.btnCommesse.Location = New System.Drawing.Point(103, 242)
         Me.btnCommesse.Name = "btnCommesse"
         Me.btnCommesse.Size = New System.Drawing.Size(107, 40)
         Me.btnCommesse.TabIndex = 9
         Me.btnCommesse.Text = "Commesse"
         Me.btnCommesse.UseVisualStyleBackColor = True
         '
+        'ckbCommesseMassive
+        '
+        Me.ckbCommesseMassive.AutoSize = True
+        Me.ckbCommesseMassive.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
+        Me.ckbCommesseMassive.Location = New System.Drawing.Point(518, 245)
+        Me.ckbCommesseMassive.Name = "ckbCommesseMassive"
+        Me.ckbCommesseMassive.Size = New System.Drawing.Size(103, 36)
+        Me.ckbCommesseMassive.TabIndex = 23
+        Me.ckbCommesseMassive.Text = "Inserisci " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Massivamente"
+        Me.ckbCommesseMassive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.ckbCommesseMassive.UseVisualStyleBackColor = True
+        '
+        'ofdFile
+        '
+        Me.ofdFile.InitialDirectory = "Desktop"
+        '
         'frmInserisciCliente
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(634, 303)
+        Me.Controls.Add(Me.ckbCommesseMassive)
         Me.Controls.Add(Me.btnCommesse)
         Me.Controls.Add(Me.btnClienti)
         Me.Controls.Add(Me.btnInserisci)
@@ -381,6 +400,7 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa.ResumeLayout(False)
         Me.gboxCommessa.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -409,4 +429,6 @@ Partial Class frmInserisciCliente
     Friend WithEvents btnClienti As Button
     Friend WithEvents btnCommesse As Button
     Friend WithEvents rdbAltro As RadioButton
+    Friend WithEvents ckbCommesseMassive As CheckBox
+    Friend WithEvents ofdFile As OpenFileDialog
 End Class
