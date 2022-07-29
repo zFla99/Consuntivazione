@@ -22,13 +22,14 @@ Partial Class frmInserisciCliente
     'Non modificarla mediante l'editor del codice.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Label3 = New System.Windows.Forms.Label()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmInserisciCliente))
+        Me.lblCliente = New System.Windows.Forms.Label()
         Me.txtCommessa = New System.Windows.Forms.TextBox()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblCommessa = New System.Windows.Forms.Label()
+        Me.lblSottCommessa = New System.Windows.Forms.Label()
         Me.txtSottoCommessa = New System.Windows.Forms.TextBox()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.Label5 = New System.Windows.Forms.Label()
+        Me.lblFase = New System.Windows.Forms.Label()
+        Me.lblSottFase = New System.Windows.Forms.Label()
         Me.txtFase = New System.Windows.Forms.TextBox()
         Me.txtSottoFase = New System.Windows.Forms.TextBox()
         Me.btnInserisci = New System.Windows.Forms.Button()
@@ -36,7 +37,7 @@ Partial Class frmInserisciCliente
         Me.rdbFormazione = New System.Windows.Forms.RadioButton()
         Me.rdbFixed = New System.Windows.Forms.RadioButton()
         Me.rdbVuota = New System.Windows.Forms.RadioButton()
-        Me.Label6 = New System.Windows.Forms.Label()
+        Me.lblCodCliente = New System.Windows.Forms.Label()
         Me.txtCodCliente = New System.Windows.Forms.TextBox()
         Me.gboxCliente = New System.Windows.Forms.GroupBox()
         Me.rdbConfig = New System.Windows.Forms.RadioButton()
@@ -47,24 +48,23 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa = New System.Windows.Forms.GroupBox()
         Me.btnClienti = New System.Windows.Forms.Button()
         Me.btnCommesse = New System.Windows.Forms.Button()
-        Me.ckbCommesseMassive = New System.Windows.Forms.CheckBox()
         Me.ofdFile = New System.Windows.Forms.OpenFileDialog()
         Me.gboxCliente.SuspendLayout()
         Me.gboxNota.SuspendLayout()
         Me.gboxCommessa.SuspendLayout()
         Me.SuspendLayout()
         '
-        'Label3
+        'lblCliente
         '
-        Me.Label3.AutoSize = True
-        Me.Label3.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.Black
-        Me.Label3.Location = New System.Drawing.Point(12, 25)
-        Me.Label3.Name = "Label3"
-        Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label3.Size = New System.Drawing.Size(59, 20)
-        Me.Label3.TabIndex = 14
-        Me.Label3.Text = "Cliente"
+        Me.lblCliente.AutoSize = True
+        Me.lblCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCliente.ForeColor = System.Drawing.Color.Black
+        Me.lblCliente.Location = New System.Drawing.Point(12, 25)
+        Me.lblCliente.Name = "lblCliente"
+        Me.lblCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCliente.Size = New System.Drawing.Size(59, 20)
+        Me.lblCliente.TabIndex = 14
+        Me.lblCliente.Text = "Cliente"
         '
         'txtCommessa
         '
@@ -76,29 +76,29 @@ Partial Class frmInserisciCliente
         Me.txtCommessa.Size = New System.Drawing.Size(110, 20)
         Me.txtCommessa.TabIndex = 3
         '
-        'Label4
+        'lblCommessa
         '
-        Me.Label4.AutoSize = True
-        Me.Label4.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.ForeColor = System.Drawing.Color.Black
-        Me.Label4.Location = New System.Drawing.Point(42, 21)
-        Me.Label4.Name = "Label4"
-        Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label4.Size = New System.Drawing.Size(85, 20)
-        Me.Label4.TabIndex = 16
-        Me.Label4.Text = "Commessa"
+        Me.lblCommessa.AutoSize = True
+        Me.lblCommessa.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCommessa.ForeColor = System.Drawing.Color.Black
+        Me.lblCommessa.Location = New System.Drawing.Point(42, 21)
+        Me.lblCommessa.Name = "lblCommessa"
+        Me.lblCommessa.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCommessa.Size = New System.Drawing.Size(85, 20)
+        Me.lblCommessa.TabIndex = 16
+        Me.lblCommessa.Text = "Commessa"
         '
-        'Label1
+        'lblSottCommessa
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.Color.Black
-        Me.Label1.Location = New System.Drawing.Point(290, 21)
-        Me.Label1.Name = "Label1"
-        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(128, 20)
-        Me.Label1.TabIndex = 16
-        Me.Label1.Text = "Sotto Commessa"
+        Me.lblSottCommessa.AutoSize = True
+        Me.lblSottCommessa.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSottCommessa.ForeColor = System.Drawing.Color.Black
+        Me.lblSottCommessa.Location = New System.Drawing.Point(290, 21)
+        Me.lblSottCommessa.Name = "lblSottCommessa"
+        Me.lblSottCommessa.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblSottCommessa.Size = New System.Drawing.Size(128, 20)
+        Me.lblSottCommessa.TabIndex = 16
+        Me.lblSottCommessa.Text = "Sotto Commessa"
         '
         'txtSottoCommessa
         '
@@ -110,29 +110,29 @@ Partial Class frmInserisciCliente
         Me.txtSottoCommessa.Size = New System.Drawing.Size(110, 20)
         Me.txtSottoCommessa.TabIndex = 4
         '
-        'Label2
+        'lblFase
         '
-        Me.Label2.AutoSize = True
-        Me.Label2.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.ForeColor = System.Drawing.Color.Black
-        Me.Label2.Location = New System.Drawing.Point(42, 66)
-        Me.Label2.Name = "Label2"
-        Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label2.Size = New System.Drawing.Size(38, 20)
-        Me.Label2.TabIndex = 16
-        Me.Label2.Text = "Fase"
+        Me.lblFase.AutoSize = True
+        Me.lblFase.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblFase.ForeColor = System.Drawing.Color.Black
+        Me.lblFase.Location = New System.Drawing.Point(42, 66)
+        Me.lblFase.Name = "lblFase"
+        Me.lblFase.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblFase.Size = New System.Drawing.Size(38, 20)
+        Me.lblFase.TabIndex = 16
+        Me.lblFase.Text = "Fase"
         '
-        'Label5
+        'lblSottFase
         '
-        Me.Label5.AutoSize = True
-        Me.Label5.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label5.ForeColor = System.Drawing.Color.Black
-        Me.Label5.Location = New System.Drawing.Point(290, 66)
-        Me.Label5.Name = "Label5"
-        Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(81, 20)
-        Me.Label5.TabIndex = 16
-        Me.Label5.Text = "Sotto Fase"
+        Me.lblSottFase.AutoSize = True
+        Me.lblSottFase.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSottFase.ForeColor = System.Drawing.Color.Black
+        Me.lblSottFase.Location = New System.Drawing.Point(290, 66)
+        Me.lblSottFase.Name = "lblSottFase"
+        Me.lblSottFase.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblSottFase.Size = New System.Drawing.Size(81, 20)
+        Me.lblSottFase.TabIndex = 16
+        Me.lblSottFase.Text = "Sotto Fase"
         '
         'txtFase
         '
@@ -158,7 +158,7 @@ Partial Class frmInserisciCliente
         '
         Me.btnInserisci.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnInserisci.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnInserisci.Location = New System.Drawing.Point(263, 242)
+        Me.btnInserisci.Location = New System.Drawing.Point(350, 242)
         Me.btnInserisci.Name = "btnInserisci"
         Me.btnInserisci.Size = New System.Drawing.Size(249, 40)
         Me.btnInserisci.TabIndex = 7
@@ -216,17 +216,17 @@ Partial Class frmInserisciCliente
         Me.rdbVuota.Text = "Vuota"
         Me.rdbVuota.UseVisualStyleBackColor = True
         '
-        'Label6
+        'lblCodCliente
         '
-        Me.Label6.AutoSize = True
-        Me.Label6.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.ForeColor = System.Drawing.Color.Black
-        Me.Label6.Location = New System.Drawing.Point(12, 54)
-        Me.Label6.Name = "Label6"
-        Me.Label6.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label6.Size = New System.Drawing.Size(112, 20)
-        Me.Label6.TabIndex = 14
-        Me.Label6.Text = "Codice Cliente"
+        Me.lblCodCliente.AutoSize = True
+        Me.lblCodCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCodCliente.ForeColor = System.Drawing.Color.Black
+        Me.lblCodCliente.Location = New System.Drawing.Point(12, 54)
+        Me.lblCodCliente.Name = "lblCodCliente"
+        Me.lblCodCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCodCliente.Size = New System.Drawing.Size(112, 20)
+        Me.lblCodCliente.TabIndex = 14
+        Me.lblCodCliente.Text = "Codice Cliente"
         '
         'txtCodCliente
         '
@@ -246,8 +246,8 @@ Partial Class frmInserisciCliente
         Me.gboxCliente.Controls.Add(Me.txtCodCliente)
         Me.gboxCliente.Controls.Add(Me.rdbClienteConfig)
         Me.gboxCliente.Controls.Add(Me.txtCliente)
-        Me.gboxCliente.Controls.Add(Me.Label6)
-        Me.gboxCliente.Controls.Add(Me.Label3)
+        Me.gboxCliente.Controls.Add(Me.lblCodCliente)
+        Me.gboxCliente.Controls.Add(Me.lblCliente)
         Me.gboxCliente.Location = New System.Drawing.Point(26, 7)
         Me.gboxCliente.Name = "gboxCliente"
         Me.gboxCliente.Size = New System.Drawing.Size(388, 98)
@@ -328,10 +328,10 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa.Controls.Add(Me.txtSottoCommessa)
         Me.gboxCommessa.Controls.Add(Me.txtFase)
         Me.gboxCommessa.Controls.Add(Me.txtCommessa)
-        Me.gboxCommessa.Controls.Add(Me.Label5)
-        Me.gboxCommessa.Controls.Add(Me.Label2)
-        Me.gboxCommessa.Controls.Add(Me.Label1)
-        Me.gboxCommessa.Controls.Add(Me.Label4)
+        Me.gboxCommessa.Controls.Add(Me.lblSottFase)
+        Me.gboxCommessa.Controls.Add(Me.lblFase)
+        Me.gboxCommessa.Controls.Add(Me.lblSottCommessa)
+        Me.gboxCommessa.Controls.Add(Me.lblCommessa)
         Me.gboxCommessa.Location = New System.Drawing.Point(26, 119)
         Me.gboxCommessa.Name = "gboxCommessa"
         Me.gboxCommessa.Size = New System.Drawing.Size(583, 106)
@@ -342,7 +342,7 @@ Partial Class frmInserisciCliente
         '
         Me.btnClienti.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnClienti.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnClienti.Location = New System.Drawing.Point(26, 242)
+        Me.btnClienti.Location = New System.Drawing.Point(42, 242)
         Me.btnClienti.Name = "btnClienti"
         Me.btnClienti.Size = New System.Drawing.Size(71, 40)
         Me.btnClienti.TabIndex = 8
@@ -353,24 +353,12 @@ Partial Class frmInserisciCliente
         '
         Me.btnCommesse.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.btnCommesse.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnCommesse.Location = New System.Drawing.Point(103, 242)
+        Me.btnCommesse.Location = New System.Drawing.Point(119, 242)
         Me.btnCommesse.Name = "btnCommesse"
         Me.btnCommesse.Size = New System.Drawing.Size(107, 40)
         Me.btnCommesse.TabIndex = 9
         Me.btnCommesse.Text = "Commesse"
         Me.btnCommesse.UseVisualStyleBackColor = True
-        '
-        'ckbCommesseMassive
-        '
-        Me.ckbCommesseMassive.AutoSize = True
-        Me.ckbCommesseMassive.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.ckbCommesseMassive.Location = New System.Drawing.Point(518, 245)
-        Me.ckbCommesseMassive.Name = "ckbCommesseMassive"
-        Me.ckbCommesseMassive.Size = New System.Drawing.Size(103, 36)
-        Me.ckbCommesseMassive.TabIndex = 23
-        Me.ckbCommesseMassive.Text = "Inserisci " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Massivamente"
-        Me.ckbCommesseMassive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.ckbCommesseMassive.UseVisualStyleBackColor = True
         '
         'ofdFile
         '
@@ -381,18 +369,18 @@ Partial Class frmInserisciCliente
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(634, 303)
-        Me.Controls.Add(Me.ckbCommesseMassive)
         Me.Controls.Add(Me.btnCommesse)
         Me.Controls.Add(Me.btnClienti)
         Me.Controls.Add(Me.btnInserisci)
         Me.Controls.Add(Me.gboxCommessa)
         Me.Controls.Add(Me.gboxNota)
         Me.Controls.Add(Me.gboxCliente)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximumSize = New System.Drawing.Size(650, 342)
         Me.MinimumSize = New System.Drawing.Size(650, 342)
         Me.Name = "frmInserisciCliente"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "frmInserisciCliente"
+        Me.Text = "Inserisci Cliente"
         Me.gboxCliente.ResumeLayout(False)
         Me.gboxCliente.PerformLayout()
         Me.gboxNota.ResumeLayout(False)
@@ -400,17 +388,16 @@ Partial Class frmInserisciCliente
         Me.gboxCommessa.ResumeLayout(False)
         Me.gboxCommessa.PerformLayout()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
 
-    Friend WithEvents Label3 As Label
+    Friend WithEvents lblCliente As Label
     Friend WithEvents txtCommessa As TextBox
-    Friend WithEvents Label4 As Label
-    Friend WithEvents Label1 As Label
+    Friend WithEvents lblCommessa As Label
+    Friend WithEvents lblSottCommessa As Label
     Friend WithEvents txtSottoCommessa As TextBox
-    Friend WithEvents Label2 As Label
-    Friend WithEvents Label5 As Label
+    Friend WithEvents lblFase As Label
+    Friend WithEvents lblSottFase As Label
     Friend WithEvents txtFase As TextBox
     Friend WithEvents txtSottoFase As TextBox
     Friend WithEvents btnInserisci As Button
@@ -418,7 +405,7 @@ Partial Class frmInserisciCliente
     Friend WithEvents rdbFormazione As RadioButton
     Friend WithEvents rdbFixed As RadioButton
     Friend WithEvents rdbVuota As RadioButton
-    Friend WithEvents Label6 As Label
+    Friend WithEvents lblCodCliente As Label
     Friend WithEvents txtCodCliente As TextBox
     Friend WithEvents gboxCliente As GroupBox
     Friend WithEvents gboxNota As GroupBox
@@ -429,6 +416,5 @@ Partial Class frmInserisciCliente
     Friend WithEvents btnClienti As Button
     Friend WithEvents btnCommesse As Button
     Friend WithEvents rdbAltro As RadioButton
-    Friend WithEvents ckbCommesseMassive As CheckBox
     Friend WithEvents ofdFile As OpenFileDialog
 End Class

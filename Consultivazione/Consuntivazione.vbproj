@@ -21,8 +21,8 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -166,6 +166,18 @@
     <Compile Include="frmModifica.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmSfondoNero.Designer.vb">
+      <DependentUpon>frmSfondoNero.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmSfondoNero.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTema.Designer.vb">
+      <DependentUpon>frmTema.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmTema.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -199,6 +211,12 @@
     <EmbeddedResource Include="frmModifica.resx">
       <DependentUpon>frmModifica.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmSfondoNero.resx">
+      <DependentUpon>frmSfondoNero.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTema.resx">
+      <DependentUpon>frmTema.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -218,6 +236,19 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <Content Include="Immagini\commesse_32x32_bianco.png" />
+    <Content Include="Immagini\commesse_32x32_nero.png" />
+    <Content Include="Immagini\documentazione_32x32_bianco.png" />
+    <Content Include="Immagini\documentazione_32x32_nero.png" />
+    <Content Include="Immagini\icona.ico" />
+    <Content Include="Immagini\menuAperto_32x32_bianco.png" />
+    <Content Include="Immagini\menuAperto_32x32_nero.png" />
+    <Content Include="Immagini\menuChiuso_32x32_bianco.png" />
+    <Content Include="Immagini\menuChiuso_32x32_nero.png" />
+    <Content Include="Immagini\pennello_32x32_bianco.png" />
+    <Content Include="Immagini\pennello_32x32_nero.png" />
+    <Content Include="Immagini\ticket_32x32_bianco.png" />
+    <Content Include="Immagini\ticket_32x32_nero.png" />
     <Content Include="Template\Template_Commesse.xlsx" />
     <Content Include="Template\Template_Ticket.xlsx" />
   </ItemGroup>

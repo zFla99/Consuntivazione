@@ -23,6 +23,7 @@ Partial Class frmClienti
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmClienti))
         Me.dgvClienti = New System.Windows.Forms.DataGridView()
         CType(Me.dgvClienti, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -57,11 +58,12 @@ Partial Class frmClienti
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(250, 286)
         Me.Controls.Add(Me.dgvClienti)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximumSize = New System.Drawing.Size(266, 325)
         Me.MinimumSize = New System.Drawing.Size(266, 325)
         Me.Name = "frmClienti"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "frmClienti"
+        Me.Text = "Clienti"
         CType(Me.dgvClienti, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

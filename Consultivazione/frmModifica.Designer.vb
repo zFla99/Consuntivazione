@@ -22,6 +22,7 @@ Partial Class frmModifica
     'Non modificarla mediante l'editor del codice.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmModifica))
         Me.gboxNota = New System.Windows.Forms.GroupBox()
         Me.rdbFormazione = New System.Windows.Forms.RadioButton()
         Me.ckbAltro = New System.Windows.Forms.CheckBox()
@@ -31,12 +32,12 @@ Partial Class frmModifica
         Me.rdbCriticita = New System.Windows.Forms.RadioButton()
         Me.gboxTempo = New System.Windows.Forms.GroupBox()
         Me.cmbTempo = New System.Windows.Forms.ComboBox()
-        Me.Label2 = New System.Windows.Forms.Label()
+        Me.lblTempo = New System.Windows.Forms.Label()
         Me.gboxData = New System.Windows.Forms.GroupBox()
-        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblData = New System.Windows.Forms.Label()
         Me.dtpData = New System.Windows.Forms.DateTimePicker()
         Me.gboxCliente = New System.Windows.Forms.GroupBox()
-        Me.Label3 = New System.Windows.Forms.Label()
+        Me.lblCliente = New System.Windows.Forms.Label()
         Me.cmbCliente = New System.Windows.Forms.ComboBox()
         Me.btnModifica = New System.Windows.Forms.Button()
         Me.btnAnnulla = New System.Windows.Forms.Button()
@@ -141,7 +142,7 @@ Partial Class frmModifica
         '
         Me.gboxTempo.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.gboxTempo.Controls.Add(Me.cmbTempo)
-        Me.gboxTempo.Controls.Add(Me.Label2)
+        Me.gboxTempo.Controls.Add(Me.lblTempo)
         Me.gboxTempo.Location = New System.Drawing.Point(264, 18)
         Me.gboxTempo.Name = "gboxTempo"
         Me.gboxTempo.Size = New System.Drawing.Size(220, 75)
@@ -161,22 +162,22 @@ Partial Class frmModifica
         Me.cmbTempo.Size = New System.Drawing.Size(110, 21)
         Me.cmbTempo.TabIndex = 2
         '
-        'Label2
+        'lblTempo
         '
-        Me.Label2.AutoSize = True
-        Me.Label2.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.ForeColor = System.Drawing.Color.Black
-        Me.Label2.Location = New System.Drawing.Point(20, 29)
-        Me.Label2.Name = "Label2"
-        Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label2.Size = New System.Drawing.Size(55, 20)
-        Me.Label2.TabIndex = 17
-        Me.Label2.Text = "Tempo"
+        Me.lblTempo.AutoSize = True
+        Me.lblTempo.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTempo.ForeColor = System.Drawing.Color.Black
+        Me.lblTempo.Location = New System.Drawing.Point(20, 29)
+        Me.lblTempo.Name = "lblTempo"
+        Me.lblTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblTempo.Size = New System.Drawing.Size(55, 20)
+        Me.lblTempo.TabIndex = 17
+        Me.lblTempo.Text = "Tempo"
         '
         'gboxData
         '
         Me.gboxData.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.gboxData.Controls.Add(Me.Label1)
+        Me.gboxData.Controls.Add(Me.lblData)
         Me.gboxData.Controls.Add(Me.dtpData)
         Me.gboxData.Location = New System.Drawing.Point(513, 18)
         Me.gboxData.Name = "gboxData"
@@ -184,17 +185,17 @@ Partial Class frmModifica
         Me.gboxData.TabIndex = 3
         Me.gboxData.TabStop = False
         '
-        'Label1
+        'lblData
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.Color.Black
-        Me.Label1.Location = New System.Drawing.Point(38, 29)
-        Me.Label1.Name = "Label1"
-        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(42, 20)
-        Me.Label1.TabIndex = 16
-        Me.Label1.Text = "Data"
+        Me.lblData.AutoSize = True
+        Me.lblData.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblData.ForeColor = System.Drawing.Color.Black
+        Me.lblData.Location = New System.Drawing.Point(38, 29)
+        Me.lblData.Name = "lblData"
+        Me.lblData.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblData.Size = New System.Drawing.Size(42, 20)
+        Me.lblData.TabIndex = 16
+        Me.lblData.Text = "Data"
         '
         'dtpData
         '
@@ -208,7 +209,7 @@ Partial Class frmModifica
         'gboxCliente
         '
         Me.gboxCliente.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.gboxCliente.Controls.Add(Me.Label3)
+        Me.gboxCliente.Controls.Add(Me.lblCliente)
         Me.gboxCliente.Controls.Add(Me.cmbCliente)
         Me.gboxCliente.Location = New System.Drawing.Point(20, 18)
         Me.gboxCliente.Name = "gboxCliente"
@@ -216,17 +217,17 @@ Partial Class frmModifica
         Me.gboxCliente.TabIndex = 1
         Me.gboxCliente.TabStop = False
         '
-        'Label3
+        'lblCliente
         '
-        Me.Label3.AutoSize = True
-        Me.Label3.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.Black
-        Me.Label3.Location = New System.Drawing.Point(19, 29)
-        Me.Label3.Name = "Label3"
-        Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label3.Size = New System.Drawing.Size(59, 20)
-        Me.Label3.TabIndex = 17
-        Me.Label3.Text = "Cliente"
+        Me.lblCliente.AutoSize = True
+        Me.lblCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCliente.ForeColor = System.Drawing.Color.Black
+        Me.lblCliente.Location = New System.Drawing.Point(19, 29)
+        Me.lblCliente.Name = "lblCliente"
+        Me.lblCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCliente.Size = New System.Drawing.Size(59, 20)
+        Me.lblCliente.TabIndex = 17
+        Me.lblCliente.Text = "Cliente"
         '
         'cmbCliente
         '
@@ -241,6 +242,8 @@ Partial Class frmModifica
         '
         'btnModifica
         '
+        Me.btnModifica.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnModifica.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnModifica.ForeColor = System.Drawing.SystemColors.ControlText
         Me.btnModifica.Location = New System.Drawing.Point(37, 143)
         Me.btnModifica.Name = "btnModifica"
@@ -251,6 +254,8 @@ Partial Class frmModifica
         '
         'btnAnnulla
         '
+        Me.btnAnnulla.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnAnnulla.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnAnnulla.ForeColor = System.Drawing.SystemColors.ControlText
         Me.btnAnnulla.Location = New System.Drawing.Point(141, 143)
         Me.btnAnnulla.Name = "btnAnnulla"
@@ -270,6 +275,7 @@ Partial Class frmModifica
         Me.Controls.Add(Me.gboxTempo)
         Me.Controls.Add(Me.gboxCliente)
         Me.Controls.Add(Me.gboxNota)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximumSize = New System.Drawing.Size(280, 230)
         Me.MinimumSize = New System.Drawing.Size(280, 230)
         Me.Name = "frmModifica"
@@ -296,11 +302,11 @@ Partial Class frmModifica
     Friend WithEvents gboxTempo As GroupBox
     Friend WithEvents gboxData As GroupBox
     Friend WithEvents gboxCliente As GroupBox
-    Friend WithEvents Label3 As Label
+    Friend WithEvents lblCliente As Label
     Friend WithEvents cmbCliente As ComboBox
     Friend WithEvents cmbTempo As ComboBox
-    Friend WithEvents Label2 As Label
-    Friend WithEvents Label1 As Label
+    Friend WithEvents lblTempo As Label
+    Friend WithEvents lblData As Label
     Friend WithEvents dtpData As DateTimePicker
     Friend WithEvents btnModifica As Button
     Friend WithEvents btnAnnulla As Button

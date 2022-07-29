@@ -1,4 +1,5 @@
 ﻿Imports System.Data.OleDb
+Imports System.IO
 Public Class frmModifica
     Dim tabellaDB As String
     Dim colonna As String
@@ -18,6 +19,43 @@ Public Class frmModifica
         cliente = frmConsuntivazione.clienteCondiviso
         caricaClientiTempo()
         impostaTabModifica()
+        impostaConfig()
+    End Sub
+    ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
+    Sub impostaConfig()
+        Dim sr As New StreamReader(fileConfig)
+        Dim appoggio As String = sr.ReadLine
+        Dim selezionaModifica As String = ""
+
+        Do
+            If appoggio.StartsWith("[") Then
+                selezionaModifica = appoggio.Replace("[", "")
+                selezionaModifica = selezionaModifica.Replace("]", "")
+                appoggio = sr.ReadLine()
+            End If
+            Dim index As Integer = appoggio.IndexOf("=") + 1
+            Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+            If selezionaModifica = "ItemColor" Then
+                If appoggio.Contains("Form_BackColor") Then
+                    Me.BackColor = ColorTranslator.FromHtml(value)
+
+                ElseIf appoggio.Contains("From_ForeColor") Then
+                    lblCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblTempo.ForeColor = ColorTranslator.FromHtml(value)
+                    lblData.ForeColor = ColorTranslator.FromHtml(value)
+
+                    rdbVuota.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbCriticita.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFixed.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFormazione.ForeColor = ColorTranslator.FromHtml(value)
+
+                    ckbHome.ForeColor = ColorTranslator.FromHtml(value)
+                    ckbAltro.ForeColor = ColorTranslator.FromHtml(value)
+                End If
+            End If
+            appoggio = sr.ReadLine()
+        Loop Until appoggio = Nothing
+        sr.Close()
     End Sub
     Private Sub frmModifica_Closed(sender As Object, e As EventArgs) Handles Me.Closed
         If corretto = False Then

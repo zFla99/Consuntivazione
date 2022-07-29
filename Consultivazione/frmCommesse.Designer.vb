@@ -23,8 +23,9 @@ Partial Class frmCommesse
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmCommesse))
         Me.dgvCommesse = New System.Windows.Forms.DataGridView()
-        Me.Label3 = New System.Windows.Forms.Label()
+        Me.lblCliente = New System.Windows.Forms.Label()
         Me.cmbCliente = New System.Windows.Forms.ComboBox()
         Me.ckbVuota = New System.Windows.Forms.CheckBox()
         Me.ckbFixed = New System.Windows.Forms.CheckBox()
@@ -57,18 +58,18 @@ Partial Class frmCommesse
         Me.dgvCommesse.Size = New System.Drawing.Size(749, 236)
         Me.dgvCommesse.TabIndex = 19
         '
-        'Label3
+        'lblCliente
         '
-        Me.Label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.Label3.AutoSize = True
-        Me.Label3.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.Black
-        Me.Label3.Location = New System.Drawing.Point(53, 280)
-        Me.Label3.Name = "Label3"
-        Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label3.Size = New System.Drawing.Size(59, 20)
-        Me.Label3.TabIndex = 21
-        Me.Label3.Text = "Cliente"
+        Me.lblCliente.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.lblCliente.AutoSize = True
+        Me.lblCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCliente.ForeColor = System.Drawing.Color.Black
+        Me.lblCliente.Location = New System.Drawing.Point(53, 280)
+        Me.lblCliente.Name = "lblCliente"
+        Me.lblCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCliente.Size = New System.Drawing.Size(59, 20)
+        Me.lblCliente.TabIndex = 21
+        Me.lblCliente.Text = "Cliente"
         '
         'cmbCliente
         '
@@ -138,14 +139,15 @@ Partial Class frmCommesse
         Me.Controls.Add(Me.ckbFormazione)
         Me.Controls.Add(Me.ckbFixed)
         Me.Controls.Add(Me.ckbVuota)
-        Me.Controls.Add(Me.Label3)
+        Me.Controls.Add(Me.lblCliente)
         Me.Controls.Add(Me.cmbCliente)
         Me.Controls.Add(Me.dgvCommesse)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximumSize = New System.Drawing.Size(789, 379)
         Me.MinimumSize = New System.Drawing.Size(789, 379)
         Me.Name = "frmCommesse"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "frmCommesse"
+        Me.Text = "Commesse"
         CType(Me.dgvCommesse, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -153,7 +155,7 @@ Partial Class frmCommesse
     End Sub
 
     Friend WithEvents dgvCommesse As DataGridView
-    Friend WithEvents Label3 As Label
+    Friend WithEvents lblCliente As Label
     Friend WithEvents cmbCliente As ComboBox
     Friend WithEvents ckbVuota As CheckBox
     Friend WithEvents ckbFixed As CheckBox

@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="Consuntivazione.exe" version="1.0.1.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <description asmv2:iconFile="icona.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="Consuntivazione" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="Consuntivazione.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet version="1" class="System.Security.NamedPermissionSet" Name="LocalIntranet" Description="Default rights given to applications on the local intranet" Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- Opzioni manifesto di Controllo dell'account utente
+             Per modificare il livello di Controllo dell'account utente di Windows, sostituire il 
+             nodo requestedExecutionLevel con uno dei seguenti.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+            Se si specifica l'elemento requestedExecutionLevel, la funzionalità Virtualizzazione file system e registro di sistema verrà disabilitata. 
+            Rimuovere questo elemento se l'applicazione richiede questa virtualizzazione per
+            compatibilità con le versioni precedenti.
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Consuntivazione.exe" size="220672">
+      <assemblyIdentity name="Consuntivazione" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>mDu0iq8lehYsZVmqefM/HHjvKAJ4YRkPKB/K/7eOm1s=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.Data.Tools.Components.dll" size="71112">
+      <assemblyIdentity name="Microsoft.Data.Tools.Components" version="17.0.0.0" publicKeyToken="B03F5F7F11D50A3A" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>3p0PnWi6LNbAjAExNRtg1G1ZVEYgAd/tZUv1oxCsct0=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="it\Microsoft.Data.Tools.Components.resources.dll" size="13768">
+      <assemblyIdentity name="Microsoft.Data.Tools.Components.resources" version="17.0.0.0" publicKeyToken="B03F5F7F11D50A3A" language="it" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>1Fhn0HpHFqaMpyoLVWRYR8sYNh/94yvOFaqWL8Icns4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Consuntivazione.exe.config" size="532">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>bWSZPOiy2VrgRbZQT6GeDK40tbF0eCHfw01XKmSOm4Q=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\documentazione.html" size="13118">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>6pSBAn7bH7EMHMPfrfw8dNKk2hggy8PtzwBQcHQS0yQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\clienti.png" size="63077">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>zO08EokmmlMjehLjMXOWJBVQlT9CsMUaCr9oG4IYR0s=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\commesse.png" size="56796">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>t1roVdRgzTEq4+bMajGcvNTCoPuEJZDQJINJbNkhirA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\dividiCliente.png" size="36465">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>QLXZEpvN1NH5zngqTjCOKkYj4ko3D1JDOgMUIFB8pVc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\homePage.png" size="30094">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>vhOAjKrvmjQPHpgPeGXLOgD7O4jd7GOCNO9HLs3odDw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\insClientiCommesse.png" size="44694">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>MrWGcc4fYuSCx6vGPQTXwqnurp8jIbSN0LDM5tOKvZU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\Immagini\visMensile.png" size="34237">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Zsa1h2Pyo/zBTzChflr+F9y6ItR44f//UWciKfThrmw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\javaScript.js" size="407">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>O0M9GSSl5Qe84WT/VSqp+TemZ80cSZX4oH1UkB2rlt0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Documentazione\style.css" size="1393">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>iMnDbCAp1r+0bWcqi+/Fbj9mNThGyJiAXmyrHRL8FPM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="icona.ico" size="7239">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>hlyyVuq9HFP4JgiEbdaSVC4OxOoul5gPyMKvIdZZOb8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\commesse_32x32_bianco.png" size="1509">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>0YSn1Dqzp21hfZ/6bodzUp49Zp3/xPXMywNc890mGlw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\commesse_32x32_nero.png" size="952">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>AMKnPJloPHRZWxxewz+ynUhfop+kwVN0sUWExfou6+w=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\documentazione_32x32_bianco.png" size="1033">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>WxhV1c2AViWNNV7yrCvs4jedz5TvT4tdgsUqiswqGGE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\documentazione_32x32_nero.png" size="692">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>1v/JWjvXK4lLXIEwzycV/ZnX5AkdZt/bz/Do2GttIuE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\icona.ico" size="7239">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>hlyyVuq9HFP4JgiEbdaSVC4OxOoul5gPyMKvIdZZOb8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\menuAperto_32x32_bianco.png" size="1812">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>lzj4boeynM8YNMqTNEEfcefD0h+Sy5gWzp2vbgd7+1E=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\menuAperto_32x32_nero.png" size="207">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>vdTTA/iywTXxOXjKmXypYQNMVDSuMIPwP3XeWv1beLQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\menuChiuso_32x32_bianco.png" size="1689">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>bLHQMKoWNhxD9nS2mDQtIFu8koTmjELkWMdiRmfK/vg=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\menuChiuso_32x32_nero.png" size="154">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>aa6NK4tOTDap65qO0atwPaDYiJ5HF6kiHbcWzFcJ9ds=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\pennello_32x32_bianco.png" size="1593">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Ul0gV/tZMgReKu2SH7sMkcMA9uygoM9Hj92BNSBV/DE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\pennello_32x32_nero.png" size="936">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>3xLG0kl9CpsoXRDvgTWSkagh9Md5LRxSaC7zTcLfo/I=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\ticket_32x32_bianco.png" size="3251">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>iOjXrKAVrAlrAwU7gaUAJFQFPda+XzmxHW2FVML5uGA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Immagini\ticket_32x32_nero.png" size="2541">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>dfJ8eh4oP6F24Q+j9eMc7L/1e3SrFsviVFiwVxGGUi4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Template\Template_Commesse.xlsx" size="19289">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>q9oEamZ8myE+0JoBW6Hyxk2rGWyRZ28JzO1I9uYMx5s=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Template\Template_Ticket.xlsx" size="50669">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>6XXy2oqy71orCHbSmoxLSH91y6v80NYh+Du/lhbznjA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Elenco delle versioni di Windows in cui è stata testata questa applicazione e
+           per cui è stato previsto l'uso. Rimuovere il commento dagli elementi appropriati per
+           fare in modo che Windows selezioni automaticamente l'ambiente più compatibile. -->
+      <!-- Windows Vista -->
+      <!--<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />-->
+      <!-- Windows 7 -->
+      <!--<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />-->
+      <!-- Windows 8 -->
+      <!--<supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}" />-->
+      <!-- Windows 8.1 -->
+      <!--<supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}" />-->
+      <!-- Windows 10 -->
+      <!--<supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />-->
+    </application>
+  </compatibility>
+</asmv1:assembly>

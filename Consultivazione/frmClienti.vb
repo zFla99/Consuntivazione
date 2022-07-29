@@ -1,4 +1,5 @@
 ﻿Imports System.Data.OleDb
+Imports System.IO
 Public Class frmClienti
     ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmClienti_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -9,6 +10,30 @@ Public Class frmClienti
         dgvClienti.Columns(2).Visible = False
         dgvClienti.Columns(1).HeaderText() = "CLIENTE"
         aggiornaDG()
+        impostaConfig()
+    End Sub
+    ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
+    Sub impostaConfig()
+        Dim sr As New StreamReader(fileConfig)
+        Dim appoggio As String = sr.ReadLine
+        Dim selezionaModifica As String = ""
+
+        Do
+            If appoggio.StartsWith("[") Then
+                selezionaModifica = appoggio.Replace("[", "")
+                selezionaModifica = selezionaModifica.Replace("]", "")
+                appoggio = sr.ReadLine()
+            End If
+            Dim index As Integer = appoggio.IndexOf("=") + 1
+            Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+            If selezionaModifica = "ItemColor" Then
+                If appoggio.Contains("Form_BackColor") Then
+                    Me.BackColor = ColorTranslator.FromHtml(value)
+                End If
+            End If
+            appoggio = sr.ReadLine()
+        Loop Until appoggio = Nothing
+        sr.Close()
     End Sub
     Sub aggiornaDG()
         Dim cn As OleDbConnection

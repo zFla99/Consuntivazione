@@ -1,8 +1,50 @@
 ﻿Imports System.Data.OleDb
+Imports System.IO
 Public Class frmInserisciCliente
     ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
     Private Sub frmInserisciCliente_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         pulisciCampi()
+        impostaConfig()
+    End Sub
+    ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
+    Sub impostaConfig()
+        Dim sr As New StreamReader(fileConfig)
+        Dim appoggio As String = sr.ReadLine
+        Dim selezionaModifica As String = ""
+
+        Do
+            If appoggio.StartsWith("[") Then
+                selezionaModifica = appoggio.Replace("[", "")
+                selezionaModifica = selezionaModifica.Replace("]", "")
+                appoggio = sr.ReadLine()
+            End If
+            Dim index As Integer = appoggio.IndexOf("=") + 1
+            Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+            If selezionaModifica = "ItemColor" Then
+                If appoggio.Contains("Form_BackColor") Then
+                    Me.BackColor = ColorTranslator.FromHtml(value)
+
+                ElseIf appoggio.Contains("From_ForeColor") Then
+                    lblCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblCodCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblCommessa.ForeColor = ColorTranslator.FromHtml(value)
+                    lblSottCommessa.ForeColor = ColorTranslator.FromHtml(value)
+                    lblFase.ForeColor = ColorTranslator.FromHtml(value)
+                    lblSottFase.ForeColor = ColorTranslator.FromHtml(value)
+
+                    rdbClienteConfig.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbConfig.ForeColor = ColorTranslator.FromHtml(value)
+
+                    rdbVuota.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFixed.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFormazione.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbAltro.ForeColor = ColorTranslator.FromHtml(value)
+                End If
+            End If
+            appoggio = sr.ReadLine()
+        Loop Until appoggio = Nothing
+        sr.Close()
     End Sub
     Sub pulisciCampi()
         txtCliente.Text = ""
@@ -13,7 +55,6 @@ Public Class frmInserisciCliente
         txtSottoFase.Text = ""
         rdbClienteConfig.Checked = True
         rdbVuota.Checked = True
-        ckbCommesseMassive.Checked = False
     End Sub
     Private Sub txtCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCliente.KeyPress
         If e.KeyChar = "'" Then
@@ -52,11 +93,6 @@ Public Class frmInserisciCliente
         End If
     End Sub
     Private Sub btnInserisci_Click(sender As Object, e As EventArgs) Handles btnInserisci.Click
-        If btnInserisci.Text = "Inserimento Massivo" Then
-            Call InserisciMassivamente()
-            Exit Sub
-        End If
-
         Dim cliente As String = txtCliente.Text
         Dim CodCliente As String = txtCodCliente.Text
         Dim commessa As String = txtCommessa.Text
@@ -319,7 +355,6 @@ Public Class frmInserisciCliente
             Exit Sub
         End If
         MsgBox("Le commesse sono state inserite correttamente", MsgBoxStyle.Information)
-        ckbCommesseMassive.Checked = False
     End Sub
     Sub scaricaTemplate()
         Dim path As String = Application.StartupPath
@@ -341,7 +376,7 @@ Public Class frmInserisciCliente
             clientiDaInserire = clientiDaInserire.Substring(0, clientiDaInserire.Length - 1)
             Dim vetClienti() As String = clientiDaInserire.Split(";")
             Call InserisciClienteMassivamente(vetClienti)
-            If inserito = False Then
+            If inserito = False And errore <> "" Then
                 MsgBox(errore)
                 rigaExcel = 0
                 Exit Sub
@@ -391,6 +426,7 @@ Public Class frmInserisciCliente
             frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
+        inserito = True
     End Sub
     Sub InserisciCommesseMassivamente(tabellaExcel As DataTable)
         Dim cliente As String
@@ -538,20 +574,5 @@ Public Class frmInserisciCliente
 
     Private Sub btnCommesse_Click(sender As Object, e As EventArgs) Handles btnCommesse.Click
         frmCommesse.ShowDialog()
-    End Sub
-
-    Private Sub ckbCommesseMassive_CheckedChanged(sender As Object, e As EventArgs) Handles ckbCommesseMassive.CheckedChanged
-        If ckbCommesseMassive.Checked = True Then
-            gboxCliente.Enabled = False
-            gboxNota.Enabled = False
-            gboxCommessa.Enabled = False
-            btnInserisci.Text = "Inserimento Massivo"
-        Else
-            gboxCliente.Enabled = True
-            rdbClienteConfig.Checked = True
-            gboxNota.Enabled = True
-            gboxCommessa.Enabled = True
-            btnInserisci.Text = "Inserisci Cliente e Commessa"
-        End If
     End Sub
 End Class

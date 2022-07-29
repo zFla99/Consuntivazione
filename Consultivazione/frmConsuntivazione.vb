@@ -4,17 +4,25 @@ Imports System.Data.OleDb
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
     ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+    Public ReadOnly fileConfig As String = Application.StartupPath & "\config.ini"
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If controlloPath() = False Then
+        If controlloPathDB() = False Then
             Me.Close()
             Exit Sub
+        End If
+        If controlloPathConfig() = False Then
+            Me.Close()
+            Exit Sub
+        Else
+            Call impostaConfig()
         End If
         Call caricaClientiTempo()
         Call DataGrid()
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
+        lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
     End Sub
-    Function controlloPath() As Boolean
+    Function controlloPathDB() As Boolean
         Dim pathFile As String
         pathFile = strConn.Substring(47, strConn.Length - 47)
         If File.Exists(pathFile) = False Then
@@ -23,14 +31,114 @@ Public Class frmConsuntivazione
         End If
         Return True
     End Function
+    Function controlloPathConfig() As Boolean
+        If File.Exists(fileConfig) = False Then
+            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.)")
+            Return False
+        End If
+        Return True
+    End Function
+    Public coloreIcone As String = ""
+    Sub impostaConfig()
+        Dim sr As New StreamReader(fileConfig)
+        Dim appoggio As String = sr.ReadLine
+        Dim selezionaModifica As String = ""
+
+        Do
+            If appoggio.StartsWith("[") Then
+                selezionaModifica = appoggio.Replace("[", "")
+                selezionaModifica = selezionaModifica.Replace("]", "")
+                appoggio = sr.ReadLine()
+            End If
+            If selezionaModifica = "ItemColor" Then
+                Dim index As Integer = appoggio.IndexOf("=") + 1
+                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+
+                If appoggio.Contains("InserisciMenu_BackColor") Then
+                    lblSfondoColorato.BackColor = ColorTranslator.FromHtml(value)
+                    lblSlide.BackColor = ColorTranslator.FromHtml(value)
+                    pnlInserisci.BackColor = ColorTranslator.FromHtml(value)
+                    pnlMenu.BackColor = ColorTranslator.FromHtml(value)
+
+                ElseIf appoggio.Contains("InserisciMenu_ForeColor") Then
+                    lblGiorno.ForeColor = ColorTranslator.FromHtml(value)
+                    lblTicket.ForeColor = ColorTranslator.FromHtml(value)
+                    lblCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblAggiungiCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblTempo.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbCriticita.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFixed.ForeColor = ColorTranslator.FromHtml(value)
+                    rdbFormazione.ForeColor = ColorTranslator.FromHtml(value)
+                    ckbAltro.ForeColor = ColorTranslator.FromHtml(value)
+                    ckbHome.ForeColor = ColorTranslator.FromHtml(value)
+
+                    lblTicketMssivi.ForeColor = ColorTranslator.FromHtml(value)
+                    lblCommesseMassive.ForeColor = ColorTranslator.FromHtml(value)
+                    lblSeparatore.ForeColor = ColorTranslator.FromHtml(value)
+                    lblTema.ForeColor = ColorTranslator.FromHtml(value)
+                    lblDocumentazione.ForeColor = ColorTranslator.FromHtml(value)
+
+                ElseIf appoggio.Contains("Form_BackColor") Then
+                    Me.BackColor = ColorTranslator.FromHtml(value)
+
+                ElseIf appoggio.Contains("From_ForeColor") Then
+                    lblResoconto.ForeColor = ColorTranslator.FromHtml(value)
+                    lblanno.ForeColor = ColorTranslator.FromHtml(value)
+                    lblMesi.ForeColor = ColorTranslator.FromHtml(value)
+                    lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
+                    lblTempoTot.ForeColor = ColorTranslator.FromHtml(value)
+                End If
+            End If
+            If selezionaModifica = "IconColor" Then
+                If appoggio.Contains("IconsColor") Then
+                    If appoggio.Contains("white") Then
+                        imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
+                        imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
+                        imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
+                        imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
+                        lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
+                        coloreIcone = "white"
+                    Else
+                        imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_nero
+                        imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_nero
+                        imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_nero
+                        imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_nero
+                        lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
+                        coloreIcone = "black"
+                    End If
+                End If
+            End If
+            appoggio = sr.ReadLine()
+        Loop Until appoggio = Nothing
+
+        sr.Close()
+    End Sub
     Private Sub Consuntivazione_Resize(sender As Object, e As EventArgs) Handles Me.Resize
-        'lblSfondoBlu.Width = 265 + pnlInserisci.Location.X + 20
+        frmSfondoNero.Location = New Point(Me.Location.X + 206, Me.Location.Y + 31)
+        If Me.Width > Me.MinimumSize.Width Then
+            frmSfondoNero.Size = New Size(Me.Width - 214, Me.Height - 39)
+        Else
+            frmSfondoNero.Size = New Size(Me.Width - 216, Me.Height - 39)
+        End If
+    End Sub
+    Private Sub frmConsuntivazione_Move(sender As Object, e As EventArgs) Handles Me.Move
+        frmSfondoNero.Location = New Point(Me.Location.X + 206, Me.Location.Y + 31)
+        If Me.Width > Me.MinimumSize.Width Then
+            frmSfondoNero.Size = New Size(Me.Width - 214, Me.Height - 39)
+        Else
+            frmSfondoNero.Size = New Size(Me.Width - 216, Me.Height - 39)
+        End If
+    End Sub
+    Private Sub frmConsuntivazione_Deactivate(sender As Object, e As EventArgs) Handles Me.Deactivate
+        If pnlMenu.Width = 200 Then
+            lblSlide_Click(sender, e)
+        End If
     End Sub
     Private Sub Consuntivazione_Click(sender As Object, e As EventArgs) Handles Me.Click
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
     End Sub
-    Private Sub lblSfondoBlu_Click(sender As Object, e As EventArgs) Handles lblSfondoBlu.Click
+    Private Sub lblSfondoBlu_Click(sender As Object, e As EventArgs) Handles lblSfondoColorato.Click
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
     End Sub
@@ -619,7 +727,7 @@ Public Class frmConsuntivazione
                 If extra = True And tempoExtra = tempo Then
                     link += "&Orelav=" & tempoExtra & "&OreStra=" & tempoExtra & "&OreOrd=0"
                 ElseIf extra = True And tempoExtra <> tempo Then
-                    link += "&Orelav=" & tempo & "&OreStra=" & tempoExtra & "&OreOrd=" & tempo - tempoExtra
+                    link += "&Orelav=" & tempo & "&OreStra=" & tempoExtra & "&OreOrd=" & CStr(CDbl(tempo.Replace(".", ",")) - CDbl(tempoExtra.Replace(".", ","))).Replace(",", ".")
                 Else
                     link += "&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo
                 End If
@@ -804,8 +912,9 @@ ore di lavoro
 (Mensile)"
             Call PulisciCampi()
             pnlInserisci.Visible = False
-            lblSfondoBlu.Visible = False
-            lblDocumentazione.Visible = False
+            lblSfondoColorato.Visible = False
+            lblSlide.Visible = False
+            pnlMenu.Width = 0
             lstMesi.Visible = True
             lblMesi.Visible = True
             lblAnno.Visible = True
@@ -835,8 +944,9 @@ ore di lavoro
 ore di lavoro
 (Giornaliero)"
             pnlInserisci.Visible = True
-            lblSfondoBlu.Visible = True
-            lblDocumentazione.Visible = True
+            lblSfondoColorato.Visible = True
+            lblSlide.Visible = True
+            lblSlide.Left = 2
             lstMesi.Visible = False
             lblMesi.Visible = False
             lblAnno.Visible = False
@@ -849,7 +959,7 @@ ore di lavoro
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, (pnlMensile.Parent.Height \ 2) - (pnlMensile.Height \ 2) - 20)
             Call AggiornaDG(giornoOggi, False)
-            pnlMensile.Width = Me.Width - lblSfondoBlu.Width - 35
+            pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 35
         End If
     End Sub
     Sub AggiornaDGMensile(Mese As String, Anno As String)
@@ -1461,7 +1571,7 @@ ore di lavoro
         Process.Start(path)
     End Sub
 
-    Private Sub lblTicketMssivi_Click(sender As Object, e As EventArgs) Handles lblTicketMssivi.Click
+    Private Sub lblTicketMssivi_Click(sender As Object, e As EventArgs) Handles lblTicketMssivi.Click, imgTicketMassivi.Click
         Dim msgResult As MsgBoxResult = MsgBox("Vuoi scaricare il Template per l'inserimento massivo?", MsgBoxStyle.YesNoCancel)
         If msgResult = MsgBoxResult.Yes Then
             Call scaricaTemplate()
@@ -1563,7 +1673,7 @@ ore di lavoro
     Dim errore As String = ""
     Sub uploadTemplate(tabellaExcel As DataTable)
         Dim cn As OleDbConnection
-        Dim cmd As New OleDbCommand
+        Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
@@ -1665,5 +1775,151 @@ ore di lavoro
         Next
         cn.Close()
         inserito = True
+    End Sub
+
+    Dim menuChiuso As Boolean = True
+    Public Sub lblSlide_Click(sender As Object, e As EventArgs) Handles lblSlide.Click
+        If pnlMenu.Width = 0 Then
+            menuChiuso = True
+            frmSfondoNero.Show()
+            frmSfondoNero.Location = New Point(Me.Location.X + 8, Me.Location.Y + 31) 'X = + 206
+            If Me.Width > Me.MinimumSize.Width Then
+                frmSfondoNero.Size = New Size(Me.Width - 14, Me.Height - 39) 'width = - 214
+            Else
+                frmSfondoNero.Size = New Size(Me.Width - 16, Me.Height - 39) 'width = - 216
+            End If
+        Else
+            menuChiuso = False
+            frmSfondoNero.Close()
+        End If
+        Me.Activate()
+        TimerSlide.Start()
+    End Sub
+
+    Private Sub TimerSlide_Tick(sender As Object, e As EventArgs) Handles TimerSlide.Tick
+        If menuChiuso = True Then
+            pnlMenu.Width += 20
+            If lblSlide.Left < 168 Then
+                lblSlide.Left += 16.5
+            End If
+            frmSfondoNero.Left += 20
+            frmSfondoNero.Width -= 20
+            If pnlMenu.Width = 200 Then
+                If coloreIcone = "white" Then
+                    lblSlide.Image = Consuntivazione.My.Resources.Resources.menuAperto_32x32_bianco
+                Else
+                    lblSlide.Image = Consuntivazione.My.Resources.Resources.menuAperto_32x32_nero
+                End If
+                frmSfondoNero.Left = Me.Location.X + 206
+                If Me.Width > Me.MinimumSize.Width Then
+                    frmSfondoNero.Width = Me.Width - 214
+                Else
+                    frmSfondoNero.Width = Me.Width - 216
+                End If
+                TimerSlide.Stop()
+            End If
+        Else
+            pnlMenu.Width -= 20
+            lblSlide.Left -= 16.5
+            If pnlMenu.Width = 0 Then
+                If coloreIcone = "white" Then
+                    lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
+                Else
+                    lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
+                End If
+                TimerSlide.Stop()
+            End If
+        End If
+    End Sub
+
+    Private Sub lblCommesseMassive_Click(sender As Object, e As EventArgs) Handles lblCommesseMassive.Click, imgCommesseMassive.Click
+        frmInserisciCliente.InserisciMassivamente()
+    End Sub
+    Private Sub lblTema_Click(sender As Object, e As MouseEventArgs) Handles lblTema.Click, imgTema.Click
+        frmTema.ShowDialog()
+        If frmTema.coloriModificati = True Then
+            Me.Close()
+        End If
+    End Sub
+    Sub colorHover(ByRef red As Integer, ByRef green As Integer, ByRef blu As Integer)
+        If red - 20 <= 0 Then
+            red = 0
+        Else
+            red -= 20
+        End If
+
+        If green - 20 <= 0 Then
+            green = 0
+        Else
+            green -= 20
+        End If
+
+        If blu - 20 <= 0 Then
+            blu = 0
+        Else
+            blu -= 20
+        End If
+    End Sub
+    Private Sub lblTicketMssivi_MouseHover(sender As Object, e As EventArgs) Handles lblTicketMssivi.MouseHover, imgTicketMassivi.MouseHover
+        Dim red As Integer = lblTicketMssivi.BackColor.R
+        Dim green As Integer = lblTicketMssivi.BackColor.G
+        Dim blu As Integer = lblTicketMssivi.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblTicketMssivi.BackColor = Color.FromArgb(red, green, blu)
+        imgTicketMassivi.BackColor = Color.FromArgb(red, green, blu)
+    End Sub
+
+    Private Sub lblTicketMssivi_MouseLeave(sender As Object, e As EventArgs) Handles lblTicketMssivi.MouseLeave, imgTicketMassivi.MouseLeave
+        lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
+        imgTicketMassivi.BackColor = lblSfondoColorato.BackColor
+    End Sub
+
+    Private Sub lblCommesseMassive_MouseHover(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseHover, imgCommesseMassive.MouseHover
+        Dim red As Integer = lblCommesseMassive.BackColor.R
+        Dim green As Integer = lblCommesseMassive.BackColor.G
+        Dim blu As Integer = lblCommesseMassive.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblCommesseMassive.BackColor = Color.FromArgb(red, green, blu)
+        imgCommesseMassive.BackColor = Color.FromArgb(red, green, blu)
+    End Sub
+
+    Private Sub lblCommesseMassive_MouseLeave(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseLeave, imgCommesseMassive.MouseLeave
+        lblCommesseMassive.BackColor = lblSfondoColorato.BackColor
+        imgCommesseMassive.BackColor = lblSfondoColorato.BackColor
+    End Sub
+    Private Sub lblTema_MouseHover(sender As Object, e As EventArgs) Handles lblTema.MouseHover, imgTema.MouseHover
+        Dim red As Integer = lblTema.BackColor.R
+        Dim green As Integer = lblTema.BackColor.G
+        Dim blu As Integer = lblTema.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblTema.BackColor = Color.FromArgb(red, green, blu)
+        imgTema.BackColor = Color.FromArgb(red, green, blu)
+    End Sub
+
+    Private Sub lblTema_MouseLeave(sender As Object, e As EventArgs) Handles lblTema.MouseLeave
+        lblTema.BackColor = lblSfondoColorato.BackColor
+        imgTema.BackColor = lblSfondoColorato.BackColor
+    End Sub
+
+    Private Sub lblDocumentazione_MouseHover(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseHover, imgDocumentazione.MouseHover
+        Dim red As Integer = lblDocumentazione.BackColor.R
+        Dim green As Integer = lblDocumentazione.BackColor.G
+        Dim blu As Integer = lblDocumentazione.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblDocumentazione.BackColor = Color.FromArgb(red, green, blu)
+        imgDocumentazione.BackColor = Color.FromArgb(red, green, blu)
+    End Sub
+
+    Private Sub lblDocumentazione_MouseLeave(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseLeave, imgDocumentazione.MouseLeave
+        lblDocumentazione.BackColor = lblSfondoColorato.BackColor
+        imgDocumentazione.BackColor = lblSfondoColorato.BackColor
     End Sub
 End Class
