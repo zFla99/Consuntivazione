@@ -4,7 +4,7 @@ Imports System.Data.OleDb
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
     ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
-    Public ReadOnly fileConfig As String = Application.StartupPath & "\config.ini"
+    Public fileConfig As String
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If controlloPathDB() = False Then
             Me.Close()
@@ -32,8 +32,14 @@ Public Class frmConsuntivazione
         Return True
     End Function
     Function controlloPathConfig() As Boolean
+        fileConfig = Application.StartupPath
+        If fileConfig.Contains("bin\Debug") Then
+            fileConfig = fileConfig.Replace("bin\Debug", "Config\config.ini")
+        Else
+            fileConfig += "\Config\config.ini"
+        End If
         If File.Exists(fileConfig) = False Then
-            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.)")
+            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.")
             Return False
         End If
         Return True

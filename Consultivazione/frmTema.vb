@@ -210,7 +210,8 @@ Public Class frmTema
 
     Private Sub btnDefault_Click(sender As Object, e As EventArgs) Handles btnDefault.Click
         If MsgBox("Sei sicuro di voler rimettere le impostazioni di default? Non potrai piu tornare indietro", MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation) = MsgBoxResult.Yes Then
-            Dim fileConfigDefault As String = Application.StartupPath & "\configDefault.ini"
+            Dim fileConfigDefault As String = fileConfig
+            fileConfigDefault = fileConfigDefault.Replace("\config.ini", "\configDefault.ini")
             File.Copy(fileConfigDefault, fileConfig, True)
             MsgBox("I colori sono stati modificati correttamente. L'applicazione verrà chiusa per apportare le modifiche.", MsgBoxStyle.Information)
             coloriModificati = True
