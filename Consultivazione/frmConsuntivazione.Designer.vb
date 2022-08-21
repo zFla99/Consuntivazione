@@ -24,6 +24,8 @@ Partial Class frmConsuntivazione
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConsuntivazione))
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
         Me.btnCarica = New System.Windows.Forms.Button()
@@ -39,13 +41,29 @@ Partial Class frmConsuntivazione
         Me.lblTempoTot = New System.Windows.Forms.Label()
         Me.lblGiorno_Mese = New System.Windows.Forms.Label()
         Me.pnlMensile = New System.Windows.Forms.Panel()
+        Me.pnlFiltri = New System.Windows.Forms.Panel()
+        Me.btnCerca = New System.Windows.Forms.Button()
+        Me.ckbDataSelezionata = New System.Windows.Forms.CheckBox()
+        Me.cmbNotaFiltro = New System.Windows.Forms.ComboBox()
+        Me.cmbConsuntivazioneFiltro = New System.Windows.Forms.ComboBox()
+        Me.cmbClienteFiltro = New System.Windows.Forms.ComboBox()
+        Me.dtpDataAFiltro = New System.Windows.Forms.DateTimePicker()
+        Me.dtpDataDaFiltro = New System.Windows.Forms.DateTimePicker()
+        Me.txtTicketFiltro = New System.Windows.Forms.TextBox()
         Me.nudAnno = New System.Windows.Forms.NumericUpDown()
-        Me.lstMesi = New System.Windows.Forms.ListBox()
-        Me.lblResoconto = New System.Windows.Forms.Label()
-        Me.lblAnno = New System.Windows.Forms.Label()
         Me.lblMesi = New System.Windows.Forms.Label()
+        Me.lstMesi = New System.Windows.Forms.ListBox()
+        Me.lblConsuntivatoFiltro = New System.Windows.Forms.Label()
+        Me.lblDataDaFiltro = New System.Windows.Forms.Label()
+        Me.lblNotaFiltro = New System.Windows.Forms.Label()
+        Me.lblClienteFiltro = New System.Windows.Forms.Label()
+        Me.lblDataAFiltro = New System.Windows.Forms.Label()
+        Me.lblTicketFiltro = New System.Windows.Forms.Label()
+        Me.lblAnno = New System.Windows.Forms.Label()
+        Me.lblFiltri = New System.Windows.Forms.Label()
         Me.btnConsuntivaTutto = New System.Windows.Forms.Button()
         Me.btnDividiXCliente = New System.Windows.Forms.Button()
+        Me.lblFiltriSelezionati = New System.Windows.Forms.Label()
         Me.lblSfondoColorato = New System.Windows.Forms.Label()
         Me.pnlInserisci = New System.Windows.Forms.Panel()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
@@ -70,8 +88,10 @@ Partial Class frmConsuntivazione
         Me.lblCommesseMassive = New System.Windows.Forms.Label()
         Me.TimerSlide = New System.Windows.Forms.Timer(Me.components)
         Me.lblSlide = New System.Windows.Forms.Label()
+        Me.TimerFiltri = New System.Windows.Forms.Timer(Me.components)
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
+        Me.pnlFiltri.SuspendLayout()
         CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlInserisci.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -82,24 +102,27 @@ Partial Class frmConsuntivazione
         '
         Me.dgvCalendario.AllowUserToAddRows = False
         Me.dgvCalendario.AllowUserToDeleteRows = False
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
+        Me.dgvCalendario.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.dgvCalendario.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle1
-        Me.dgvCalendario.Location = New System.Drawing.Point(45, 46)
-        Me.dgvCalendario.MinimumSize = New System.Drawing.Size(660, 426)
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.ControlLight
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle2
+        Me.dgvCalendario.Location = New System.Drawing.Point(45, 55)
         Me.dgvCalendario.Name = "dgvCalendario"
         Me.dgvCalendario.ReadOnly = True
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.dgvCalendario.RowsDefaultCellStyle = DataGridViewCellStyle3
         Me.dgvCalendario.Size = New System.Drawing.Size(680, 426)
         Me.dgvCalendario.TabIndex = 17
         '
@@ -217,9 +240,10 @@ Partial Class frmConsuntivazione
         '
         Me.lblTempoTot.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblTempoTot.AutoSize = True
-        Me.lblTempoTot.Location = New System.Drawing.Point(685, 505)
+        Me.lblTempoTot.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.lblTempoTot.Location = New System.Drawing.Point(686, 524)
         Me.lblTempoTot.Name = "lblTempoTot"
-        Me.lblTempoTot.Size = New System.Drawing.Size(15, 17)
+        Me.lblTempoTot.Size = New System.Drawing.Size(13, 15)
         Me.lblTempoTot.TabIndex = 18
         Me.lblTempoTot.Text = "0"
         '
@@ -228,9 +252,10 @@ Partial Class frmConsuntivazione
         Me.lblGiorno_Mese.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblGiorno_Mese.AutoSize = True
         Me.lblGiorno_Mese.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.lblGiorno_Mese.Location = New System.Drawing.Point(586, 488)
+        Me.lblGiorno_Mese.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.lblGiorno_Mese.Location = New System.Drawing.Point(604, 507)
         Me.lblGiorno_Mese.Name = "lblGiorno_Mese"
-        Me.lblGiorno_Mese.Size = New System.Drawing.Size(84, 51)
+        Me.lblGiorno_Mese.Size = New System.Drawing.Size(73, 45)
         Me.lblGiorno_Mese.TabIndex = 18
         Me.lblGiorno_Mese.Text = "Totale " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ore di lavoro" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Giornaliero)"
         Me.lblGiorno_Mese.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -241,88 +266,286 @@ Partial Class frmConsuntivazione
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlMensile.BackColor = System.Drawing.Color.Transparent
-        Me.pnlMensile.Controls.Add(Me.nudAnno)
-        Me.pnlMensile.Controls.Add(Me.lstMesi)
-        Me.pnlMensile.Controls.Add(Me.lblResoconto)
-        Me.pnlMensile.Controls.Add(Me.lblAnno)
-        Me.pnlMensile.Controls.Add(Me.lblMesi)
+        Me.pnlMensile.Controls.Add(Me.pnlFiltri)
         Me.pnlMensile.Controls.Add(Me.lblGiorno_Mese)
         Me.pnlMensile.Controls.Add(Me.lblTempoTot)
         Me.pnlMensile.Controls.Add(Me.dgvCalendario)
+        Me.pnlMensile.Controls.Add(Me.lblFiltri)
         Me.pnlMensile.Controls.Add(Me.btnConsuntivaTutto)
         Me.pnlMensile.Controls.Add(Me.btnDividiXCliente)
-        Me.pnlMensile.Location = New System.Drawing.Point(327, 15)
+        Me.pnlMensile.Controls.Add(Me.lblFiltriSelezionati)
+        Me.pnlMensile.Location = New System.Drawing.Point(327, 0)
         Me.pnlMensile.Name = "pnlMensile"
-        Me.pnlMensile.Size = New System.Drawing.Size(770, 550)
+        Me.pnlMensile.Size = New System.Drawing.Size(770, 566)
         Me.pnlMensile.TabIndex = 19
+        '
+        'pnlFiltri
+        '
+        Me.pnlFiltri.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlFiltri.Controls.Add(Me.btnCerca)
+        Me.pnlFiltri.Controls.Add(Me.ckbDataSelezionata)
+        Me.pnlFiltri.Controls.Add(Me.cmbNotaFiltro)
+        Me.pnlFiltri.Controls.Add(Me.cmbConsuntivazioneFiltro)
+        Me.pnlFiltri.Controls.Add(Me.cmbClienteFiltro)
+        Me.pnlFiltri.Controls.Add(Me.dtpDataAFiltro)
+        Me.pnlFiltri.Controls.Add(Me.dtpDataDaFiltro)
+        Me.pnlFiltri.Controls.Add(Me.txtTicketFiltro)
+        Me.pnlFiltri.Controls.Add(Me.nudAnno)
+        Me.pnlFiltri.Controls.Add(Me.lblMesi)
+        Me.pnlFiltri.Controls.Add(Me.lstMesi)
+        Me.pnlFiltri.Controls.Add(Me.lblConsuntivatoFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblDataDaFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblNotaFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblClienteFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblDataAFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblTicketFiltro)
+        Me.pnlFiltri.Controls.Add(Me.lblAnno)
+        Me.pnlFiltri.Location = New System.Drawing.Point(45, 1)
+        Me.pnlFiltri.Name = "pnlFiltri"
+        Me.pnlFiltri.Size = New System.Drawing.Size(680, 0)
+        Me.pnlFiltri.TabIndex = 27
+        '
+        'btnCerca
+        '
+        Me.btnCerca.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnCerca.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.btnCerca.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCerca.FlatStyle = System.Windows.Forms.FlatStyle.System
+        Me.btnCerca.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
+        Me.btnCerca.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btnCerca.Location = New System.Drawing.Point(55, -40)
+        Me.btnCerca.Name = "btnCerca"
+        Me.btnCerca.Size = New System.Drawing.Size(66, 27)
+        Me.btnCerca.TabIndex = 28
+        Me.btnCerca.Text = "Cerca"
+        Me.btnCerca.UseVisualStyleBackColor = False
+        '
+        'ckbDataSelezionata
+        '
+        Me.ckbDataSelezionata.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ckbDataSelezionata.AutoSize = True
+        Me.ckbDataSelezionata.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.ckbDataSelezionata.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
+        Me.ckbDataSelezionata.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.ckbDataSelezionata.Location = New System.Drawing.Point(533, -36)
+        Me.ckbDataSelezionata.Name = "ckbDataSelezionata"
+        Me.ckbDataSelezionata.Size = New System.Drawing.Size(104, 20)
+        Me.ckbDataSelezionata.TabIndex = 28
+        Me.ckbDataSelezionata.Text = "Seleziona Data"
+        Me.ckbDataSelezionata.UseVisualStyleBackColor = True
+        '
+        'cmbNotaFiltro
+        '
+        Me.cmbNotaFiltro.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.cmbNotaFiltro.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cmbNotaFiltro.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cmbNotaFiltro.Items.AddRange(New Object() {"Criticità", "Fixed", "Formazione", "Home"})
+        Me.cmbNotaFiltro.Location = New System.Drawing.Point(341, -79)
+        Me.cmbNotaFiltro.MaxLength = 2
+        Me.cmbNotaFiltro.Name = "cmbNotaFiltro"
+        Me.cmbNotaFiltro.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbNotaFiltro.Size = New System.Drawing.Size(91, 25)
+        Me.cmbNotaFiltro.Sorted = True
+        Me.cmbNotaFiltro.TabIndex = 27
+        '
+        'cmbConsuntivazioneFiltro
+        '
+        Me.cmbConsuntivazioneFiltro.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.cmbConsuntivazioneFiltro.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cmbConsuntivazioneFiltro.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cmbConsuntivazioneFiltro.Items.AddRange(New Object() {"NO", "SI"})
+        Me.cmbConsuntivazioneFiltro.Location = New System.Drawing.Point(341, -110)
+        Me.cmbConsuntivazioneFiltro.MaxLength = 2
+        Me.cmbConsuntivazioneFiltro.Name = "cmbConsuntivazioneFiltro"
+        Me.cmbConsuntivazioneFiltro.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbConsuntivazioneFiltro.Size = New System.Drawing.Size(57, 25)
+        Me.cmbConsuntivazioneFiltro.Sorted = True
+        Me.cmbConsuntivazioneFiltro.TabIndex = 27
+        '
+        'cmbClienteFiltro
+        '
+        Me.cmbClienteFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.cmbClienteFiltro.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cmbClienteFiltro.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cmbClienteFiltro.Location = New System.Drawing.Point(118, -81)
+        Me.cmbClienteFiltro.MaxLength = 30
+        Me.cmbClienteFiltro.Name = "cmbClienteFiltro"
+        Me.cmbClienteFiltro.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbClienteFiltro.Size = New System.Drawing.Size(110, 25)
+        Me.cmbClienteFiltro.TabIndex = 27
+        '
+        'dtpDataAFiltro
+        '
+        Me.dtpDataAFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.dtpDataAFiltro.CustomFormat = "dd/MM/yyyy"
+        Me.dtpDataAFiltro.Enabled = False
+        Me.dtpDataAFiltro.Format = System.Windows.Forms.DateTimePickerFormat.Custom
+        Me.dtpDataAFiltro.Location = New System.Drawing.Point(533, -79)
+        Me.dtpDataAFiltro.Name = "dtpDataAFiltro"
+        Me.dtpDataAFiltro.Size = New System.Drawing.Size(102, 23)
+        Me.dtpDataAFiltro.TabIndex = 10
+        '
+        'dtpDataDaFiltro
+        '
+        Me.dtpDataDaFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.dtpDataDaFiltro.Checked = False
+        Me.dtpDataDaFiltro.CustomFormat = "dd/MM/yyyy"
+        Me.dtpDataDaFiltro.Enabled = False
+        Me.dtpDataDaFiltro.Format = System.Windows.Forms.DateTimePickerFormat.Custom
+        Me.dtpDataDaFiltro.Location = New System.Drawing.Point(533, -110)
+        Me.dtpDataDaFiltro.Name = "dtpDataDaFiltro"
+        Me.dtpDataDaFiltro.Size = New System.Drawing.Size(102, 23)
+        Me.dtpDataDaFiltro.TabIndex = 10
+        '
+        'txtTicketFiltro
+        '
+        Me.txtTicketFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.txtTicketFiltro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.txtTicketFiltro.Location = New System.Drawing.Point(118, -110)
+        Me.txtTicketFiltro.MaxLength = 10
+        Me.txtTicketFiltro.Name = "txtTicketFiltro"
+        Me.txtTicketFiltro.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.txtTicketFiltro.Size = New System.Drawing.Size(110, 23)
+        Me.txtTicketFiltro.TabIndex = 1
         '
         'nudAnno
         '
-        Me.nudAnno.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.nudAnno.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.nudAnno.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.nudAnno.Enabled = False
         Me.nudAnno.ImeMode = System.Windows.Forms.ImeMode.NoControl
-        Me.nudAnno.Location = New System.Drawing.Point(234, 17)
+        Me.nudAnno.Location = New System.Drawing.Point(131, -38)
         Me.nudAnno.Maximum = New Decimal(New Integer() {2999, 0, 0, 0})
         Me.nudAnno.Minimum = New Decimal(New Integer() {2022, 0, 0, 0})
         Me.nudAnno.Name = "nudAnno"
         Me.nudAnno.Size = New System.Drawing.Size(55, 23)
         Me.nudAnno.TabIndex = 23
         Me.nudAnno.Value = New Decimal(New Integer() {2022, 0, 0, 0})
-        Me.nudAnno.Visible = False
+        '
+        'lblMesi
+        '
+        Me.lblMesi.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.lblMesi.AutoSize = True
+        Me.lblMesi.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblMesi.Location = New System.Drawing.Point(197, -38)
+        Me.lblMesi.Name = "lblMesi"
+        Me.lblMesi.Size = New System.Drawing.Size(49, 20)
+        Me.lblMesi.TabIndex = 22
+        Me.lblMesi.Text = "Mese:"
+        Me.lblMesi.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'lstMesi
         '
-        Me.lstMesi.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lstMesi.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.lstMesi.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lstMesi.ColumnWidth = 30
         Me.lstMesi.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lstMesi.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lstMesi.ItemHeight = 17
         Me.lstMesi.Items.AddRange(New Object() {"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8", "   9", "  10", "  11", "  12"})
-        Me.lstMesi.Location = New System.Drawing.Point(354, 22)
+        Me.lstMesi.Location = New System.Drawing.Point(252, -36)
         Me.lstMesi.MultiColumn = True
         Me.lstMesi.Name = "lstMesi"
         Me.lstMesi.Size = New System.Drawing.Size(365, 19)
         Me.lstMesi.TabIndex = 20
-        Me.lstMesi.Visible = False
         '
-        'lblResoconto
+        'lblConsuntivatoFiltro
         '
-        Me.lblResoconto.AutoSize = True
-        Me.lblResoconto.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 15.0!, System.Drawing.FontStyle.Bold)
-        Me.lblResoconto.Location = New System.Drawing.Point(39, 14)
-        Me.lblResoconto.Name = "lblResoconto"
-        Me.lblResoconto.Size = New System.Drawing.Size(109, 27)
-        Me.lblResoconto.TabIndex = 21
-        Me.lblResoconto.Text = "Resoconto"
-        Me.lblResoconto.Visible = False
+        Me.lblConsuntivatoFiltro.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.lblConsuntivatoFiltro.AutoSize = True
+        Me.lblConsuntivatoFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblConsuntivatoFiltro.Location = New System.Drawing.Point(228, -109)
+        Me.lblConsuntivatoFiltro.Name = "lblConsuntivatoFiltro"
+        Me.lblConsuntivatoFiltro.Size = New System.Drawing.Size(107, 20)
+        Me.lblConsuntivatoFiltro.TabIndex = 22
+        Me.lblConsuntivatoFiltro.Text = "Consuntivato:"
+        Me.lblConsuntivatoFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblDataDaFiltro
+        '
+        Me.lblDataDaFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblDataDaFiltro.AutoSize = True
+        Me.lblDataDaFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblDataDaFiltro.Location = New System.Drawing.Point(459, -109)
+        Me.lblDataDaFiltro.Name = "lblDataDaFiltro"
+        Me.lblDataDaFiltro.Size = New System.Drawing.Size(68, 20)
+        Me.lblDataDaFiltro.TabIndex = 22
+        Me.lblDataDaFiltro.Text = "Data Da:"
+        Me.lblDataDaFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblNotaFiltro
+        '
+        Me.lblNotaFiltro.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.lblNotaFiltro.AutoSize = True
+        Me.lblNotaFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblNotaFiltro.Location = New System.Drawing.Point(228, -79)
+        Me.lblNotaFiltro.Name = "lblNotaFiltro"
+        Me.lblNotaFiltro.Size = New System.Drawing.Size(46, 20)
+        Me.lblNotaFiltro.TabIndex = 22
+        Me.lblNotaFiltro.Text = "Nota:"
+        Me.lblNotaFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblClienteFiltro
+        '
+        Me.lblClienteFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.lblClienteFiltro.AutoSize = True
+        Me.lblClienteFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblClienteFiltro.Location = New System.Drawing.Point(51, -79)
+        Me.lblClienteFiltro.Name = "lblClienteFiltro"
+        Me.lblClienteFiltro.Size = New System.Drawing.Size(62, 20)
+        Me.lblClienteFiltro.TabIndex = 22
+        Me.lblClienteFiltro.Text = "Cliente:"
+        Me.lblClienteFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblDataAFiltro
+        '
+        Me.lblDataAFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblDataAFiltro.AutoSize = True
+        Me.lblDataAFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblDataAFiltro.Location = New System.Drawing.Point(459, -79)
+        Me.lblDataAFiltro.Name = "lblDataAFiltro"
+        Me.lblDataAFiltro.Size = New System.Drawing.Size(59, 20)
+        Me.lblDataAFiltro.TabIndex = 22
+        Me.lblDataAFiltro.Text = "Data A:"
+        Me.lblDataAFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblTicketFiltro
+        '
+        Me.lblTicketFiltro.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.lblTicketFiltro.AutoSize = True
+        Me.lblTicketFiltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
+        Me.lblTicketFiltro.Location = New System.Drawing.Point(51, -109)
+        Me.lblTicketFiltro.Name = "lblTicketFiltro"
+        Me.lblTicketFiltro.Size = New System.Drawing.Size(54, 20)
+        Me.lblTicketFiltro.TabIndex = 22
+        Me.lblTicketFiltro.Text = "Ticket:"
+        Me.lblTicketFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'lblAnno
         '
-        Me.lblAnno.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblAnno.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.lblAnno.AutoSize = True
         Me.lblAnno.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblAnno.Location = New System.Drawing.Point(179, 20)
+        Me.lblAnno.Location = New System.Drawing.Point(76, -38)
         Me.lblAnno.Name = "lblAnno"
         Me.lblAnno.Size = New System.Drawing.Size(49, 20)
         Me.lblAnno.TabIndex = 22
         Me.lblAnno.Text = "Anno:"
         Me.lblAnno.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.lblAnno.Visible = False
         '
-        'lblMesi
+        'lblFiltri
         '
-        Me.lblMesi.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblMesi.AutoSize = True
-        Me.lblMesi.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!)
-        Me.lblMesi.Location = New System.Drawing.Point(299, 20)
-        Me.lblMesi.Name = "lblMesi"
-        Me.lblMesi.Size = New System.Drawing.Size(49, 20)
-        Me.lblMesi.TabIndex = 22
-        Me.lblMesi.Text = "Mese:"
-        Me.lblMesi.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.lblMesi.Visible = False
+        Me.lblFiltri.BackColor = System.Drawing.Color.Transparent
+        Me.lblFiltri.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblFiltri.ForeColor = System.Drawing.Color.White
+        Me.lblFiltri.Image = Global.Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
+        Me.lblFiltri.Location = New System.Drawing.Point(42, 30)
+        Me.lblFiltri.Name = "lblFiltri"
+        Me.lblFiltri.Size = New System.Drawing.Size(16, 16)
+        Me.lblFiltri.TabIndex = 26
+        Me.lblFiltri.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.lblFiltri.Visible = False
         '
         'btnConsuntivaTutto
         '
@@ -332,7 +555,7 @@ Partial Class frmConsuntivazione
         Me.btnConsuntivaTutto.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnConsuntivaTutto.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnConsuntivaTutto.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(322, 488)
+        Me.btnConsuntivaTutto.Location = New System.Drawing.Point(322, 504)
         Me.btnConsuntivaTutto.Name = "btnConsuntivaTutto"
         Me.btnConsuntivaTutto.Size = New System.Drawing.Size(147, 51)
         Me.btnConsuntivaTutto.TabIndex = 5
@@ -348,13 +571,23 @@ Partial Class frmConsuntivazione
         Me.btnDividiXCliente.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnDividiXCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
         Me.btnDividiXCliente.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnDividiXCliente.Location = New System.Drawing.Point(64, 488)
+        Me.btnDividiXCliente.Location = New System.Drawing.Point(64, 504)
         Me.btnDividiXCliente.Name = "btnDividiXCliente"
         Me.btnDividiXCliente.Size = New System.Drawing.Size(153, 51)
         Me.btnDividiXCliente.TabIndex = 5
         Me.btnDividiXCliente.Text = "Dividi per Cliente"
         Me.btnDividiXCliente.UseVisualStyleBackColor = False
         Me.btnDividiXCliente.Visible = False
+        '
+        'lblFiltriSelezionati
+        '
+        Me.lblFiltriSelezionati.AutoSize = True
+        Me.lblFiltriSelezionati.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblFiltriSelezionati.Location = New System.Drawing.Point(63, 28)
+        Me.lblFiltriSelezionati.Name = "lblFiltriSelezionati"
+        Me.lblFiltriSelezionati.Size = New System.Drawing.Size(0, 19)
+        Me.lblFiltriSelezionati.TabIndex = 21
+        Me.lblFiltriSelezionati.Visible = False
         '
         'lblSfondoColorato
         '
@@ -404,6 +637,8 @@ Partial Class frmConsuntivazione
         'btnCancellaFiltri
         '
         Me.btnCancellaFiltri.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCancellaFiltri.FlatStyle = System.Windows.Forms.FlatStyle.System
+        Me.btnCancellaFiltri.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
         Me.btnCancellaFiltri.Location = New System.Drawing.Point(16, 120)
         Me.btnCancellaFiltri.Name = "btnCancellaFiltri"
         Me.btnCancellaFiltri.Size = New System.Drawing.Size(181, 25)
@@ -632,7 +867,7 @@ Partial Class frmConsuntivazione
         '
         'TimerSlide
         '
-        Me.TimerSlide.Interval = 1
+        Me.TimerSlide.Interval = 10
         '
         'lblSlide
         '
@@ -645,6 +880,10 @@ Partial Class frmConsuntivazione
         Me.lblSlide.Size = New System.Drawing.Size(32, 32)
         Me.lblSlide.TabIndex = 24
         Me.lblSlide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'TimerFiltri
+        '
+        Me.TimerFiltri.Interval = 10
         '
         'frmConsuntivazione
         '
@@ -666,6 +905,8 @@ Partial Class frmConsuntivazione
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlMensile.ResumeLayout(False)
         Me.pnlMensile.PerformLayout()
+        Me.pnlFiltri.ResumeLayout(False)
+        Me.pnlFiltri.PerformLayout()
         CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlInserisci.ResumeLayout(False)
         Me.pnlInserisci.PerformLayout()
@@ -691,7 +932,7 @@ Partial Class frmConsuntivazione
     Friend WithEvents lblTempoTot As Label
     Friend WithEvents lblGiorno_Mese As Label
     Friend WithEvents pnlMensile As Panel
-    Friend WithEvents lblResoconto As Label
+    Friend WithEvents lblFiltriSelezionati As Label
     Friend WithEvents lblMesi As Label
     Friend WithEvents lstMesi As ListBox
     Friend WithEvents btnConsuntivaTutto As Button
@@ -722,4 +963,21 @@ Partial Class frmConsuntivazione
     Friend WithEvents imgTicketMassivi As Label
     Friend WithEvents imgCommesseMassive As Label
     Friend WithEvents lblSeparatore As Label
+    Friend WithEvents lblFiltri As Label
+    Friend WithEvents pnlFiltri As Panel
+    Friend WithEvents cmbConsuntivazioneFiltro As ComboBox
+    Friend WithEvents cmbClienteFiltro As ComboBox
+    Friend WithEvents txtTicketFiltro As TextBox
+    Friend WithEvents lblConsuntivatoFiltro As Label
+    Friend WithEvents lblDataDaFiltro As Label
+    Friend WithEvents lblNotaFiltro As Label
+    Friend WithEvents lblClienteFiltro As Label
+    Friend WithEvents lblDataAFiltro As Label
+    Friend WithEvents lblTicketFiltro As Label
+    Friend WithEvents cmbNotaFiltro As ComboBox
+    Friend WithEvents dtpDataAFiltro As DateTimePicker
+    Friend WithEvents dtpDataDaFiltro As DateTimePicker
+    Friend WithEvents TimerFiltri As Timer
+    Friend WithEvents ckbDataSelezionata As CheckBox
+    Friend WithEvents btnCerca As Button
 End Class

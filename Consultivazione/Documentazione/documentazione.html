@@ -43,7 +43,61 @@
                 <li><b>Altro:</b> nota libera</li>
                 <li><b>Home:</b> indica lo “Smart Working”</li>
                 <li><b>Cancella Filtri:</b> tasto che deflegga tutti i campi</li>
+            </ul><br>
+            <p>Inoltre, sempre a sinistra è possibile accedere ad un menu aggiuntivo con opzioni utili premendo le 3 lineette:</p>
+            <img src="Immagini/menuImpostazioni.png">
+            <p>Il menu è diviso nel seguente modo.</p>
+            <h4>Lato Superiore</h4>
+            <ul>
+                <li><b>Inserisci Ticket Massivamente:</b> con questo tasto è possibile inserire massivamente dei ticket da un Excel di template</li>
+                <li><b>Inserisci Commesse Massivamente:</b> con questo tasto è possibile inserire massivamente delle commesse da un Excel di template</li>
             </ul>
+            <p>Gli step da eseguire sono uguali per entrambi.</p>
+            <img src="Immagini/downloadTemplate.png">
+            <ul>
+                <li><b>Si:</b> non si possiede del template e si procede con il download sul Desktop</li>
+                <li><b>No:</b> si possiede già il template e si procede con il caricamento</li>
+                <li><b>Annulla:</b> si annulla il menu</li>
+            </ul><br>
+            <p><b>In caso di "Si":</b></p>
+            <p>Nel template sarà necessario compilare queste informazioni:</p>
+            <img src="Immagini/templateTicket.png">
+            <p><b>N.B.</b></p>
+            <p>Inserire i campi con buon senso.</p>
+            <ul>
+                <li>Se le colonne <b>TICKET</b>, <b>CLIENTE</b>, <b>TEMPO</b>, <b>DATA</b> o <b>CONSUNTIVATO</b> sono vuote, il record verrà scartato.</li>
+                <li>Se la colonna <b>CLIENTE</b> contiene un cliente che non è ancora stato valorizzato sul programma, il file non viene importato segnalando la causa</li>
+                <li>La colonna <b>TEMPO</b> deve avere massimo 2 cifre decimali (ma puo anche non averne)</li>
+                <li>La colonna <b>DATA</b> deve essere valorizzata con <b>gg/mm/yyyy</b></li>
+                <li>La colonna <b>CONSUNTIVATO</b> deve essere valorizzata con <b>SI/NO</b></li>
+            </ul>
+            <p>Un esempio:</p>
+            <img src="Immagini/esempioInserimentoTemplate.png"><br><br>
+            <p><b>Per le commesse invece:</b></p>
+            <img src="Immagini/templateCommesse.png">
+            <ul>
+                <li><b>Cliente:</b> nome del cliente dato da programma</li>
+                <li><b>Nota:</b> nota da assegnare alla commessa (Fixed, Formazione, ecc.). Questo nome è importante per richiamare la commessa nel programma.</li>
+                <li><b>Cod. Cliente:</b> codice del cliente su GoldenRing</li>
+                <li><b>Commessa:</b> codice della commessa su GoldenRing</li>
+                <li><b>Sott. Commessa:</b> codice della sotto commessa su GoldenRing</li>
+                <li><b>Fase:</b> codice della fase su GoldenRing</li>
+                <li><b>Sott. Fase:</b> codice della sotto fase su GoldenRing</li>
+            </ul><br>
+            <p><b>In caso di "No":</b></p>
+            <img src="Immagini/selezionaTemplate.png">
+            <p>Qui sarà necessario selezionare il template e, se non ci sono errori, il template verrà caricato correttamente.</p>
+
+            <h4>Lato Inferiore</h4>
+            <ul>
+                <li><b>Cambia Tema:</b> per cambiare i colori del programma</li>
+                <li><b>Documentazione:</b> per aprire questa documentazione</li>
+            </ul><br>
+            <p><b>Cambia Tema:</b></p>
+            <img src="Immagini/cambiaTema.png">
+            <p>In questa pagina sarà possibile cambiare i colori del programma premendo su uno di essi.</p>
+            <p>Una volta effettuate le modifiche e premuto il tasto <b>Applica</b>, il programma verrà chiuso e sarà necessario riaprirlo.</p>
+            <p>Il tasto <b>Default</b> riporterà i colori a Blu-Bianco</p>
             <h4>N.B. Lato sinistro</h4>
             <p><b>Giorno:</b></p>
             <ul>
@@ -62,9 +116,8 @@
             </ul>
             <p><b>Altro:</b></p>
             <ul>
-                <li>Fleggando questa check-box, verrà chiesto di inserire una nota scritta. Le cose vietate da scrivere sono (Fixed,  Formazione, Home, Criticità) in quanto sono campi glia selezionabili con i flag</li>
+                <li>Fleggando questa check-box, verrà chiesto di inserire una nota scritta. Le parole vietate da scrivere sono (Fixed,  Formazione, Home e Criticità) in quanto sono campi già selezionabili con i flag</li>
                 <li>Non è possibile inserire un tempo extra, verrà inserito in modo automatico quando si superano le 8 ore, in alternativa sarà possibile modificarlo</li>
-                <li>Al momento non è ancora stata gestita la problematica delle note che iniziano con “Fj” o successivo fino a “Zz”</li>
             </ul>
             <p><b>Home:</b></p>
             <ul>
@@ -150,19 +203,15 @@
         <p>Per modificare il contenuto delle celle, è necessario premere il tasto destro.</p>
         <p>Inoltre, è possibile filtrare le informazioni attraverso i campi sotto la tabella.</p>
     </section>
-    <section class="visMensile">
-        <h3>Visualizzazione Mensile</h3>
-        <p>Per passare alla visualizzazione mensile, sarà necessario cliccare sulla label in basso a destra <b>(“Totale ore di lavoro”)</b>.</p>
+    <section class="visDettagliata">
+        <h3>Visualizzazione Dettagliata</h3>
+        <p>Per passare alla visualizzazione dettagliata, sarà necessario cliccare sulla label in basso a destra <b>(“Totale ore di lavoro”)</b>.</p>
         <p>Una volta premuto, si passerà alla seguente schermata:</p>
-        <img src="Immagini/visMensile.png">
-        <p>Qui è possibile visualizzare un resoconto mensile dei ticket effettuati con le relative informazioni.</p>
-        <p>Anche qui è possibile effettuare delle modifiche dei ticket utilizzando il tasto destro sulle celle. (tranne che per il tempo)</p>
-        
-        <h4>Struttura della pagina</h4>
-        <p>In alto a destra è presente una list-box in cui è possibile selezionare il mese da visualizzare. (a breve sarà disponibile anche la possibilità di selezionare l’anno!)</p>
-        <br>
-        <p>Sotto la tabella, a destra è presente la label che se cliccata rimanda alla pagina iniziale di inserimento ticket.</p>
-        <p>A sinistra, invece, è presente il tasto <b>“Dividi per Cliente”</b>.</p>
+        <img src="Immagini/visDettaglio.png">
+        <p>Qui è possibile visualizzare un resoconto dettagliato dei ticket effettuati con le relative informazioni.</p>
+        <p>Anche qui è possibile effettuare delle modifiche dei ticket utilizzando il tasto destro sulle celle. (tranne che per il tempo)</p><br>
+        <p>E' possibile modificare i dati visualizzati in questa pagina con i filtri modificabili premendo le 3 linee sopra la tabella:</p>
+        <img src="Immagini/filtriDettagliati.png">
     </section>
     <section class="dividiCliente">
         <h3>Dividi per Cliente</h3>

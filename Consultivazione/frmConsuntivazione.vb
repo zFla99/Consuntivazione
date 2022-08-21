@@ -87,12 +87,33 @@ Public Class frmConsuntivazione
                 ElseIf appoggio.Contains("Form_BackColor") Then
                     Me.BackColor = ColorTranslator.FromHtml(value)
 
+                    Dim red As Integer = ColorTranslator.FromHtml(value).R
+                    Dim green As Integer = ColorTranslator.FromHtml(value).G
+                    Dim blu As Integer = ColorTranslator.FromHtml(value).B
+
+                    Call colorHover(red, green, blu)
+                    pnlFiltri.BackColor = Color.FromArgb(red, green, blu)
+
+                    Dim t As Double = ColorTranslator.FromHtml(value).GetBrightness
+                    If t <= 0.41 Then
+                        lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_bianco
+                    Else
+                        lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
+                    End If
+
                 ElseIf appoggio.Contains("From_ForeColor") Then
-                    lblResoconto.ForeColor = ColorTranslator.FromHtml(value)
-                    lblanno.ForeColor = ColorTranslator.FromHtml(value)
-                    lblMesi.ForeColor = ColorTranslator.FromHtml(value)
+                    lblFiltriSelezionati.ForeColor = ColorTranslator.FromHtml(value)
                     lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
                     lblTempoTot.ForeColor = ColorTranslator.FromHtml(value)
+
+                    lblTicketFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblClienteFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblConsuntivatoFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblNotaFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblDataDaFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblDataAFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                    lblAnno.ForeColor = ColorTranslator.FromHtml(value)
+                    lblMesi.ForeColor = ColorTranslator.FromHtml(value)
                 End If
             End If
             If selezionaModifica = "IconColor" Then
@@ -141,6 +162,20 @@ Public Class frmConsuntivazione
         End If
     End Sub
     Private Sub Consuntivazione_Click(sender As Object, e As EventArgs) Handles Me.Click
+        dgvCalendario.ClearSelection()
+        txtTicket.Focus()
+        If menuFiltriChiuso = False Then
+            lblFiltri_Click(sender, e)
+        End If
+    End Sub
+    Private Sub pnlMensile_Click(sender As Object, e As EventArgs) Handles pnlMensile.Click
+        dgvCalendario.ClearSelection()
+        txtTicket.Focus()
+        If menuFiltriChiuso = False Then
+            lblFiltri_Click(sender, e)
+        End If
+    End Sub
+    Private Sub pnlInserisci_Click(sender As Object, e As EventArgs) Handles pnlInserisci.Click
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
     End Sub
@@ -195,14 +230,14 @@ Public Class frmConsuntivazione
     Dim cliente As String
     Dim nota As String
     Dim tempo As Double
-    Private Sub txtTicket_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtTicket.KeyPress
+    Private Sub txtTicket_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtTicket.KeyPress, txtTicketFiltro.KeyPress
         If (Not Char.IsControl(e.KeyChar) _
                      AndAlso (Not Char.IsDigit(e.KeyChar) _
                      AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "/") Then
             e.Handled = True
         End If
     End Sub
-    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress, cmbClienteFiltro.KeyPress, cmbConsuntivazioneFiltro.KeyPress, cmbNotaFiltro.KeyPress
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
@@ -464,7 +499,7 @@ Public Class frmConsuntivazione
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA ='" & giorno & "'"
+        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -558,7 +593,7 @@ Public Class frmConsuntivazione
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA='" & giorno & "' ORDER BY ID"
+        str = "SELECT * FROM Consuntivazione WHERE DATA=#" & giorno & "# ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -574,7 +609,7 @@ Public Class frmConsuntivazione
             dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
             dgvCalendario.Rows(i + 1).Cells(3).Value = tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
             somma += tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
-            dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString
+            dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
@@ -797,7 +832,7 @@ Public Class frmConsuntivazione
             Else
                 Exit Sub
             End If
-        ElseIf lblResoconto.Visible = True And dgvCalendario.Columns(e.ColumnIndex).HeaderText() = "TEMPO" Then
+        ElseIf lblFiltriSelezionati.Visible = True And dgvCalendario.Columns(e.ColumnIndex).HeaderText() = "TEMPO" Then
             If MsgBox("Qui non puoi modificare. Vuoi essere reindirizzato al giorno?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                 lblGiorno_Mese_Click(sender, e)
                 dtpData.Text = giorno
@@ -926,12 +961,15 @@ ore di lavoro
             lblAnno.Visible = True
             nudAnno.Visible = True
             nudAnno.Enabled = True
-            lblResoconto.Visible = True
+            lblFiltri.Visible = True
+            pnlFiltri.Visible = True
+            lblFiltriSelezionati.Visible = True
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = True
 
             pnlMensile.Left = 0
             pnlMensile.Width = Me.Width - 15
+            pnlFiltri.Width = dgvCalendario.Width
             'pnlMensile.Left = (pnlMensile.Parent.Width \ 2) - (pnlMensile.Width \ 2)
             Dim Mese As String
             Dim Anno As Integer
@@ -945,6 +983,9 @@ ore di lavoro
             lstMesi.SelectedIndex = Mese.Replace(0, "") - 1
             nudAnno.Value = Anno
             Call AggiornaDGMensile(Mese, Anno)
+
+            lblFiltriSelezionati.Text = "Anno: " & Anno & "  Mese: " & Mese
+            strWhere = "WHERE Month(DATA) = " & Mese & " AND Year(DATA) = " & Anno
         Else
             lblGiorno_Mese.Text = "Totale 
 ore di lavoro
@@ -958,14 +999,20 @@ ore di lavoro
             lblAnno.Visible = False
             nudAnno.Visible = False
             nudAnno.Enabled = False
-            lblResoconto.Visible = False
+            pnlFiltri.Visible = False
+            If menuFiltriChiuso = False Then
+                lblFiltri_Click(sender, e)
+            End If
+            lblFiltri.Visible = False
+            lblFiltriSelezionati.Visible = False
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = False
 
-            pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, (pnlMensile.Parent.Height \ 2) - (pnlMensile.Height \ 2) - 20)
+            pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, 0)
             Call AggiornaDG(giornoOggi, False)
             pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 35
+            pnlFiltri.Width = pnlMensile.Width
         End If
     End Sub
     Sub AggiornaDGMensile(Mese As String, Anno As String)
@@ -994,7 +1041,7 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
             dgvCalendario.Rows(i + 1).Cells(3).Value = tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
             somma += tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
-            dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString
+            dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
@@ -1050,33 +1097,38 @@ ore di lavoro
         cn.Close()
     End Sub
 
-    Private Sub lstMesi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstMesi.SelectedIndexChanged
-        Dim Anno As Integer = nudAnno.Value
-        Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
-        If Mese.Length = 1 Then
-            Mese = "0" + Mese
-        End If
-        Call AggiornaDGMensile(Mese, Anno)
-    End Sub
+    'Private Sub lstMesi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstMesi.SelectedIndexChanged
+    '    Dim Anno As Integer = nudAnno.Value
+    '    Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
+    '    If Mese.Length = 1 Then
+    '        Mese = "0" + Mese
+    '    End If
+    '    Call AggiornaDGMensile(Mese, Anno)
+    'End Sub
 
-    Private Sub nudAnno_ValueChanged(sender As Object, e As EventArgs) Handles nudAnno.ValueChanged
-        If nudAnno.Enabled = False Then
-            Exit Sub
-        End If
-        Dim Anno As Integer = nudAnno.Value
-        Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
-        If Mese.Length = 1 Then
-            Mese = "0" + Mese
-        End If
-        Call AggiornaDGMensile(Mese, Anno)
-    End Sub
+    'Private Sub nudAnno_ValueChanged(sender As Object, e As EventArgs) Handles nudAnno.ValueChanged
+    '    If nudAnno.Enabled = False Then
+    '        Exit Sub
+    '    End If
+    '    Dim Anno As Integer = nudAnno.Value
+    '    Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
+    '    If Mese.Length = 1 Then
+    '        Mese = "0" + Mese
+    '    End If
+    '    Call AggiornaDGMensile(Mese, Anno)
+    'End Sub
 
     Private Sub btnDividiXCliente_Click(sender As Object, e As EventArgs) Handles btnDividiXCliente.Click
         If btnDividiXCliente.Text = "Dividi per Cliente" Then
             btnDividiXCliente.Text = "Ritorna al Mese"
             btnConsuntivaTutto.Visible = True
         Else
-            lstMesi_SelectedIndexChanged(sender, e)
+            Dim a As Integer = nudAnno.Value
+            Dim m As String = lstMesi.SelectedItem.ToString.Trim
+            If m.Length = 1 Then
+                m = "0" + m
+            End If
+            Call AggiornaDGMensile(m, a)
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnConsuntivaTutto.Visible = False
             Exit Sub
@@ -1095,7 +1147,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT DISTINCT DATA FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA"
+        str = "SELECT DISTINCT DATA FROM Consuntivazione " & strWhere & " ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -1111,7 +1163,7 @@ ore di lavoro
 
         Dim DateLavorative(tabella.Rows.Count) As String
         For i = 0 To tabella.Rows.Count - 1
-            DateLavorative(i) = tabella.Rows(i).Item("DATA").ToString
+            DateLavorative(i) = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
         Next
 
 
@@ -1134,7 +1186,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
+        str = "SELECT DISTINCT CLIENTE, DATA, NOTA, COUNT(*) AS NUM_TICKET FROM Consuntivazione " & strWhere & " GROUP BY DATA, CLIENTE, NOTA ORDER BY DATA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -1151,7 +1203,7 @@ ore di lavoro
 
         For i = 0 To tabella.Rows.Count - 1
             cliente = tabella.Rows(i).Item("CLIENTE").ToString
-            data = tabella.Rows(i).Item("DATA").ToString
+            data = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             nota = tabella.Rows(i).Item("NOTA").ToString
 
             comm = False
@@ -1182,7 +1234,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA, CLIENTE, NOTA"
+        str = "SELECT * FROM Consuntivazione " & strWhere & " ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         nuovaTabella.Clear()
@@ -1224,7 +1276,7 @@ ore di lavoro
                         End If
                     Next
                     If conta <> 0 Then
-                        If cliente = clientePrec And (nota = notaPrec Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString Then
+                        If cliente = clientePrec And (nota = notaPrec Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "") Then
                             If nota.ToLower.Contains("extra(") Then
                                 Dim tempoExtra As String
                                 Dim vetDividiNota() As String
@@ -1352,7 +1404,7 @@ ore di lavoro
                     j += 1
                     'conta = tabella.Rows.Count - 1
                 End If
-            Loop Until conta > tabella.Rows.Count - 1 OrElse DateLavorative(i) <> tabella.Rows(conta).Item("DATA").ToString
+            Loop Until conta > tabella.Rows.Count - 1 OrElse DateLavorative(i) <> tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "")
 
             dgvCalendario.Rows(j).Cells(1).Value = ""
             dgvCalendario.Rows(j).Cells(2).Value = "TOTALE:"
@@ -1380,6 +1432,9 @@ ore di lavoro
             j += 1
             tempoTot = 0
         Next
+        If menuFiltriChiuso = False Then
+            lblFiltri_Click(sender, e)
+        End If
     End Sub
     Dim vetRConsuntivare() As Integer
     Dim RDC As Integer = 0
@@ -1415,7 +1470,7 @@ ore di lavoro
         Dim n As String = tabella.Rows(0).Item("NOTA").ToString
 
         For i = 0 To rTabella
-            If c = tabella.Rows(i).Item("CLIENTE").ToString And d = tabella.Rows(i).Item("DATA").ToString Then
+            If c = tabella.Rows(i).Item("CLIENTE").ToString And d = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "") Then
                 For j = 0 To rTab
                     If tabella.Rows(i).Item("NOTA").ToString.Contains(vetNote(j)) Then
                         If rDaInserire = "" Then
@@ -1454,7 +1509,7 @@ ore di lavoro
                     Next
                 End If
                 c = tabella.Rows(i).Item("CLIENTE").ToString
-                d = tabella.Rows(i).Item("DATA").ToString
+                d = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
                 rDaInserire = ""
                 For j = 0 To rTab
                     If tabella.Rows(i).Item("NOTA").ToString.Contains(vetNote(j)) Then
@@ -1538,21 +1593,42 @@ ore di lavoro
         CCons += 1
     End Sub
 
-    Private Sub txtTicket_TextChanged(sender As Object, e As KeyEventArgs) Handles txtTicket.KeyDown
+    Private Sub txtTicket_KeyDown(sender As Object, e As KeyEventArgs) Handles txtTicket.KeyDown
         If e.KeyCode = Keys.Enter Then
             btnCarica_Click(sender, e)
         End If
     End Sub
+    Private Sub txtTicketFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles txtTicketFiltro.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnCerca_Click(sender, e)
+        End If
+    End Sub
 
-    Private Sub cmbCliente_SelectedIndexChanged(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
+    Private Sub cmbCliente_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
         If e.KeyCode = Keys.Enter Then
             btnCarica_Click(sender, e)
+        End If
+    End Sub
+    Private Sub cmbClienteFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbClienteFiltro.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnCerca_Click(sender, e)
         End If
     End Sub
 
     Private Sub cmbTempo_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbTempo.KeyDown
         If e.KeyCode = Keys.Enter Then
             btnCarica_Click(sender, e)
+        End If
+    End Sub
+
+    Private Sub cmbConsuntivazioneFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbConsuntivazioneFiltro.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnCerca_Click(sender, e)
+        End If
+    End Sub
+    Private Sub cmbNotaFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbNotaFiltro.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnCerca_Click(sender, e)
         End If
     End Sub
 
@@ -1927,5 +2003,176 @@ ore di lavoro
     Private Sub lblDocumentazione_MouseLeave(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseLeave, imgDocumentazione.MouseLeave
         lblDocumentazione.BackColor = lblSfondoColorato.BackColor
         imgDocumentazione.BackColor = lblSfondoColorato.BackColor
+    End Sub
+    Dim menuFiltriChiuso As Boolean = True
+    Private Sub lblFiltri_Click(sender As Object, e As EventArgs) Handles lblFiltri.Click
+        If pnlFiltri.Height = 0 Then
+            menuFiltriChiuso = True
+            pnlFiltri.Top = 10
+        Else
+            menuFiltriChiuso = False
+            pnlFiltri.Top = 0
+        End If
+        TimerFiltri.Start()
+    End Sub
+
+    Private Sub TimerFiltri_Tick(sender As Object, e As EventArgs) Handles TimerFiltri.Tick
+        If menuFiltriChiuso = True Then
+            pnlFiltri.Height += 13
+            If pnlFiltri.Height > 13 Then
+                lblFiltri.Top += 13
+                lblFiltriSelezionati.Top += 13
+                dgvCalendario.Height -= 13
+                dgvCalendario.Top += 13
+            End If
+            If pnlFiltri.Height = 130 Then
+                menuFiltriChiuso = False
+                TimerFiltri.Stop()
+            End If
+        Else
+            pnlFiltri.Height -= 13
+            If pnlFiltri.Height >= 13 Then
+                lblFiltri.Top -= 13
+                lblFiltriSelezionati.Top -= 13
+                dgvCalendario.Height += 13
+                dgvCalendario.Top -= 13
+            End If
+            If pnlFiltri.Height = 0 Then
+                menuFiltriChiuso = True
+                TimerFiltri.Stop()
+            End If
+        End If
+    End Sub
+
+    Private Sub ckbDataSelezionata_CheckedChanged(sender As Object, e As EventArgs) Handles ckbDataSelezionata.CheckedChanged
+        If ckbDataSelezionata.Checked = True Then
+            dtpDataDaFiltro.Enabled = True
+            dtpDataAFiltro.Enabled = True
+            nudAnno.Enabled = False
+            lstMesi.Enabled = False
+        Else
+            dtpDataDaFiltro.Enabled = False
+            dtpDataAFiltro.Enabled = False
+            nudAnno.Enabled = True
+            lstMesi.Enabled = True
+        End If
+    End Sub
+
+    Dim strWhere As String = ""
+    Private Sub btnCerca_Click(sender As Object, e As EventArgs) Handles btnCerca.Click
+        If btnDividiXCliente.Text = "Ritorna al Mese" Then
+            btnDividiXCliente.Text = "Dividi per Cliente"
+            btnConsuntivaTutto.Visible = False
+        End If
+
+        Dim filtriSel As String = ""
+        If txtTicketFiltro.Text <> "" Then
+            filtriSel += "Ticket: " & txtTicketFiltro.Text & ";"
+        End If
+        If cmbClienteFiltro.Text <> "" Then
+            filtriSel += "Cliente: " & cmbClienteFiltro.Text & ";"
+        End If
+        If cmbConsuntivazioneFiltro.Text <> "" Then
+            filtriSel += "Consuntivato: " & cmbConsuntivazioneFiltro.Text & ";"
+        End If
+        If cmbNotaFiltro.Text <> "" Then
+            filtriSel += "Nota: " & cmbNotaFiltro.Text & ";"
+        End If
+        If ckbDataSelezionata.Checked = True Then
+            filtriSel += "Data Da: " & dtpDataDaFiltro.Text & ";"
+            filtriSel += "Data A: " & dtpDataAFiltro.Text & ";"
+        Else
+            Dim mese As String = lstMesi.SelectedItem.ToString.Trim
+            If mese.Length = 1 Then
+                mese = "0" + mese
+            End If
+
+            filtriSel += "Anno: " & nudAnno.Text & ";"
+            filtriSel += "Mese: " & mese & ";"
+        End If
+
+        If filtriSel.EndsWith(";") Then
+            filtriSel = filtriSel.Substring(0, filtriSel.Length - 1)
+        End If
+        lblFiltriSelezionati.Text = filtriSel.Replace(";", "   -   ")
+
+        Dim vetFiltri() As String = filtriSel.Split(";")
+        Dim indice As Integer
+        strWhere = ""
+        For i = 0 To vetFiltri.Length - 1
+            If vetFiltri(i).Contains("Ticket") Then
+                indice = vetFiltri(i).IndexOf(":")
+                strWhere += "AND Ticket = '" & vetFiltri(i).Substring(indice + 2, vetFiltri(i).Length - (indice + 2)) & "' "
+            End If
+            If vetFiltri(i).Contains("Cliente") Then
+                indice = vetFiltri(i).IndexOf(":")
+                strWhere += "AND Cliente = '" & vetFiltri(i).Substring(indice + 2, vetFiltri(i).Length - (indice + 2)) & "' "
+            End If
+            If vetFiltri(i).Contains("Consuntivato") Then
+                indice = vetFiltri(i).IndexOf(":")
+                strWhere += "AND Consuntivato = '" & vetFiltri(i).Substring(indice + 2, vetFiltri(i).Length - (indice + 2)) & "' "
+            End If
+            If vetFiltri(i).Contains("Nota") Then
+                indice = vetFiltri(i).IndexOf(":")
+                strWhere += "AND Nota LIKE '%" & vetFiltri(i).Substring(indice + 2, vetFiltri(i).Length - (indice + 2)) & "%' "
+            End If
+            If vetFiltri(i).Contains("Data Da") Then
+                strWhere += "AND Data BETWEEN #" & Format(dtpDataDaFiltro.Value, "MM/dd/yyyy") & "# AND #" & Format(dtpDataAFiltro.Value, "MM/dd/yyyy") & "#"
+            End If
+            If vetFiltri(i).Contains("Anno") Then
+                Dim mese As String = lstMesi.SelectedItem.ToString.Trim
+                If mese.Length = 1 Then
+                    mese = "0" + mese
+                End If
+                strWhere += "AND Data LIKE '%/" & mese & "/" & nudAnno.Value & "' "
+            End If
+        Next
+        If strWhere.Trim.StartsWith("AND") Then
+            strWhere = strWhere.Substring(4, strWhere.Length - 4)
+        End If
+        strWhere = "WHERE " + strWhere
+        Call visualizzaFiltri(strWhere, dtpDataDaFiltro.Value.ToString, dtpDataAFiltro.Value.ToString)
+        If menuFiltriChiuso = False Then
+            lblFiltri_Click(sender, e)
+        End If
+    End Sub
+    Sub visualizzaFiltri(strWhere As String, dataDa As String, dataA As String)
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT * FROM Consuntivazione " & strWhere & " ORDER BY DATA, CLIENTE, NOTA"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim giornoDa As Integer = dataDa.Substring(0, 2)
+        Dim meseDa As Integer = dataDa.Substring(3, 2)
+        Dim annoDa As Integer = dataDa.Substring(6, 4)
+
+        Dim giornoA As Integer = dataA.Substring(0, 2)
+        Dim meseA As Integer = dataA.Substring(3, 2)
+        Dim annoA As Integer = dataA.Substring(6, 4)
+
+        Dim somma As Double = 0
+        dgvCalendario.RowCount = 1
+        dgvCalendario.RowCount = tabella.Rows.Count + 1
+        For i = 0 To tabella.Rows.Count - 1
+            dgvCalendario.Rows(i + 1).Cells(1).Value = tabella.Rows(i).Item("TICKET").ToString
+            dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
+            dgvCalendario.Rows(i + 1).Cells(3).Value = tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
+            somma += tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
+            dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
+            dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
+            dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
+            dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
+        Next
+        lblTempoTot.Text = somma
+        Call RedimDGV()
     End Sub
 End Class
