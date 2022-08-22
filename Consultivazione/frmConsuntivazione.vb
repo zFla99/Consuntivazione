@@ -590,10 +590,11 @@ Public Class frmConsuntivazione
         Dim str As String
         Dim i As Integer
         Dim somma As Double
+        Dim dataGiorno As Date = giorno
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA=#" & giorno & "# ORDER BY ID"
+        str = "SELECT * FROM Consuntivazione WHERE DATA=#" & Format(dataGiorno, "MM/dd/yyyy") & "# ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
