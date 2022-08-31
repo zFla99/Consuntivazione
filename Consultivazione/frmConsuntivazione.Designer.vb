@@ -77,6 +77,7 @@ Partial Class frmConsuntivazione
         Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
         Me.ofdFile = New System.Windows.Forms.OpenFileDialog()
         Me.pnlMenu = New System.Windows.Forms.Panel()
+        Me.imgImpostazioni = New System.Windows.Forms.Label()
         Me.lblSeparatore = New System.Windows.Forms.Label()
         Me.imgDocumentazione = New System.Windows.Forms.Label()
         Me.lblDocumentazione = New System.Windows.Forms.Label()
@@ -86,9 +87,9 @@ Partial Class frmConsuntivazione
         Me.imgCommesseMassive = New System.Windows.Forms.Label()
         Me.lblTicketMssivi = New System.Windows.Forms.Label()
         Me.lblCommesseMassive = New System.Windows.Forms.Label()
+        Me.lblImpostazioni = New System.Windows.Forms.Label()
         Me.TimerSlide = New System.Windows.Forms.Timer(Me.components)
         Me.lblSlide = New System.Windows.Forms.Label()
-        Me.TimerFiltri = New System.Windows.Forms.Timer(Me.components)
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlFiltri.SuspendLayout()
@@ -342,7 +343,7 @@ Partial Class frmConsuntivazione
         Me.cmbNotaFiltro.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
         Me.cmbNotaFiltro.Items.AddRange(New Object() {"Criticità", "Fixed", "Formazione", "Home"})
         Me.cmbNotaFiltro.Location = New System.Drawing.Point(341, -79)
-        Me.cmbNotaFiltro.MaxLength = 2
+        Me.cmbNotaFiltro.MaxLength = 20
         Me.cmbNotaFiltro.Name = "cmbNotaFiltro"
         Me.cmbNotaFiltro.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmbNotaFiltro.Size = New System.Drawing.Size(91, 25)
@@ -741,6 +742,7 @@ Partial Class frmConsuntivazione
         Me.pnlMenu.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.pnlMenu.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
+        Me.pnlMenu.Controls.Add(Me.imgImpostazioni)
         Me.pnlMenu.Controls.Add(Me.lblSeparatore)
         Me.pnlMenu.Controls.Add(Me.imgDocumentazione)
         Me.pnlMenu.Controls.Add(Me.lblDocumentazione)
@@ -750,17 +752,30 @@ Partial Class frmConsuntivazione
         Me.pnlMenu.Controls.Add(Me.imgCommesseMassive)
         Me.pnlMenu.Controls.Add(Me.lblTicketMssivi)
         Me.pnlMenu.Controls.Add(Me.lblCommesseMassive)
+        Me.pnlMenu.Controls.Add(Me.lblImpostazioni)
         Me.pnlMenu.Location = New System.Drawing.Point(-1, -1)
         Me.pnlMenu.Name = "pnlMenu"
         Me.pnlMenu.Size = New System.Drawing.Size(0, 585)
         Me.pnlMenu.TabIndex = 25
+        '
+        'imgImpostazioni
+        '
+        Me.imgImpostazioni.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.imgImpostazioni.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgImpostazioni.ForeColor = System.Drawing.SystemColors.Control
+        Me.imgImpostazioni.Image = Global.Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
+        Me.imgImpostazioni.Location = New System.Drawing.Point(15, 512)
+        Me.imgImpostazioni.Name = "imgImpostazioni"
+        Me.imgImpostazioni.Size = New System.Drawing.Size(36, 36)
+        Me.imgImpostazioni.TabIndex = 102
+        Me.imgImpostazioni.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'lblSeparatore
         '
         Me.lblSeparatore.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.lblSeparatore.AutoSize = True
         Me.lblSeparatore.ForeColor = System.Drawing.Color.White
-        Me.lblSeparatore.Location = New System.Drawing.Point(18, 400)
+        Me.lblSeparatore.Location = New System.Drawing.Point(18, 335)
         Me.lblSeparatore.Name = "lblSeparatore"
         Me.lblSeparatore.Size = New System.Drawing.Size(158, 17)
         Me.lblSeparatore.TabIndex = 4
@@ -772,7 +787,7 @@ Partial Class frmConsuntivazione
         Me.imgDocumentazione.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgDocumentazione.ForeColor = System.Drawing.SystemColors.Control
         Me.imgDocumentazione.Image = Global.Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
-        Me.imgDocumentazione.Location = New System.Drawing.Point(15, 511)
+        Me.imgDocumentazione.Location = New System.Drawing.Point(15, 372)
         Me.imgDocumentazione.Name = "imgDocumentazione"
         Me.imgDocumentazione.Size = New System.Drawing.Size(36, 36)
         Me.imgDocumentazione.TabIndex = 100
@@ -783,7 +798,7 @@ Partial Class frmConsuntivazione
         Me.lblDocumentazione.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.lblDocumentazione.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDocumentazione.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblDocumentazione.Location = New System.Drawing.Point(0, 500)
+        Me.lblDocumentazione.Location = New System.Drawing.Point(0, 360)
         Me.lblDocumentazione.Name = "lblDocumentazione"
         Me.lblDocumentazione.Padding = New System.Windows.Forms.Padding(65, 0, 0, 0)
         Me.lblDocumentazione.Size = New System.Drawing.Size(199, 60)
@@ -797,7 +812,7 @@ Partial Class frmConsuntivazione
         Me.imgTema.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTema.ForeColor = System.Drawing.SystemColors.Control
         Me.imgTema.Image = Global.Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
-        Me.imgTema.Location = New System.Drawing.Point(15, 441)
+        Me.imgTema.Location = New System.Drawing.Point(15, 442)
         Me.imgTema.Name = "imgTema"
         Me.imgTema.Size = New System.Drawing.Size(36, 36)
         Me.imgTema.TabIndex = 100
@@ -822,7 +837,7 @@ Partial Class frmConsuntivazione
         Me.imgTicketMassivi.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTicketMassivi.ForeColor = System.Drawing.SystemColors.Control
         Me.imgTicketMassivi.Image = Global.Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
-        Me.imgTicketMassivi.Location = New System.Drawing.Point(15, 131)
+        Me.imgTicketMassivi.Location = New System.Drawing.Point(15, 132)
         Me.imgTicketMassivi.Name = "imgTicketMassivi"
         Me.imgTicketMassivi.Size = New System.Drawing.Size(36, 36)
         Me.imgTicketMassivi.TabIndex = 100
@@ -833,7 +848,7 @@ Partial Class frmConsuntivazione
         Me.imgCommesseMassive.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgCommesseMassive.ForeColor = System.Drawing.SystemColors.Control
         Me.imgCommesseMassive.Image = Global.Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
-        Me.imgCommesseMassive.Location = New System.Drawing.Point(18, 201)
+        Me.imgCommesseMassive.Location = New System.Drawing.Point(18, 202)
         Me.imgCommesseMassive.Name = "imgCommesseMassive"
         Me.imgCommesseMassive.Size = New System.Drawing.Size(36, 36)
         Me.imgCommesseMassive.TabIndex = 100
@@ -865,6 +880,19 @@ Partial Class frmConsuntivazione
         Me.lblCommesseMassive.Text = "Inserisci Commesse" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Massivamente"
         Me.lblCommesseMassive.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
+        'lblImpostazioni
+        '
+        Me.lblImpostazioni.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.lblImpostazioni.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblImpostazioni.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblImpostazioni.Location = New System.Drawing.Point(0, 500)
+        Me.lblImpostazioni.Name = "lblImpostazioni"
+        Me.lblImpostazioni.Padding = New System.Windows.Forms.Padding(65, 0, 0, 0)
+        Me.lblImpostazioni.Size = New System.Drawing.Size(199, 60)
+        Me.lblImpostazioni.TabIndex = 101
+        Me.lblImpostazioni.Text = "Impostazioni"
+        Me.lblImpostazioni.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
         'TimerSlide
         '
         Me.TimerSlide.Interval = 10
@@ -880,10 +908,6 @@ Partial Class frmConsuntivazione
         Me.lblSlide.Size = New System.Drawing.Size(32, 32)
         Me.lblSlide.TabIndex = 24
         Me.lblSlide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'TimerFiltri
-        '
-        Me.TimerFiltri.Interval = 10
         '
         'frmConsuntivazione
         '
@@ -977,7 +1001,8 @@ Partial Class frmConsuntivazione
     Friend WithEvents cmbNotaFiltro As ComboBox
     Friend WithEvents dtpDataAFiltro As DateTimePicker
     Friend WithEvents dtpDataDaFiltro As DateTimePicker
-    Friend WithEvents TimerFiltri As Timer
     Friend WithEvents ckbDataSelezionata As CheckBox
     Friend WithEvents btnCerca As Button
+    Friend WithEvents imgImpostazioni As Label
+    Friend WithEvents lblImpostazioni As Label
 End Class

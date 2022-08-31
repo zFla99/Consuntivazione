@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Documentazione</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&family=Open+Sans&family=Ubuntu&display=swap" rel="stylesheet"/>
+    <script src='javaScript.js'></script>
+</head>
+<body class="sfondoBianco" id="sfondoBody">
+    <header class="header">
+    <button class="bottoneSfondo" id="button">Sfondo Nero</button>
+    </header>
+    <h1 class="titolo">Documentazione per il programma di Consuntivazione</h1>
+    <section class="homePage">
+        <h3>Home Page</h3>
+        <div class="sinistra">
+            <img src="Immagini/homePage.png">
+            <p>Questa è la home page, è strutturata nel seguente modo:</p>            
+            <ul>
+                <li>Lato sinistro: tutti i campi presenti all’interno dell’area blu, sono destinati all’inserimento di un ticket</li>
+                <li>Lato destro: è presente una rappresentazione grafica della giornata selezionata</li>
+            </ul>
+            <h4>Funzionamento lato sinistro</h4>
+            <p>I campi <b>obbligatori</b> presenti sono:</p>
+            <ul>
+                <li><b>Giorno:</b> da qui è possibile selezionare il giorno che si desidera vedere/modificare. Una volta selezionato, la tabella di destra si aggiornerà automaticamente</li>
+                <li><b>Ticket:</b> questa è una text-box in cui è possibile inserire solo numeri (0-9) oppure il simbolo (/) in caso di mancanza ticket (es. Criticità)</li>
+                <li><b>Cliente:</b> questa è una combo-box in cui è possibile inserire il cliente. Questo campo si compilerà in automatico durante la scrittura del cliente premendo tab non appena si vede il suggerimento</li>
+                <li><b>Tempo:</b> questa è una combo-box in cui è possibile inserire un tempo di risoluzione. Per semplificare l’inserimento, anche questo campo è provvisto di suggerimenti come il campo “Clienti”</li>
+                <li><b>Carica:</b> questo bottone ti permette di inserire il ticket e ti segnala in caso di mancati campi obbligatori o di errori con i dati inseriti</li>
+            </ul>
+            <p class="dividiParagrafo">I campi <b>“facoltativi”</b> sono quelli presenti all’interno della group-box con bordo bianco sotto al tasto “Carica” e sono:</p>
+            <ul>
+                <li><b>(Vuoto):</b> ovvero quando tutti i campi sono defleggati, indica la commessa base del cliente</li>
+                <li><b>Criticità:</b> indica una criticità Dashboard (solitamente affiancato ad un numero ticket uguale a “/“)</li>
+                <li><b>Fixed:</b> indica un attività di maintenance</li>
+                <li><b>Formazione:</b> indica una formazione o coordinamento</li>
+                <li><b>Altro:</b> nota libera</li>
+                <li><b>Home:</b> indica lo “Smart Working”</li>
+                <li><b>Cancella Filtri:</b> tasto che deflegga tutti i campi</li>
+            </ul><br>
+            <p>Inoltre, sempre a sinistra è possibile accedere ad un menu aggiuntivo con opzioni utili premendo le 3 lineette:</p>
+            <img src="Immagini/menuImpostazioni.png">
+            <p>Il menu è diviso nel seguente modo.</p>
+            <h4>Lato Superiore</h4>
+            <ul>
+                <li><b>Inserisci Ticket Massivamente:</b> con questo tasto è possibile inserire massivamente dei ticket da un Excel di template</li>
+                <li><b>Inserisci Commesse Massivamente:</b> con questo tasto è possibile inserire massivamente delle commesse da un Excel di template</li>
+            </ul>
+            <p>Gli step da eseguire sono uguali per entrambi.</p>
+            <img src="Immagini/downloadTemplate.png">
+            <ul>
+                <li><b>Si:</b> non si possiede del template e si procede con il download sul Desktop</li>
+                <li><b>No:</b> si possiede già il template e si procede con il caricamento</li>
+                <li><b>Annulla:</b> si annulla il menu</li>
+            </ul><br>
+            <p><b>In caso di "Si":</b></p>
+            <p>Nel template sarà necessario compilare queste informazioni:</p>
+            <img src="Immagini/templateTicket.png">
+            <p><b>N.B.</b></p>
+            <p>Inserire i campi con buon senso.</p>
+            <ul>
+                <li>Se le colonne <b>TICKET</b>, <b>CLIENTE</b>, <b>TEMPO</b>, <b>DATA</b> o <b>CONSUNTIVATO</b> sono vuote, il record verrà scartato.</li>
+                <li>Se la colonna <b>CLIENTE</b> contiene un cliente che non è ancora stato valorizzato sul programma, il file non viene importato segnalando la causa</li>
+                <li>La colonna <b>TEMPO</b> deve avere massimo 2 cifre decimali (ma puo anche non averne)</li>
+                <li>La colonna <b>DATA</b> deve essere valorizzata con <b>gg/mm/yyyy</b></li>
+                <li>La colonna <b>CONSUNTIVATO</b> deve essere valorizzata con <b>SI/NO</b></li>
+            </ul>
+            <p>Un esempio:</p>
+            <img src="Immagini/esempioInserimentoTemplate.png"><br><br>
+            <p><b>Per le commesse invece:</b></p>
+            <img src="Immagini/templateCommesse.png">
+            <ul>
+                <li><b>Cliente:</b> nome del cliente dato da programma</li>
+                <li><b>Nota:</b> nota da assegnare alla commessa (Fixed, Formazione, ecc.). Questo nome è importante per richiamare la commessa nel programma.</li>
+                <li><b>Cod. Cliente:</b> codice del cliente su GoldenRing</li>
+                <li><b>Commessa:</b> codice della commessa su GoldenRing</li>
+                <li><b>Sott. Commessa:</b> codice della sotto commessa su GoldenRing</li>
+                <li><b>Fase:</b> codice della fase su GoldenRing</li>
+                <li><b>Sott. Fase:</b> codice della sotto fase su GoldenRing</li>
+            </ul><br>
+            <p><b>In caso di "No":</b></p>
+            <img src="Immagini/selezionaTemplate.png">
+            <p>Qui sarà necessario selezionare il template e, se non ci sono errori, il template verrà caricato correttamente.</p>
+
+            <h4>Lato Inferiore</h4>
+            <ul>
+                <li><b>Cambia Tema:</b> per cambiare i colori del programma</li>
+                <li><b>Documentazione:</b> per aprire questa documentazione</li>
+            </ul><br>
+            <p><b>Cambia Tema:</b></p>
+            <img src="Immagini/cambiaTema.png">
+            <p>In questa pagina sarà possibile cambiare i colori del programma premendo su uno di essi.</p>
+            <p>Una volta effettuate le modifiche e premuto il tasto <b>Applica</b>, il programma verrà chiuso e sarà necessario riaprirlo.</p>
+            <p>Il tasto <b>Default</b> riporterà i colori a Blu-Bianco</p>
+            <h4>N.B. Lato sinistro</h4>
+            <p><b>Giorno:</b></p>
+            <ul>
+                <li>Se il giorno selezionato è diverso da quello odierno, in caso di modifica verrà lasciato qualche secondo per visualizzare il cambio del dato e dopodiché si verrà reindirizzati al giorno odierno</li>
+                <li>Se il giorno selezionato è diverso da quello odierno, è possibile effettuare una modifica alla volta. Questa funzione è stata introdotta per evitare la modifica di ulteriori dati anche durante il re-indirizzamento del punto 1. D’altronde non si è soliti a modificare molti dati dei giorni precedenti</li>
+                <li>Se il giorno selezionato è uguale a quello odierno, invece, la modifica multipla è consentita. (Qui davvero necessaria)</li>
+            </ul>
+            <p><b>Ticket:</b></p>
+            <ul>
+                <li>per evitare la ridondanza dei ticket in tabella, è stata introdotta una funzione che, in caso di ticket diverso da “/”, confronta il ticket che si vuole inserire con quelli già presenti della data odierna. Se trova una confidenza, il ticket non si inserisce nuovo, ma va a modificare quello già esistente aumentando il tempo di lavorazione in base hai dati richiesti. (Esempio pratico screen)</li>
+            </ul>
+            <p><b>Cliente:</b></p>
+            <ul>
+                <li>I clienti presenti all’interno della combo-box, sono valorizzati in base ai dati presenti sulla tabella “Clienti” a DB (spiegare come vederli con degli screen)</li>
+                <li>Se si inserisce un cliente che non ha la commessa selezionata, il ticket non verrà inserito e verrà segnalato un errore</li>
+            </ul>
+            <p><b>Altro:</b></p>
+            <ul>
+                <li>Fleggando questa check-box, verrà chiesto di inserire una nota scritta. Le parole vietate da scrivere sono (Fixed,  Formazione, Home e Criticità) in quanto sono campi già selezionabili con i flag</li>
+                <li>Non è possibile inserire un tempo extra, verrà inserito in modo automatico quando si superano le 8 ore, in alternativa sarà possibile modificarlo</li>
+            </ul>
+            <p><b>Home:</b></p>
+            <ul>
+                <li>Se viene inserito o modificando un ticket con o senza la nota “Home”, verrà impostato anche su tutti gli altri ticket del giorno</li>
+            </ul>
+        </div>
+        <div class="destra">
+            <h4>Funzionamento lato destro</h4>
+            <p>Nel lato destro, sono mostrati in modo tabellare tutti i ticket che sono stati inseriti nel giorno selezionato.</p>
+            <p>Le operazioni che si possono fare con questa tabella sono le seguenti:</p>
+            <ul>
+                <li>
+                    <b>Tasto sinistro:</b>
+                    <ul>
+                        <li>Se si clicca su un qualsiasi ticket presente al di sotto della colonna “TICKET”, si verrà reindirizzati alla pagina di Mantis</li>
+                    </ul>
+                </li>
+                <li>
+                    <b>Tasto destro:</b>
+                    <ul>
+                        <li>
+                            Se si clicca su una qualsiasi cella, è possibile entrare in modifica con l’apposito menu (mettere lo screen di tutti i menu).<br>
+                            I criteri di modifica sono gli stessi dell’inserimento
+                        </li>
+                        <li>Per la colonna <b>“CONSUNTIVATO”</b> cliccando una cella, il contenuto cambia da <b>“NO”</b> a <b>“SI”</b> o viceversa</li>
+                        <li>Cliccando sulla colonna 0 (quella per selezionare la riga), è possibile eliminare il ticket inserito</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="insClientiCommesse">
+        <h3>Inserimento nuovo cliente e/o commessa</h3>
+        <p>Per entrare nel menu di inserimento clienti e/o commesse, è necessario premere il tasto “+” alla destra della combo-box cliente</p>
+        <img src="Immagini/insClientiCommesse.png">
+        <p>In questo menu è possibile decidere se inserire:</p>
+        <ul>
+            <li>Cliente + Config</li>
+            <li>Solo Cliente</li>
+            <li>Solo Config</li>
+        </ul>
+
+        <h4>In caso di inserimento di Configurazioni</h4>
+        <p>È possibile scegliere il tipo di commessa con:</p>
+        <ul>
+            <li><b>Vuota:</b> commessa standard</li>
+            <li><b>Fixed</b></li>
+            <li><b>Formazione</b></li>
+        </ul>
+        <br>
+        <p>I campi necessari da inserire nelle text-box (Codice Cliente, Commessa, Sotto Commessa, Fase, Sotto Fase) devono essere presi dai codici di GoldenRing e sono divisi in obbligatori e facoltativi.</p>
+        <p>Quelli <b>obbligatori</b> sono:</p>
+        <ul>
+            <li><b>Cliente</b></li>
+            <li><b>Commessa</b></li>
+            <li><b>Sotto Commessa</b></li>
+        </ul>
+        <br>
+        <p>Quelli <b>facoltativi</b> sono:</p>
+        <ul>
+            <li><b>Fase</b></li>
+            <li><b>Sotto Fase</b></li>
+        </ul>
+
+        <h4>In caso di inserimento Cliente</h4>
+        <p>È necessario inserire solamente il campo <b>“Cliente”</b></p>
+
+        <h4>Visualizzazione Clienti e Commesse</h4>
+        <p>In questo menu, in basso a sinistra, sono presenti 2 tasti:</p>
+        <ul>
+            <li><b>Clienti</b></li>
+            <li><b>Commesse</b></li>
+        </ul>
+        <br>
+        <p><b>Clienti:</b></p>
+        <img src="Immagini/clienti.png">
+        <p>Premendo su questo tasto, appare un nuovo menu in cui è possibile visualizzare tutti i clienti già valorizzati.</p>
+        <p>Per modificare il contenuto delle celle, è necessario premere il tasto destro.</p><br>
+
+        <p><b>Commesse:</b></p>
+        <img src="Immagini/commesse.png">
+        <p>Premendo su questo tasto, appare un nuovo menu in cui è possibile visualizzare tutte le commesse già valorizzate.</p>
+        <p>Per modificare il contenuto delle celle, è necessario premere il tasto destro.</p>
+        <p>Inoltre, è possibile filtrare le informazioni attraverso i campi sotto la tabella.</p>
+    </section>
+    <section class="visDettagliata">
+        <h3>Visualizzazione Dettagliata</h3>
+        <p>Per passare alla visualizzazione dettagliata, sarà necessario cliccare sulla label in basso a destra <b>(“Totale ore di lavoro”)</b>.</p>
+        <p>Una volta premuto, si passerà alla seguente schermata:</p>
+        <img src="Immagini/visDettaglio.png">
+        <p>Qui è possibile visualizzare un resoconto dettagliato dei ticket effettuati con le relative informazioni.</p>
+        <p>Anche qui è possibile effettuare delle modifiche dei ticket utilizzando il tasto destro sulle celle. (tranne che per il tempo)</p><br>
+        <p>E' possibile modificare i dati visualizzati in questa pagina con i filtri modificabili premendo le 3 linee sopra la tabella:</p>
+        <img src="Immagini/filtriDettagliati.png">
+    </section>
+    <section class="dividiCliente">
+        <h3>Dividi per Cliente</h3>
+        <img src="Immagini/dividiCliente.png">
+        <p>Questa è la pagina più importante per la consuntivazione.</p>
+        <p>Qui è possibile visualizzare il resoconto mensile raggruppato per Data, Cliente, Ticket e Nota.</p>
+
+        <h4>Struttura della pagina</h4>
+        <p>La struttura della pagina è uguale a quella della visualizzazione mensile con qualche piccola differenza.</p>
+        <p>In basso a destra, il tasto <b>“Dividi per Cliente”</b> ha cambiato nome in <b>“Ritorna al Mese”</b> che se premuto riporta alla visualizzazione mensile</p>
+        <p>In basso al centro è presente il tasto <b>“Consuntiva Tutto”</b></p>
+
+        <h4>Funzionamento della Pagina</h4>
+        <p>La funzione di questa pagina è quella di raggruppare i dati per giorno in modo di consuntivare su Golden Ring ogni commessa senza doppi.</p>
+        <p>Qui non è possibile modificare i dati, però è possibile essere reindirizzati alla pagina iniziale per apporle.</p>
+        <br>
+        <p>Per consuntivare effettivamente le ore su Golden Ring, bisogna seguire questi step preliminari:</p>
+        <ul>
+            <li>Accedere al portale di Golden Ring sul browser</li>
+            <li>Andare sulla pagina della consuntivazione manuale</li>
+            <li>Se non è attiva, abilitare l’estensione con lo script di inserimento automatico</li>
+        </ul>
+        <br>
+        <p>Completati questi step, è possibile procedere alla consuntivazione in 2 modi:</p>
+        <ul>
+            <li><b>Manuale:</b> cliccando su “NO” (sotto la colonna “CONSUNTIVATO”) per tutti i ticket che si desidera consuntivare</li>
+            <li><b>Automatico:</b> cliccando il tasto <b>“Consuntiva Tutto”</b></li>
+        </ul>
+        <p><b>N.B.</b> Nel caso in cui una determinata riga risultasse come consuntivata quando in realtà non lo è, bisogna cliccare su “SI” e verrà chiesta la conferma.</p>
+    </section>
+    <footer class="footer">
+        <p>Copiright© - Flavio Doroci</p>
+    </footer>
+</body>
+</html>

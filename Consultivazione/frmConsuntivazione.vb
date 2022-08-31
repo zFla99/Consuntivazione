@@ -123,6 +123,7 @@ Public Class frmConsuntivazione
                         imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
                         imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
                         imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
+                        imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
                         lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
                         coloreIcone = "white"
                     Else
@@ -130,6 +131,7 @@ Public Class frmConsuntivazione
                         imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_nero
                         imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_nero
                         imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_nero
+                        imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_nero
                         lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
                         coloreIcone = "black"
                     End If
@@ -202,10 +204,12 @@ Public Class frmConsuntivazione
         cn.Close()
 
         cmbCliente.Items.Clear()
+        cmbClienteFiltro.Items.Clear()
         frmModifica.cmbCliente.Items.Clear()
         frmCommesse.cmbCliente.Items.Clear()
         For i = 0 To tabella.Rows.Count - 1
             cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            cmbClienteFiltro.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
@@ -273,6 +277,9 @@ Public Class frmConsuntivazione
         End If
 
         ticket = txtTicket.Text.Replace("'", "")
+        If ticket.Contains("/") Then
+            ticket = "/"
+        End If
         cliente = cmbCliente.Text.Replace("'", "")
         tempo = cmbTempo.Text.Replace(".", ",")
         giorno = dtpData.Text
@@ -366,10 +373,6 @@ Public Class frmConsuntivazione
                     conta += 1
                 End If
             Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa standard")
-                Exit Sub
-            End If
             If nota = "" Then
                 nota = "Criticità"
             Else
@@ -382,7 +385,7 @@ Public Class frmConsuntivazione
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per il Bug Fix")
+                MsgBox("Questo cliente non ha la commessa per il Bug Fix", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
 
@@ -398,7 +401,7 @@ Public Class frmConsuntivazione
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per la Formazione")
+                MsgBox("Questo cliente non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
             If nota = "" Then
@@ -412,25 +415,32 @@ Public Class frmConsuntivazione
                     conta += 1
                 End If
             Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa standard")
-                Exit Sub
-            End If
         End If
 
         If ckbAltro.Checked = True Then
             Dim notaInput As String
             notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = notaInput.Replace("'", "")
+            notaInput = notaInput.Replace(",", "")
             notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
             If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)")
+                MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
-                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("extra") Then
-                MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)")
+                MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)", MsgBoxStyle.Exclamation)
+                Exit Sub
+            End If
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = notaInput Then
+                    conta += 1
+                End If
+            Next
+            If conta > 1 And nota <> "" Then
+                MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
             If nota = "" Then
@@ -438,6 +448,10 @@ Public Class frmConsuntivazione
             Else
                 nota += ", " & notaInput
             End If
+        End If
+        If conta = 0 Then
+            MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
+            Exit Sub
         End If
 
         If notaExtra <> "" Then
@@ -619,7 +633,7 @@ Public Class frmConsuntivazione
         Call RedimDGV()
     End Sub
 
-    Sub AggiornaConsuntivato(cliente As String, ticket As String, data As String, consuntivato As String)
+    Sub AggiornaConsuntivato(cliente As String, ticket As String, data As Date, consuntivato As String)
         Dim vetNumTicket() As String = ticket.Split("%2C")
         Dim numTicket As Integer = vetNumTicket.Length
         Dim ticketVet() As String
@@ -635,9 +649,9 @@ Public Class frmConsuntivazione
         For i = 0 To numTicket - 1
             cn.Open()
             If ticketVet(i) = "Criticità" Then
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = '" & data & "' AND CLIENTE = '" & cliente & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
             Else
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = '" & data & "' AND CLIENTE = '" & cliente & "'"
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
             End If
             cmd = New OleDbCommand(str, cn)
             Try
@@ -649,9 +663,6 @@ Public Class frmConsuntivazione
             End Try
             cn.Close()
         Next
-        Call RedimDGV()
-        btnDividiXCliente.Text = "Dividi per Cliente"
-        btnDividiXCliente_Click(sender:=New EventArgs, e:=New EventArgs)
     End Sub
     Sub PulisciCampi()
         dtpData.Value = Now
@@ -700,6 +711,7 @@ Public Class frmConsuntivazione
                     If MsgBox("Risulta gia consuntivato. Vuoi rimettere a 'NO'?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                         consuntivato = "NO"
                         Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
+                        dgvCalendario.Rows(e.RowIndex).Cells(5).Value = consuntivato
                         Exit Sub
                     End If
                     Exit Sub
@@ -781,6 +793,7 @@ Public Class frmConsuntivazione
                 End If
                 Process.Start(link)
                 Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
+                dgvCalendario.Rows(e.RowIndex).Cells(5).Value = consuntivato
             End If
         Else
             If e.ColumnIndex = 1 Then
@@ -985,7 +998,7 @@ ore di lavoro
             nudAnno.Value = Anno
             Call AggiornaDGMensile(Mese, Anno)
 
-            lblFiltriSelezionati.Text = "Anno: " & Anno & "  Mese: " & Mese
+            lblFiltriSelezionati.Text = "Anno: " & Anno & "   -   Mese: " & Mese
             strWhere = "WHERE Month(DATA) = " & Mese & " AND Year(DATA) = " & Anno
         Else
             lblGiorno_Mese.Text = "Totale 
@@ -1000,12 +1013,18 @@ ore di lavoro
             lblAnno.Visible = False
             nudAnno.Visible = False
             nudAnno.Enabled = False
+
             pnlFiltri.Visible = False
             If menuFiltriChiuso = False Then
                 lblFiltri_Click(sender, e)
             End If
             lblFiltri.Visible = False
             lblFiltriSelezionati.Visible = False
+            txtTicketFiltro.Clear()
+            cmbClienteFiltro.Text = ""
+            cmbNotaFiltro.Text = ""
+            cmbConsuntivazioneFiltro.Text = ""
+
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = False
@@ -1924,6 +1943,9 @@ ore di lavoro
             Me.Close()
         End If
     End Sub
+    Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click
+        MsgBox("Coming Soon", MsgBoxStyle.Information)
+    End Sub
     Sub colorHover(ByRef red As Integer, ByRef green As Integer, ByRef blu As Integer)
         If red - 20 <= 0 Then
             red = 0
@@ -1985,9 +2007,25 @@ ore di lavoro
         imgTema.BackColor = Color.FromArgb(red, green, blu)
     End Sub
 
-    Private Sub lblTema_MouseLeave(sender As Object, e As EventArgs) Handles lblTema.MouseLeave
+    Private Sub lblTema_MouseLeave(sender As Object, e As EventArgs) Handles lblTema.MouseLeave, imgTema.MouseLeave
         lblTema.BackColor = lblSfondoColorato.BackColor
         imgTema.BackColor = lblSfondoColorato.BackColor
+    End Sub
+
+    Private Sub lblImpostazioni_MouseHover(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseHover, imgImpostazioni.MouseHover
+        Dim red As Integer = lblImpostazioni.BackColor.R
+        Dim green As Integer = lblImpostazioni.BackColor.G
+        Dim blu As Integer = lblImpostazioni.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblImpostazioni.BackColor = Color.FromArgb(red, green, blu)
+        imgImpostazioni.BackColor = Color.FromArgb(red, green, blu)
+    End Sub
+
+    Private Sub lblImpostazioni_MouseLeave(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseLeave, imgImpostazioni.MouseLeave
+        lblImpostazioni.BackColor = lblSfondoColorato.BackColor
+        imgImpostazioni.BackColor = lblSfondoColorato.BackColor
     End Sub
 
     Private Sub lblDocumentazione_MouseHover(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseHover, imgDocumentazione.MouseHover
@@ -2008,43 +2046,23 @@ ore di lavoro
     Dim menuFiltriChiuso As Boolean = True
     Private Sub lblFiltri_Click(sender As Object, e As EventArgs) Handles lblFiltri.Click
         If pnlFiltri.Height = 0 Then
-            menuFiltriChiuso = True
-            pnlFiltri.Top = 10
-        Else
             menuFiltriChiuso = False
-            pnlFiltri.Top = 0
-        End If
-        TimerFiltri.Start()
-    End Sub
-
-    Private Sub TimerFiltri_Tick(sender As Object, e As EventArgs) Handles TimerFiltri.Tick
-        If menuFiltriChiuso = True Then
-            pnlFiltri.Height += 13
-            If pnlFiltri.Height > 13 Then
-                lblFiltri.Top += 13
-                lblFiltriSelezionati.Top += 13
-                dgvCalendario.Height -= 13
-                dgvCalendario.Top += 13
-            End If
-            If pnlFiltri.Height = 130 Then
-                menuFiltriChiuso = False
-                TimerFiltri.Stop()
-            End If
+            pnlFiltri.Top = 10
+            pnlFiltri.Height = 130
+            lblFiltri.Top += 130
+            lblFiltriSelezionati.Top += 130
+            dgvCalendario.Height -= 130
+            dgvCalendario.Top += 130
         Else
-            pnlFiltri.Height -= 13
-            If pnlFiltri.Height >= 13 Then
-                lblFiltri.Top -= 13
-                lblFiltriSelezionati.Top -= 13
-                dgvCalendario.Height += 13
-                dgvCalendario.Top -= 13
-            End If
-            If pnlFiltri.Height = 0 Then
-                menuFiltriChiuso = True
-                TimerFiltri.Stop()
-            End If
+            menuFiltriChiuso = True
+            pnlFiltri.Top = 0
+            pnlFiltri.Height = 0
+            lblFiltri.Top -= 130
+            lblFiltriSelezionati.Top -= 130
+            dgvCalendario.Height += 130
+            dgvCalendario.Top -= 130
         End If
     End Sub
-
     Private Sub ckbDataSelezionata_CheckedChanged(sender As Object, e As EventArgs) Handles ckbDataSelezionata.CheckedChanged
         If ckbDataSelezionata.Checked = True Then
             dtpDataDaFiltro.Enabled = True

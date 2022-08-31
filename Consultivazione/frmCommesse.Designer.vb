@@ -76,11 +76,12 @@ Partial Class frmCommesse
         Me.cmbCliente.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.cmbCliente.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
         Me.cmbCliente.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-        Me.cmbCliente.Location = New System.Drawing.Point(118, 280)
+        Me.cmbCliente.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        Me.cmbCliente.Location = New System.Drawing.Point(118, 277)
         Me.cmbCliente.MaxLength = 30
         Me.cmbCliente.Name = "cmbCliente"
         Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmbCliente.Size = New System.Drawing.Size(110, 21)
+        Me.cmbCliente.Size = New System.Drawing.Size(110, 25)
         Me.cmbCliente.TabIndex = 1
         '
         'ckbVuota

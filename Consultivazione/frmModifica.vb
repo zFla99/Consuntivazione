@@ -17,7 +17,6 @@ Public Class frmModifica
         End If
         id = frmConsuntivazione.idCondiviso
         cliente = frmConsuntivazione.clienteCondiviso
-        caricaClientiTempo()
         impostaTabModifica()
         impostaConfig()
     End Sub
@@ -63,44 +62,7 @@ Public Class frmModifica
         End If
         PulisciCampi()
     End Sub
-    Sub caricaClientiTempo()
-        'Clienti
-        Dim cn As OleDbConnection
-        Dim cmd As OleDbCommand
-        Dim da As OleDbDataAdapter
-        Dim tabella As New DataTable
-        Dim str As String
 
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
-
-        cmbCliente.Items.Clear()
-        frmConsuntivazione.cmbCliente.Items.Clear()
-        frmCommesse.cmbCliente.Items.Clear()
-        For i = 0 To tabella.Rows.Count - 1
-            cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-        Next
-
-        'Tempo
-        cmbTempo.Items.Clear()
-        cmbTempo.Items.Add("0,25")
-        cmbTempo.Items.Add("0,5")
-        cmbTempo.Items.Add("0,75")
-        cmbTempo.Items.Add("1")
-        cmbTempo.Items.Add("1,25")
-        cmbTempo.Items.Add("1,5")
-        cmbTempo.Items.Add("1,75")
-        cmbTempo.Items.Add("2")
-    End Sub
     Sub PulisciCampi()
         dtpData.Value = Now
         cmbCliente.Text = ""
@@ -416,7 +378,7 @@ Public Class frmModifica
 
 
         cn.Open()
-        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA ='#" & giorno & "#"
+        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -497,15 +459,10 @@ Public Class frmModifica
                     conta += 1
                 End If
             Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa standard")
-                corretto = False
-                Exit Sub
-            End If
-            If dato = "" Then
-                dato = "Criticità"
+            If nota = "" Then
+                nota = "Criticità"
             Else
-                dato += ", Criticità"
+                nota += ", Criticità"
             End If
         ElseIf rdbFixed.Checked = True Then
             For i = 0 To tabella.Rows.Count - 1
@@ -514,15 +471,14 @@ Public Class frmModifica
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per il Bug Fix")
-                corretto = False
+                MsgBox("Questo cliente non ha la commessa per il Bug Fix", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
 
-            If dato = "" Then
-                dato = "Fixed"
+            If nota = "" Then
+                nota = "Fixed"
             Else
-                dato += ", Fixed"
+                nota += ", Fixed"
             End If
         ElseIf rdbFormazione.Checked = True Then
             For i = 0 To tabella.Rows.Count - 1
@@ -531,14 +487,13 @@ Public Class frmModifica
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per la Formazione")
-                corretto = False
+                MsgBox("Questo cliente non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
-            If dato = "" Then
-                dato = "Formazione"
+            If nota = "" Then
+                nota = "Formazione"
             Else
-                dato += ", Formazione"
+                nota += ", Formazione"
             End If
         Else
             For i = 0 To tabella.Rows.Count - 1
@@ -546,11 +501,6 @@ Public Class frmModifica
                     conta += 1
                 End If
             Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa standard")
-                corretto = False
-                Exit Sub
-            End If
         End If
 
         If ckbAltro.Checked = True Then
@@ -559,16 +509,14 @@ Public Class frmModifica
             notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
             If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)")
-                corretto = False
+                MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
-                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
-                corretto = False
+                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("extra") Then
                 If CDbl(frmConsuntivazione.lblTempoTot.Text) <= 8 Then
-                    MsgBox("Tempo extra non valido (non puoi inserire un tempo extra se hai fatto meno di 8 ore)")
+                    MsgBox("Tempo extra non valido (non puoi inserire un tempo extra se hai fatto meno di 8 ore)", MsgBoxStyle.Exclamation)
                     Exit Sub
                 End If
                 Dim tempoExtra As String = InputBox("Inserisci un tempo extra")
@@ -577,20 +525,33 @@ Public Class frmModifica
                     MsgBox("Tempo extra non valido (non è un numero)")
                     Exit Sub
                 ElseIf tempoExtra > CDbl(frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value) Then
-                    MsgBox("Tempo extra non valido (non può essere maggiore del tempo di risoluzione)")
+                    MsgBox("Tempo extra non valido (non può essere maggiore del tempo di risoluzione)", MsgBoxStyle.Exclamation)
                     Exit Sub
                 ElseIf tempoExtra <= 0 Then
-                    MsgBox("Tempo extra non valido (non può essere minore o uguale a 0)")
+                    MsgBox("Tempo extra non valido (non può essere minore o uguale a 0)", MsgBoxStyle.Exclamation)
                     Exit Sub
                 End If
                 notaInput = "Extra(" & tempoExtra & ")"
                 notaInput = notaInput.Replace("'", "")
+            End If
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i) = notaInput Then
+                    conta += 1
+                End If
+            Next
+            If conta > 1 And nota <> "" Then
+                MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
+                Exit Sub
             End If
             If dato = "" Then
                 dato = notaInput
             Else
                 dato += ", " & notaInput
             End If
+        End If
+        If conta = 0 Then
+            MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
+            Exit Sub
         End If
         corretto = True
     End Sub

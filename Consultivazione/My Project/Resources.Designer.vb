@@ -103,6 +103,26 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property impostazioni_32x32_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("impostazioni_32x32_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property impostazioni_32x32_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("impostazioni_32x32_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property menuAperto_32x32_bianco() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("menuAperto_32x32_bianco", resourceCulture)

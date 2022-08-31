@@ -95,7 +95,7 @@ Public Class frmClienti
         cn.Close()
     End Sub
     Private Sub dgvCalendario_CellMouseDown(sender As Object, e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgvClienti.CellMouseDown
-        If e.Button = MouseButtons.Left Then
+        If e.Button = MouseButtons.Right Then
             If e.RowIndex = -1 Then
                 Exit Sub
             End If
@@ -118,8 +118,38 @@ Public Class frmClienti
                 End If
 
                 modificaCliente(cliente, e.RowIndex)
+                modificaCmbClienti()
             End If
             aggiornaDG()
         End If
+    End Sub
+    Sub modificaCmbClienti()
+        'Clienti
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        frmModifica.cmbCliente.Items.Clear()
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        frmConsuntivazione.cmbClienteFiltro.Items.Clear()
+        frmCommesse.cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
+            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmConsuntivazione.cmbClienteFiltro.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
     End Sub
 End Class

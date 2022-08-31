@@ -118,46 +118,52 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="menuAperto_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\menuAperto_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ticket_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\ticket_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="commesse_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\commesse_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pennello_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\pennello_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="menuChiuso_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\menuChiuso_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ticket_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\ticket_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="menuChiuso_16x16_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\menuChiuso_16x16_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="documentazione_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Immagini\documentazione_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="menuAperto_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\menuAperto_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ticket_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\ticket_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="documentazione_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Immagini\documentazione_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pennello_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\pennello_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="menuChiuso_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\menuChiuso_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="commesse_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Immagini\commesse_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="menuChiuso_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\menuChiuso_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="commesse_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\commesse_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="menuAperto_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\menuAperto_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ticket_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\ticket_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pennello_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\pennello_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pennello_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\pennello_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="menuAperto_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\menuAperto_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="menuChiuso_16x16_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Immagini\menuChiuso_16x16_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="menuChiuso_16x16_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Immagini\menuChiuso_16x16_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="menuChiuso_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\menuChiuso_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="impostazioni_32x32_bianco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\impostazioni_32x32_bianco.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="impostazioni_32x32_nero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Immagini\impostazioni_32x32_nero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
