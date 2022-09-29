@@ -21,8 +21,8 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>8</ApplicationRevision>
-    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -113,6 +113,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -152,6 +153,12 @@
     </Compile>
     <Compile Include="frmConsuntivazione.Designer.vb">
       <DependentUpon>frmConsuntivazione.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmImpostazioni.Designer.vb">
+      <DependentUpon>frmImpostazioni.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmImpostazioni.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmInserisciCliente.Designer.vb">
@@ -205,6 +212,9 @@
     <EmbeddedResource Include="frmConsuntivazione.resx">
       <DependentUpon>frmConsuntivazione.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmImpostazioni.resx">
+      <DependentUpon>frmImpostazioni.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmInserisciCliente.resx">
       <DependentUpon>frmInserisciCliente.vb</DependentUpon>
     </EmbeddedResource>
@@ -225,8 +235,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config\config.ini" />
-    <Content Include="Config\configDefault.ini" />
+    <None Include="Config\config.ini" />
+    <None Include="Config\configDefault.ini" />
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
@@ -238,13 +248,29 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <Content Include="Documentazione\Immagini\cambiaTema.png" />
+    <Content Include="Documentazione\Immagini\copertina.png" />
+    <Content Include="Documentazione\Immagini\downloadTemplate.png" />
+    <Content Include="Documentazione\Immagini\esempioInserimentoTemplate.png" />
+    <Content Include="Documentazione\Immagini\filtriDettagliati.png" />
+    <Content Include="Documentazione\Immagini\LatoInferiore.png" />
+    <Content Include="Documentazione\Immagini\LatoSuperiore.png" />
+    <Content Include="Documentazione\Immagini\menuImpostazioni.png" />
+    <Content Include="Documentazione\Immagini\selezionaTemplate.png" />
+    <Content Include="Documentazione\Immagini\templateCommesse.png" />
+    <Content Include="Documentazione\Immagini\templateTicket.png" />
+    <Content Include="Documentazione\Immagini\visDettaglio.png" />
     <Content Include="Immagini\commesse_32x32_bianco.png" />
     <Content Include="Immagini\commesse_32x32_nero.png" />
     <Content Include="Immagini\documentazione_32x32_bianco.png" />
     <Content Include="Immagini\documentazione_32x32_nero.png" />
     <Content Include="Immagini\icona.ico" />
+    <Content Include="Immagini\impostazioni_32x32_bianco.png" />
+    <Content Include="Immagini\impostazioni_32x32_nero.png" />
     <Content Include="Immagini\menuAperto_32x32_bianco.png" />
     <Content Include="Immagini\menuAperto_32x32_nero.png" />
+    <Content Include="Immagini\menuChiuso_16x16_bianco.png" />
+    <Content Include="Immagini\menuChiuso_16x16_nero.png" />
     <Content Include="Immagini\menuChiuso_32x32_bianco.png" />
     <Content Include="Immagini\menuChiuso_32x32_nero.png" />
     <Content Include="Immagini\pennello_32x32_bianco.png" />

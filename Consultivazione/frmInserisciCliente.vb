@@ -1,7 +1,7 @@
 ﻿Imports System.Data.OleDb
 Imports System.IO
 Public Class frmInserisciCliente
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+    ReadOnly strConn As String = frmConsuntivazione.strConn
     Private Sub frmInserisciCliente_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         pulisciCampi()
         impostaConfig()

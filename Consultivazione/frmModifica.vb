@@ -7,7 +7,7 @@ Public Class frmModifica
     Dim nota As String
     Dim id As String
     Dim cliente As String = frmConsuntivazione.clienteCondiviso
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+    ReadOnly strConn As String = frmConsuntivazione.strConn
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
@@ -313,6 +313,10 @@ Public Class frmModifica
             Exit Sub
         End If
         dato = dato.Replace(".", ",")
+        If IsNumeric(dato) = False Then
+            MsgBox("Non è un tempo valido", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
         Dim vecchioTempo As String = frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value
         Dim nuovoTempo As Double
         notaExtra = ""
@@ -459,10 +463,10 @@ Public Class frmModifica
                     conta += 1
                 End If
             Next
-            If nota = "" Then
-                nota = "Criticità"
+            If dato = "" Then
+                dato = "Criticità"
             Else
-                nota += ", Criticità"
+                dato += ", Criticità"
             End If
         ElseIf rdbFixed.Checked = True Then
             For i = 0 To tabella.Rows.Count - 1
@@ -475,10 +479,10 @@ Public Class frmModifica
                 Exit Sub
             End If
 
-            If nota = "" Then
-                nota = "Fixed"
+            If dato = "" Then
+                dato = "Fixed"
             Else
-                nota += ", Fixed"
+                dato += ", Fixed"
             End If
         ElseIf rdbFormazione.Checked = True Then
             For i = 0 To tabella.Rows.Count - 1
@@ -490,10 +494,10 @@ Public Class frmModifica
                 MsgBox("Questo cliente non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
                 Exit Sub
             End If
-            If nota = "" Then
-                nota = "Formazione"
+            If dato = "" Then
+                dato = "Formazione"
             Else
-                nota += ", Formazione"
+                dato += ", Formazione"
             End If
         Else
             For i = 0 To tabella.Rows.Count - 1
@@ -515,10 +519,6 @@ Public Class frmModifica
                 MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("extra") Then
-                If CDbl(frmConsuntivazione.lblTempoTot.Text) <= 8 Then
-                    MsgBox("Tempo extra non valido (non puoi inserire un tempo extra se hai fatto meno di 8 ore)", MsgBoxStyle.Exclamation)
-                    Exit Sub
-                End If
                 Dim tempoExtra As String = InputBox("Inserisci un tempo extra")
                 tempoExtra = tempoExtra.Replace(".", ",")
                 If IsNumeric(tempoExtra) = False Then

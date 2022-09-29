@@ -90,6 +90,8 @@ Partial Class frmConsuntivazione
         Me.lblImpostazioni = New System.Windows.Forms.Label()
         Me.TimerSlide = New System.Windows.Forms.Timer(Me.components)
         Me.lblSlide = New System.Windows.Forms.Label()
+        Me.lblExtra = New System.Windows.Forms.Label()
+        Me.lblTempoExtra = New System.Windows.Forms.Label()
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlFiltri.SuspendLayout()
@@ -267,8 +269,10 @@ Partial Class frmConsuntivazione
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlMensile.BackColor = System.Drawing.Color.Transparent
+        Me.pnlMensile.Controls.Add(Me.lblExtra)
         Me.pnlMensile.Controls.Add(Me.pnlFiltri)
         Me.pnlMensile.Controls.Add(Me.lblGiorno_Mese)
+        Me.pnlMensile.Controls.Add(Me.lblTempoExtra)
         Me.pnlMensile.Controls.Add(Me.lblTempoTot)
         Me.pnlMensile.Controls.Add(Me.dgvCalendario)
         Me.pnlMensile.Controls.Add(Me.lblFiltri)
@@ -540,7 +544,7 @@ Partial Class frmConsuntivazione
         Me.lblFiltri.BackColor = System.Drawing.Color.Transparent
         Me.lblFiltri.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lblFiltri.ForeColor = System.Drawing.Color.White
-        Me.lblFiltri.Image = Global.Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
+        Me.lblFiltri.Image = CType(resources.GetObject("lblFiltri.Image"), System.Drawing.Image)
         Me.lblFiltri.Location = New System.Drawing.Point(42, 30)
         Me.lblFiltri.Name = "lblFiltri"
         Me.lblFiltri.Size = New System.Drawing.Size(16, 16)
@@ -763,7 +767,7 @@ Partial Class frmConsuntivazione
         Me.imgImpostazioni.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.imgImpostazioni.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgImpostazioni.ForeColor = System.Drawing.SystemColors.Control
-        Me.imgImpostazioni.Image = Global.Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
+        Me.imgImpostazioni.Image = CType(resources.GetObject("imgImpostazioni.Image"), System.Drawing.Image)
         Me.imgImpostazioni.Location = New System.Drawing.Point(15, 512)
         Me.imgImpostazioni.Name = "imgImpostazioni"
         Me.imgImpostazioni.Size = New System.Drawing.Size(36, 36)
@@ -786,7 +790,7 @@ Partial Class frmConsuntivazione
         Me.imgDocumentazione.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.imgDocumentazione.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgDocumentazione.ForeColor = System.Drawing.SystemColors.Control
-        Me.imgDocumentazione.Image = Global.Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
+        Me.imgDocumentazione.Image = CType(resources.GetObject("imgDocumentazione.Image"), System.Drawing.Image)
         Me.imgDocumentazione.Location = New System.Drawing.Point(15, 372)
         Me.imgDocumentazione.Name = "imgDocumentazione"
         Me.imgDocumentazione.Size = New System.Drawing.Size(36, 36)
@@ -811,7 +815,7 @@ Partial Class frmConsuntivazione
         Me.imgTema.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.imgTema.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTema.ForeColor = System.Drawing.SystemColors.Control
-        Me.imgTema.Image = Global.Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
+        Me.imgTema.Image = CType(resources.GetObject("imgTema.Image"), System.Drawing.Image)
         Me.imgTema.Location = New System.Drawing.Point(15, 442)
         Me.imgTema.Name = "imgTema"
         Me.imgTema.Size = New System.Drawing.Size(36, 36)
@@ -836,7 +840,7 @@ Partial Class frmConsuntivazione
         Me.imgTicketMassivi.BackColor = System.Drawing.Color.Transparent
         Me.imgTicketMassivi.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTicketMassivi.ForeColor = System.Drawing.SystemColors.Control
-        Me.imgTicketMassivi.Image = Global.Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
+        Me.imgTicketMassivi.Image = CType(resources.GetObject("imgTicketMassivi.Image"), System.Drawing.Image)
         Me.imgTicketMassivi.Location = New System.Drawing.Point(15, 132)
         Me.imgTicketMassivi.Name = "imgTicketMassivi"
         Me.imgTicketMassivi.Size = New System.Drawing.Size(36, 36)
@@ -847,7 +851,7 @@ Partial Class frmConsuntivazione
         '
         Me.imgCommesseMassive.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgCommesseMassive.ForeColor = System.Drawing.SystemColors.Control
-        Me.imgCommesseMassive.Image = Global.Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
+        Me.imgCommesseMassive.Image = CType(resources.GetObject("imgCommesseMassive.Image"), System.Drawing.Image)
         Me.imgCommesseMassive.Location = New System.Drawing.Point(18, 202)
         Me.imgCommesseMassive.Name = "imgCommesseMassive"
         Me.imgCommesseMassive.Size = New System.Drawing.Size(36, 36)
@@ -902,12 +906,38 @@ Partial Class frmConsuntivazione
         Me.lblSlide.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
         Me.lblSlide.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lblSlide.ForeColor = System.Drawing.Color.White
-        Me.lblSlide.Image = Global.Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
+        Me.lblSlide.Image = CType(resources.GetObject("lblSlide.Image"), System.Drawing.Image)
         Me.lblSlide.Location = New System.Drawing.Point(2, 2)
         Me.lblSlide.Name = "lblSlide"
         Me.lblSlide.Size = New System.Drawing.Size(32, 32)
         Me.lblSlide.TabIndex = 24
         Me.lblSlide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblExtra
+        '
+        Me.lblExtra.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblExtra.AutoSize = True
+        Me.lblExtra.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblExtra.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.lblExtra.Location = New System.Drawing.Point(521, 522)
+        Me.lblExtra.Name = "lblExtra"
+        Me.lblExtra.Size = New System.Drawing.Size(37, 15)
+        Me.lblExtra.TabIndex = 28
+        Me.lblExtra.Text = "Extra"
+        Me.lblExtra.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.lblExtra.Visible = False
+        '
+        'lblTempoExtra
+        '
+        Me.lblTempoExtra.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblTempoExtra.AutoSize = True
+        Me.lblTempoExtra.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.lblTempoExtra.Location = New System.Drawing.Point(564, 522)
+        Me.lblTempoExtra.Name = "lblTempoExtra"
+        Me.lblTempoExtra.Size = New System.Drawing.Size(13, 15)
+        Me.lblTempoExtra.TabIndex = 18
+        Me.lblTempoExtra.Text = "0"
+        Me.lblTempoExtra.Visible = False
         '
         'frmConsuntivazione
         '
@@ -1005,4 +1035,6 @@ Partial Class frmConsuntivazione
     Friend WithEvents btnCerca As Button
     Friend WithEvents imgImpostazioni As Label
     Friend WithEvents lblImpostazioni As Label
+    Friend WithEvents lblExtra As Label
+    Friend WithEvents lblTempoExtra As Label
 End Class

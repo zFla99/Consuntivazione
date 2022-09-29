@@ -3,18 +3,18 @@ Imports System.Data.OleDb
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
-    ReadOnly strConn As String = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+    Public strConn As String
     Public fileConfig As String
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If controlloPathDB() = False Then
-            Me.Close()
-            Exit Sub
-        End If
         If controlloPathConfig() = False Then
             Me.Close()
             Exit Sub
         Else
-            Call impostaConfig()
+            If controlloPathDB() = False Then
+            Me.Close()
+            Exit Sub
+        End If
+        Call impostaConfig()
         End If
         Call caricaClientiTempo()
         Call DataGrid()
@@ -23,23 +23,58 @@ Public Class frmConsuntivazione
         lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
     End Sub
     Function controlloPathDB() As Boolean
+        Dim sr As New StreamReader(fileConfig)
+        Dim appoggio As String = sr.ReadLine
+        Dim selezionaModifica As String = ""
+        Dim path As String = ""
+
+        Do
+            If appoggio.StartsWith("[") Then
+                selezionaModifica = appoggio.Replace("[", "")
+                selezionaModifica = selezionaModifica.Replace("]", "")
+                appoggio = sr.ReadLine()
+            End If
+            If selezionaModifica = "Path" Then
+                Dim index As Integer = appoggio.IndexOf("=") + 1
+                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+
+                If appoggio.Contains("DB_PATH") Then
+                    path = value
+                    If path = "" Then
+                        strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+                    Else
+                        strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & path
+                    End If
+                End If
+            End If
+            appoggio = sr.ReadLine()
+        Loop Until appoggio = Nothing
+
+        sr.Close()
         Dim pathFile As String
         pathFile = strConn.Substring(47, strConn.Length - 47)
-        If File.Exists(pathFile) = False Then
-            MsgBox("La cartella del programma non esiste o non è presente nella /Documenti. (../Documenti/Altro/Consuntivazione/..)")
+        If pathFile.EndsWith("Consuntivazione.accdb") = False Then
+            MsgBox("Il file selezionato non è il Database di 'Consuntivazione.accdb'. 
+Cambialo!", MsgBoxStyle.Critical)
+            frmImpostazioni.ShowDialog()
             Return False
+        End If
+        If File.Exists(pathFile) = False Then
+            MsgBox("Database non trovato nel seguente path: " & pathFile & ".
+Cambialo!", MsgBoxStyle.Critical)
+            frmImpostazioni.ShowDialog()
+            Return False
+        End If
+        If path = "" Then
+            frmImpostazioni.applicaModifiche(pathFile)
         End If
         Return True
     End Function
     Function controlloPathConfig() As Boolean
-        fileConfig = Application.StartupPath
-        If fileConfig.Contains("bin\Debug") Then
-            fileConfig = fileConfig.Replace("bin\Debug", "Config\config.ini")
-        Else
-            fileConfig += "\Config\config.ini"
-        End If
+        fileConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\Consultivazione\Config\config.ini"
         If File.Exists(fileConfig) = False Then
-            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.")
+            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.
+P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sotto 'Documenti\Altro'")
             Return False
         End If
         Return True
@@ -196,7 +231,7 @@ Public Class frmConsuntivazione
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        str = "Select Cliente FROM Clienti ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -964,7 +999,7 @@ Public Class frmConsuntivazione
         If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
             lblGiorno_Mese.Text = "Totale 
 ore di lavoro
-(Mensile)"
+(Dettaglio)"
             Call PulisciCampi()
             pnlInserisci.Visible = False
             lblSfondoColorato.Visible = False
@@ -980,6 +1015,8 @@ ore di lavoro
             lblFiltriSelezionati.Visible = True
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = True
+            lblExtra.Visible = True
+            lblTempoExtra.Visible = True
 
             pnlMensile.Left = 0
             pnlMensile.Width = Me.Width - 15
@@ -1028,6 +1065,8 @@ ore di lavoro
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = False
+            lblExtra.Visible = False
+            lblTempoExtra.Visible = False
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, 0)
             Call AggiornaDG(giornoOggi, False)
@@ -1043,6 +1082,7 @@ ore di lavoro
         Dim str As String
         Dim i As Integer
         Dim somma As Double
+        Dim extra As Double
 
 
         cn = New OleDbConnection(strConn)
@@ -1064,9 +1104,17 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
+            If tabella.Rows(i).Item("NOTA").ToString.Contains("Extra") = True Then
+                Dim tempoExtra As String
+                Dim vetDividiNota() As String
+                vetDividiNota = tabella.Rows(i).Item("NOTA").ToString.Split("(")
+                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                extra += tempoExtra
+            End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
         lblTempoTot.Text = somma
+        lblTempoExtra.Text = extra
         btnDividiXCliente.Text = "Dividi per Cliente"
         btnConsuntivaTutto.Visible = False
         Call RedimDGV()
@@ -1297,16 +1345,6 @@ ore di lavoro
                     Next
                     If conta <> 0 Then
                         If cliente = clientePrec And (nota = notaPrec Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "") Then
-                            If nota.ToLower.Contains("extra(") Then
-                                Dim tempoExtra As String
-                                Dim vetDividiNota() As String
-                                vetDividiNota = nota.Split("(")
-                                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
-                                sommaTempoExtra += tempoExtra
-                                notaExtra = "Extra(" & sommaTempoExtra & ")"
-                                nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
-                                notaExtraBoolean = True
-                            End If
                             If nota.Contains("Criticità") Then
                                 ticket += "," & "Criticità"
                                 If nota.Contains("Home") Then
@@ -1362,6 +1400,16 @@ ore di lavoro
                                 ticket = tabella.Rows(conta).Item("TICKET").ToString
                             End If
                             tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+                        End If
+                        If nota.ToLower.Contains("extra(") Then
+                            Dim tempoExtra As String
+                            Dim vetDividiNota() As String
+                            vetDividiNota = nota.Split("(")
+                            tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                            sommaTempoExtra += tempoExtra
+                            notaExtra = "Extra(" & sommaTempoExtra & ")"
+                            nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
+                            notaExtraBoolean = True
                         End If
                     Else
                         If nota.Contains("Criticità") Then
@@ -1944,7 +1992,10 @@ ore di lavoro
         End If
     End Sub
     Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click
-        MsgBox("Coming Soon", MsgBoxStyle.Information)
+        frmImpostazioni.ShowDialog()
+        If frmImpostazioni.modifica = True Then
+            Me.Close()
+        End If
     End Sub
     Sub colorHover(ByRef red As Integer, ByRef green As Integer, ByRef blu As Integer)
         If red - 20 <= 0 Then
@@ -2179,6 +2230,7 @@ ore di lavoro
         Dim annoA As Integer = dataA.Substring(6, 4)
 
         Dim somma As Double = 0
+        Dim extra As Double = 0
         dgvCalendario.RowCount = 1
         dgvCalendario.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
@@ -2189,9 +2241,17 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
+            If tabella.Rows(i).Item("NOTA").ToString.Contains("Extra") = True Then
+                Dim tempoExtra As String
+                Dim vetDividiNota() As String
+                vetDividiNota = tabella.Rows(i).Item("NOTA").ToString.Split("(")
+                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                extra += tempoExtra
+            End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
         lblTempoTot.Text = somma
+        lblTempoExtra.Text = extra
         Call RedimDGV()
     End Sub
 End Class
