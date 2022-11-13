@@ -1,0 +1,232 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+}
+h3{
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgb(184, 184, 184);
+}
+h4{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-decoration: underline;
+}
+ul{
+    padding-left: 40px;
+}
+li{
+    padding-bottom: 10px;
+}
+section{
+    margin: auto;
+    max-width: 1160px;
+    width: 1160px;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 0;
+    font-size: 13pt;
+    background-color: #202124;
+}
+img{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-width: 1100px;
+    }
+
+.sfondoBianco{
+    background-color: whitesmoke;
+    color: rgb(22, 22, 22);
+}
+.sfondoNero{
+    background-color: #202124;
+    color: whitesmoke;
+}
+
+
+
+.fade-in{opacity: 0.1;transform: translateY(10vh); transition: all 1s cubic-bezier(.215, .61, .355, 1);}
+.fade-in.in-page{opacity: 1;transform: translateY(0vh);}
+
+
+.sfocatura{
+    height: 100vh;
+    background-image: linear-gradient(to bottom, rgb(0,0,0), #202124);
+}
+.copertina{
+    width: 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position:center;
+    position: fixed;
+    top:0;
+    left:0;
+    background-image: url("Immagini/copertina.png");
+    object-fit: cover;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.section-title{
+    position: relative;
+    z-index : 1;
+    margin: auto;
+    max-width: 1160px;
+    width: 1160px;
+    height: 100vh;
+}
+.section-indice{
+    position: relative;
+    z-index : 1;
+    margin: auto;
+    /* max-width: 1160px; */
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(to top, #202124 75%, rgba(0, 0, 0, 0));
+    /* border: 1px solid red; */
+}
+.indice{
+    padding-top: 250px;
+    margin: auto;
+    max-width: 1160px;
+    width: 1160px;
+    transform: scale(1);
+    transition: all 1.5s cubic-bezier(.215, .61, .355, 1);
+    opacity: 0;
+}
+.section-indice.in-page .indice{
+    transform: scale(1);
+    opacity:1;
+}
+
+.title{
+    z-index: 1;
+    font-size: 30pt;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* max-width: 50%; */
+    /* position: fixed; */
+    top: 0; left:0;
+    margin:auto;
+    transform: scale(0.5);
+    transition: all 1s cubic-bezier(.215, .61, .355, 1);
+    opacity: 0; 
+
+}
+.section-title.in-page .title{
+    transform: scale(1);
+    opacity:1;
+}
+
+.img{
+    transform: scale(1);
+    transition: all 1s cubic-bezier(.215, .61, .355, 1);
+    opacity: 0.3; 
+}
+
+.section-img.in-page .img{
+    transform: scale(1);
+    opacity:1;
+}
+
+.panel{
+    height: auto;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+.panel--white{background: #fff;}
+
+/*---------------------------------------------------*/
+/* CARDS                                             */
+/*---------------------------------------------------*/
+.cards{
+    max-width: 1200px; 
+    margin: auto;
+    height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.card{
+    width: 300px; 
+    margin: 0 5%;
+    float: left;
+}
+.card__image{
+    width: 100%;
+    border-radius: 5%;
+    height: auto;
+}
+.card__copy{
+    padding: 5px 20px; 
+    text-align: center;
+}
+.card__copy h3 {
+    margin-bottom: 0px;
+}
+/*---------------------------------------------------*/
+
+.lato-superiore{
+    display: none;
+}
+
+.lato-inferiore{
+    display: none;
+}
+
+
+.indice h2{
+    margin: auto;
+    width: max-content;
+    padding-bottom: 50px;
+}
+.indice h4{
+    padding-left: 20px;
+}
+.header {
+    display: none;
+    position: fixed;
+    color: white;
+    background-color: black;
+    padding: 20px;
+    height: max-content;
+    width: 100%;
+}
+.bottoneSfondo{
+    color: whitesmoke;
+    font-size: 13pt;
+    background-color: black;
+}
+.dividiParagrafo{
+    padding-top: 25px;
+}
+.colonne{
+    display: flex;
+}
+.colonne div{
+    width: 50%;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.colonne p{
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgb(184, 184, 184);
+}
+.g{
+    font-weight: bold;
+}
+
+.footer {
+    color: white;
+    background-color: black;
+    margin-top: 50px;
+    padding: 20px;
+    height: max-content;
+    width: 100%;
+}
