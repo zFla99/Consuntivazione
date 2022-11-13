@@ -11,10 +11,10 @@ Public Class frmConsuntivazione
             Exit Sub
         Else
             If controlloPathDB() = False Then
-            Me.Close()
-            Exit Sub
-        End If
-        Call impostaConfig()
+                Me.Close()
+                Exit Sub
+            End If
+            Call impostaConfig()
         End If
         Call caricaClientiTempo()
         Call DataGrid()
@@ -34,7 +34,7 @@ Public Class frmConsuntivazione
                 selezionaModifica = selezionaModifica.Replace("]", "")
                 appoggio = sr.ReadLine()
             End If
-            If selezionaModifica = "Path" Then
+            If selezionaModifica = "ConfigImp" Then
                 Dim index As Integer = appoggio.IndexOf("=") + 1
                 Dim value As String = appoggio.Substring(index, appoggio.Length - index)
 
@@ -80,6 +80,8 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
         Return True
     End Function
     Public coloreIcone As String = ""
+    Public AggAutDettaglio As Boolean
+    Public AggAutGiornoAttuale As Boolean
     Sub impostaConfig()
         Dim sr As New StreamReader(fileConfig)
         Dim appoggio As String = sr.ReadLine
@@ -172,7 +174,16 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
                     End If
                 End If
             End If
-            appoggio = sr.ReadLine()
+            If selezionaModifica = "ConfigImp" Then
+                Dim index As Integer = appoggio.IndexOf("=") + 1
+                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+                If appoggio.Contains("AggAutGiornoAttuale") Then
+                    AggAutGiornoAttuale = value
+                ElseIf appoggio.Contains("AggAutDettaglio") Then
+                    AggAutDettaglio = value
+                End If
+            End If
+                appoggio = sr.ReadLine()
         Loop Until appoggio = Nothing
 
         sr.Close()
@@ -334,7 +345,7 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
         End If
 
         Call InserisciTicket()
-        Call AggiornaDG(giorno, True)
+        Call AggiornaDG(giorno, AggAutGiornoAttuale)
         Call PulisciCampi()
     End Sub
     Sub DataGrid()
@@ -700,7 +711,9 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
         Next
     End Sub
     Sub PulisciCampi()
-        dtpData.Value = Now
+        If AggAutGiornoAttuale = True Then
+            dtpData.Value = Now
+        End If
         txtTicket.Text = ""
         cmbCliente.Text = ""
         cmbTempo.Text = ""
@@ -862,10 +875,10 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
             Else
                 Exit Sub
             End If
-            If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Mensile)" Then
+            If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Dettaglio)" Then
                 Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
             Else
-                Call AggiornaDG(giorno, True)
+                Call AggiornaDG(giorno, AggAutGiornoAttuale)
                 Call PulisciCampi()
             End If
             Exit Sub
@@ -908,10 +921,12 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
             annulla = False
             Exit Sub
         End If
-        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Mensile)" Then
-            Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
+        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Dettaglio)" Then
+            If AggAutDettaglio = True Then
+                Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
+            End If
         Else
-            Call AggiornaDG(giorno, True)
+            Call AggiornaDG(giorno, AggAutGiornoAttuale)
             Call PulisciCampi()
         End If
     End Sub
@@ -969,6 +984,9 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
                 Exit Sub
             End Try
             cn.Close()
+            If AggAutDettaglio = False Then
+                dgvCalendario.Rows(r).Cells(c).Value = dato
+            End If
         End If
     End Sub
     Sub EliminaRiga(id As Integer)
@@ -1031,7 +1049,11 @@ ore di lavoro
                 Mese = giorno.Substring(3, 2)
                 Anno = giorno.Substring(6, 4)
             End If
-            lstMesi.SelectedIndex = Mese.Replace(0, "") - 1
+            If Mese < 10 Then
+                lstMesi.SelectedIndex = Mese.Replace(0, "") - 1
+            Else
+                lstMesi.SelectedIndex = Mese - 1
+            End If
             nudAnno.Value = Anno
             Call AggiornaDGMensile(Mese, Anno)
 
@@ -1711,7 +1733,7 @@ ore di lavoro
         frmInserisciCliente.ShowDialog()
     End Sub
 
-    Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click
+    Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click, imgDocumentazione.Click
         Dim path As String = Application.StartupPath
         If path.Contains("bin\Debug") Then
             path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
@@ -1991,9 +2013,9 @@ ore di lavoro
             Me.Close()
         End If
     End Sub
-    Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click
+    Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click, imgImpostazioni.Click
         frmImpostazioni.ShowDialog()
-        If frmImpostazioni.modifica = True Then
+        If frmImpostazioni.modifica = True Or frmImpostazioni.trasferito = True Then
             Me.Close()
         End If
     End Sub

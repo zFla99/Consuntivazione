@@ -3,6 +3,7 @@ Imports System.IO
 Public Class frmModifica
     Dim tabellaDB As String
     Dim colonna As String
+    Dim c As Integer
     Dim riga As Integer
     Dim nota As String
     Dim id As String
@@ -19,6 +20,7 @@ Public Class frmModifica
         cliente = frmConsuntivazione.clienteCondiviso
         impostaTabModifica()
         impostaConfig()
+        PulisciCampi()
     End Sub
     ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
     Sub impostaConfig()
@@ -73,6 +75,7 @@ Public Class frmModifica
         rdbFixed.Checked = False
         rdbFormazione.Checked = False
         ckbHome.Checked = False
+        ckbAltro.Checked = False
     End Sub
 
     Sub impostaTabModifica()
@@ -92,14 +95,18 @@ Public Class frmModifica
                 gboxCliente.Left = 20
                 TabIndex = 1
                 gboxCliente.Focus()
+                cmbCliente.Text = ""
                 cmbCliente.Focus()
+                c = 2
 
             Case "TEMPO_RISOLUZIONE"
                 gboxTempo.Visible = True
                 gboxTempo.Left = 20
                 TabIndex = 2
                 gboxTempo.Focus()
+                cmbTempo.Text = ""
                 cmbTempo.Focus()
+                c = 3
 
             Case "DATA"
                 gboxData.Visible = True
@@ -107,6 +114,7 @@ Public Class frmModifica
                 TabIndex = 3
                 gboxData.Focus()
                 dtpData.Focus()
+                c = 4
 
             Case "NOTA"
                 If tabellaDB = "LinkGR" Then
@@ -118,6 +126,7 @@ Public Class frmModifica
                 End If
                 gboxNota.Visible = True
                 gboxNota.Left = 20
+                c = 6
         End Select
 
     End Sub
@@ -213,6 +222,9 @@ Public Class frmModifica
             If colonna = "TEMPO_RISOLUZIONE" Then
                 Call controllaExtra()
             End If
+        End If
+        If frmConsuntivazione.AggAutDettaglio = False Then
+            frmConsuntivazione.dgvCalendario.Rows(riga).Cells(c).Value = dato
         End If
         Me.Close()
     End Sub
@@ -382,7 +394,7 @@ Public Class frmModifica
 
 
         cn.Open()
-        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
+        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & Format(giorno, "MM/dd/yyyy") & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -404,8 +416,8 @@ Public Class frmModifica
         Next
 
         Dim vecchioTempo As Double = CDbl(frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value)
-        Dim nuovoTempo As Double = CDbl(tabella.Rows(riga - 1).Item("TEMPO_RISOLUZIONE").ToString)
-        If CDbl(frmConsuntivazione.lblTempoTot.Text) - vecchioTempo + nuovoTempo <= 8 Then
+        'Dim nuovoTempo As Double = CDbl(tabella.Rows(riga - 1).Item("TEMPO_RISOLUZIONE").ToString)
+        If CDbl(frmConsuntivazione.lblTempoTot.Text) - vecchioTempo + dato <= 8 Then
             For i = 0 To numRighe
                 notaRiga = tabella.Rows(i).Item("NOTA").ToString
                 If notaRiga.ToLower.Contains("extra(") Then
@@ -619,7 +631,7 @@ Public Class frmModifica
                 corretto = False
             End If
             For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i).ToLower = notaInput Then
+                If vetCommNota(i).ToLower = notaInput.ToLower Then
                     conta += 1
                 End If
             Next

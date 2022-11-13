@@ -214,6 +214,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmImpostazioni.resx">
       <DependentUpon>frmImpostazioni.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmInserisciCliente.resx">
       <DependentUpon>frmInserisciCliente.vb</DependentUpon>
@@ -248,6 +249,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <Content Include="Database\Consuntivazione.accdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Documentazione\Immagini\cambiaTema.png" />
     <Content Include="Documentazione\Immagini\copertina.png" />
     <Content Include="Documentazione\Immagini\downloadTemplate.png" />
