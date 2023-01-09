@@ -394,7 +394,7 @@ Public Class frmModifica
 
 
         cn.Open()
-        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & Format(giorno, "MM/dd/yyyy") & "#"
+        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA = #" & giorno & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()

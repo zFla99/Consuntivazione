@@ -1,5 +1,6 @@
 ﻿Imports System.IO
 Imports System.Data.OleDb
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
@@ -183,7 +184,7 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
                     AggAutDettaglio = value
                 End If
             End If
-                appoggio = sr.ReadLine()
+            appoggio = sr.ReadLine()
         Loop Until appoggio = Nothing
 
         sr.Close()
@@ -322,12 +323,12 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
             Exit Sub
         End If
 
-        ticket = txtTicket.Text.Replace("'", "")
+        ticket = txtTicket.Text.Replace("'", "").Trim
         If ticket.Contains("/") Then
             ticket = "/"
         End If
-        cliente = cmbCliente.Text.Replace("'", "")
-        tempo = cmbTempo.Text.Replace(".", ",")
+        cliente = cmbCliente.Text.Replace("'", "").Trim
+        tempo = cmbTempo.Text.Replace(".", ",").Trim
         giorno = dtpData.Text
 
         If tempo + CDbl(lblTempoTot.Text) > 8 Then
@@ -637,6 +638,8 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
         noSpam = False
         TimerVisualizzazione.Stop()
     End Sub
+
+    Dim sommaExtra As Double = 0
     Sub AggiornaDG(ByVal giorno As String, ByVal controllo As Boolean)
         If controllo = True Then
             Call VisTemp()
@@ -650,6 +653,7 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
         Dim str As String
         Dim i As Integer
         Dim somma As Double
+        Dim extra As Double = 0
         Dim dataGiorno As Date = giorno
 
         cn = New OleDbConnection(strConn)
@@ -673,9 +677,17 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
             dgvCalendario.Rows(i + 1).Cells(4).Value = tabella.Rows(i).Item("DATA").ToString.Replace(" 00:00:00", "")
             dgvCalendario.Rows(i + 1).Cells(5).Value = tabella.Rows(i).Item("CONSUNTIVATO").ToString
             dgvCalendario.Rows(i + 1).Cells(6).Value = tabella.Rows(i).Item("NOTA").ToString
+            If tabella.Rows(i).Item("NOTA").ToString.Contains("Extra") = True Then
+                Dim tempoExtra As String
+                Dim vetDividiNota() As String
+                vetDividiNota = tabella.Rows(i).Item("NOTA").ToString.Split("(")
+                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                extra += tempoExtra
+            End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
         lblTempoTot.Text = somma
+        sommaExtra = extra
         Call RedimDGV()
     End Sub
 
@@ -956,7 +968,7 @@ P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sot
             Dim dato As String
             If colonnaCondivisa = "TICKET" Then
                 dato = InputBox("Inserisci un numero ticket")
-                dato = dato.Replace("'", "")
+                dato = dato.Replace("'", "").Trim
                 If dato = "" Or dato.Length > txtTicket.MaxLength Then
                     MsgBox("Ticket non valido (Max " & txtTicket.MaxLength & " car.)")
                     annulla = True
@@ -1030,11 +1042,11 @@ ore di lavoro
             nudAnno.Enabled = True
             lblFiltri.Visible = True
             pnlFiltri.Visible = True
+            dtpDataDaFiltro.Value = Now().AddYears(-2)
+            dtpDataAFiltro.Value = Now()
             lblFiltriSelezionati.Visible = True
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = True
-            lblExtra.Visible = True
-            lblTempoExtra.Visible = True
 
             pnlMensile.Left = 0
             pnlMensile.Width = Me.Width - 15
@@ -1087,8 +1099,6 @@ ore di lavoro
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = False
-            lblExtra.Visible = False
-            lblTempoExtra.Visible = False
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, 0)
             Call AggiornaDG(giornoOggi, False)
@@ -1136,7 +1146,7 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
         lblTempoTot.Text = somma
-        lblTempoExtra.Text = extra
+        sommaExtra = extra
         btnDividiXCliente.Text = "Dividi per Cliente"
         btnConsuntivaTutto.Visible = False
         Call RedimDGV()
@@ -1404,10 +1414,14 @@ ore di lavoro
                                     Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
                                     notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
                                 End If
-                                If notaPrec = "" Then
+                                If notaPrec = "" Or notaPrec.Trim = "Criticità," Then
                                     dgvCalendario.Rows(j).Cells(6).Value = notaExtra
                                 Else
-                                    dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                                    If notaPrec.Trim.EndsWith(",") Then
+                                        dgvCalendario.Rows(j).Cells(6).Value = notaPrec.Trim & " " & notaExtra
+                                    Else
+                                        dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                                    End If
                                 End If
                             End If
 
@@ -1460,6 +1474,16 @@ ore di lavoro
                     dgvCalendario.Rows(j).Cells(3).Value = tempo
                     dgvCalendario.Rows(j).Cells(4).Value = DateLavorative(i)
                     dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
+                    If nota.ToLower.Contains("extra(") Then
+                        Dim tempoExtra As String
+                        Dim vetDividiNota() As String
+                        vetDividiNota = nota.Split("(")
+                        tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                        sommaTempoExtra += tempoExtra
+                        notaExtra = "Extra(" & sommaTempoExtra & ")"
+                        nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
+                        notaExtraBoolean = True
+                    End If
                     If notaPrec.Contains("Criticità") Then
                         If notaPrec.Contains("Home") Then
                             notaPrec = notaPrec.Replace(", Criticità", "")
@@ -1481,10 +1505,14 @@ ore di lavoro
                             Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
                             notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
                         End If
-                        If notaPrec = "" Then
+                        If notaPrec = "" Or notaPrec.Trim = "Criticità," Then
                             dgvCalendario.Rows(j).Cells(6).Value = notaExtra
                         Else
-                            dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                            If notaPrec.Trim.EndsWith(",") Then
+                                dgvCalendario.Rows(j).Cells(6).Value = notaPrec.Trim & " " & notaExtra
+                            Else
+                                dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
+                            End If
                         End If
                     End If
 
@@ -2273,7 +2301,27 @@ ore di lavoro
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
         lblTempoTot.Text = somma
-        lblTempoExtra.Text = extra
+        sommaExtra = extra
         Call RedimDGV()
+    End Sub
+    Private Sub lblTempoTot_MouseHover(sender As Object, e As EventArgs) Handles lblTempoTot.MouseHover
+        ToolTip1.Active = True
+        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
+            If sommaExtra > 0 And CDbl(lblTempoTot.Text) < 8 Then
+                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Rimasto: " & 8 - CDbl(lblTempoTot.Text))
+            ElseIf sommaExtra > 0 Then
+                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra)
+            ElseIf CDbl(lblTempoTot.Text) < 8 Then
+                ToolTip1.SetToolTip(lblTempoTot, "Tempo Rimasto: " & 8 - lblTempoTot.Text)
+            Else
+                ToolTip1.Active = False
+            End If
+        Else
+            If sommaExtra > 0 Then
+                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Ordinario: " & CDbl(lblTempoTot.Text) - sommaExtra)
+            Else
+                ToolTip1.Active = False
+            End If
+        End If
     End Sub
 End Class

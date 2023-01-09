@@ -90,8 +90,7 @@ Partial Class frmConsuntivazione
         Me.lblImpostazioni = New System.Windows.Forms.Label()
         Me.TimerSlide = New System.Windows.Forms.Timer(Me.components)
         Me.lblSlide = New System.Windows.Forms.Label()
-        Me.lblExtra = New System.Windows.Forms.Label()
-        Me.lblTempoExtra = New System.Windows.Forms.Label()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlFiltri.SuspendLayout()
@@ -269,10 +268,8 @@ Partial Class frmConsuntivazione
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlMensile.BackColor = System.Drawing.Color.Transparent
-        Me.pnlMensile.Controls.Add(Me.lblExtra)
         Me.pnlMensile.Controls.Add(Me.pnlFiltri)
         Me.pnlMensile.Controls.Add(Me.lblGiorno_Mese)
-        Me.pnlMensile.Controls.Add(Me.lblTempoExtra)
         Me.pnlMensile.Controls.Add(Me.lblTempoTot)
         Me.pnlMensile.Controls.Add(Me.dgvCalendario)
         Me.pnlMensile.Controls.Add(Me.lblFiltri)
@@ -765,7 +762,7 @@ Partial Class frmConsuntivazione
         'imgImpostazioni
         '
         Me.imgImpostazioni.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.imgImpostazioni.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgImpostazioni.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgImpostazioni.ForeColor = System.Drawing.SystemColors.Control
         Me.imgImpostazioni.Image = CType(resources.GetObject("imgImpostazioni.Image"), System.Drawing.Image)
         Me.imgImpostazioni.Location = New System.Drawing.Point(15, 512)
@@ -788,7 +785,7 @@ Partial Class frmConsuntivazione
         'imgDocumentazione
         '
         Me.imgDocumentazione.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.imgDocumentazione.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgDocumentazione.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgDocumentazione.ForeColor = System.Drawing.SystemColors.Control
         Me.imgDocumentazione.Image = CType(resources.GetObject("imgDocumentazione.Image"), System.Drawing.Image)
         Me.imgDocumentazione.Location = New System.Drawing.Point(15, 372)
@@ -800,7 +797,7 @@ Partial Class frmConsuntivazione
         'lblDocumentazione
         '
         Me.lblDocumentazione.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.lblDocumentazione.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDocumentazione.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDocumentazione.ForeColor = System.Drawing.SystemColors.Control
         Me.lblDocumentazione.Location = New System.Drawing.Point(0, 360)
         Me.lblDocumentazione.Name = "lblDocumentazione"
@@ -813,7 +810,7 @@ Partial Class frmConsuntivazione
         'imgTema
         '
         Me.imgTema.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.imgTema.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgTema.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTema.ForeColor = System.Drawing.SystemColors.Control
         Me.imgTema.Image = CType(resources.GetObject("imgTema.Image"), System.Drawing.Image)
         Me.imgTema.Location = New System.Drawing.Point(15, 442)
@@ -825,7 +822,7 @@ Partial Class frmConsuntivazione
         'lblTema
         '
         Me.lblTema.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.lblTema.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTema.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTema.ForeColor = System.Drawing.SystemColors.Control
         Me.lblTema.Location = New System.Drawing.Point(0, 430)
         Me.lblTema.Name = "lblTema"
@@ -838,7 +835,7 @@ Partial Class frmConsuntivazione
         'imgTicketMassivi
         '
         Me.imgTicketMassivi.BackColor = System.Drawing.Color.Transparent
-        Me.imgTicketMassivi.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgTicketMassivi.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgTicketMassivi.ForeColor = System.Drawing.SystemColors.Control
         Me.imgTicketMassivi.Image = CType(resources.GetObject("imgTicketMassivi.Image"), System.Drawing.Image)
         Me.imgTicketMassivi.Location = New System.Drawing.Point(15, 132)
@@ -849,7 +846,7 @@ Partial Class frmConsuntivazione
         '
         'imgCommesseMassive
         '
-        Me.imgCommesseMassive.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.imgCommesseMassive.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.imgCommesseMassive.ForeColor = System.Drawing.SystemColors.Control
         Me.imgCommesseMassive.Image = CType(resources.GetObject("imgCommesseMassive.Image"), System.Drawing.Image)
         Me.imgCommesseMassive.Location = New System.Drawing.Point(18, 202)
@@ -861,7 +858,7 @@ Partial Class frmConsuntivazione
         'lblTicketMssivi
         '
         Me.lblTicketMssivi.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
-        Me.lblTicketMssivi.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTicketMssivi.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTicketMssivi.ForeColor = System.Drawing.SystemColors.Control
         Me.lblTicketMssivi.Location = New System.Drawing.Point(0, 120)
         Me.lblTicketMssivi.Name = "lblTicketMssivi"
@@ -873,7 +870,7 @@ Partial Class frmConsuntivazione
         '
         'lblCommesseMassive
         '
-        Me.lblCommesseMassive.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCommesseMassive.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCommesseMassive.ForeColor = System.Drawing.SystemColors.Control
         Me.lblCommesseMassive.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.lblCommesseMassive.Location = New System.Drawing.Point(0, 190)
@@ -887,7 +884,7 @@ Partial Class frmConsuntivazione
         'lblImpostazioni
         '
         Me.lblImpostazioni.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.lblImpostazioni.Font = New System.Drawing.Font("Century Gothic", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblImpostazioni.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblImpostazioni.ForeColor = System.Drawing.SystemColors.Control
         Me.lblImpostazioni.Location = New System.Drawing.Point(0, 500)
         Me.lblImpostazioni.Name = "lblImpostazioni"
@@ -913,31 +910,9 @@ Partial Class frmConsuntivazione
         Me.lblSlide.TabIndex = 24
         Me.lblSlide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'lblExtra
+        'ToolTip1
         '
-        Me.lblExtra.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblExtra.AutoSize = True
-        Me.lblExtra.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.lblExtra.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!, System.Drawing.FontStyle.Bold)
-        Me.lblExtra.Location = New System.Drawing.Point(521, 522)
-        Me.lblExtra.Name = "lblExtra"
-        Me.lblExtra.Size = New System.Drawing.Size(37, 15)
-        Me.lblExtra.TabIndex = 28
-        Me.lblExtra.Text = "Extra"
-        Me.lblExtra.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.lblExtra.Visible = False
-        '
-        'lblTempoExtra
-        '
-        Me.lblTempoExtra.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblTempoExtra.AutoSize = True
-        Me.lblTempoExtra.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
-        Me.lblTempoExtra.Location = New System.Drawing.Point(564, 522)
-        Me.lblTempoExtra.Name = "lblTempoExtra"
-        Me.lblTempoExtra.Size = New System.Drawing.Size(13, 15)
-        Me.lblTempoExtra.TabIndex = 18
-        Me.lblTempoExtra.Text = "0"
-        Me.lblTempoExtra.Visible = False
+        Me.ToolTip1.IsBalloon = True
         '
         'frmConsuntivazione
         '
@@ -1035,6 +1010,5 @@ Partial Class frmConsuntivazione
     Friend WithEvents btnCerca As Button
     Friend WithEvents imgImpostazioni As Label
     Friend WithEvents lblImpostazioni As Label
-    Friend WithEvents lblExtra As Label
-    Friend WithEvents lblTempoExtra As Label
+    Friend WithEvents ToolTip1 As ToolTip
 End Class
