@@ -36,6 +36,10 @@ Public Class frmImpostazioni
                     txtPathDB.Text = dato
                 ElseIf appoggio.Contains("DB_DEFAULT") Then
                     DBDefault = dato
+                    If DBDefault = "" Then
+                        DBDefault = txtPathDB.Text.Replace("Consuntivazione.accdb", "DB Default\Consuntivazione.accdb")
+                        valorizzaVetModifiche("DBDefault", DBDefault)
+                    End If
                 ElseIf appoggio.Contains("AggAutGiornoAttuale") Then
                     ckbGiornoAttuale.Checked = CBool(dato)
                 ElseIf appoggio.Contains("AggAutDettaglio") Then
@@ -274,27 +278,30 @@ Public Class frmImpostazioni
 
             Dim strInsert As String = ""
             Call generaInsert(strInsert, tabella)
-            strInsert = strInsert.Substring(0, strInsert.Length - 1)
-            Dim vetStrSQL() As String = strInsert.Split("|")
+            If strInsert <> "" Then
+                strInsert = strInsert.Substring(0, strInsert.Length - 1)
+                Dim vetStrSQL() As String = strInsert.Split("|")
 
-            Try
-                cn.Open()
-            Catch ex As Exception
-                MsgBox("Errore di connessione. Codice Errore: " & ex.Message)
-                Exit Sub
-            End Try
-            For j = 0 To vetStrSQL.Length - 1
-                cmd = New OleDbCommand(vetStrSQL(j), cn)
                 Try
-                    nRighe = cmd.ExecuteNonQuery
+                    cn.Open()
                 Catch ex As Exception
-                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-                    cn.Close()
+                    MsgBox("Errore di connessione. Codice Errore: " & ex.Message)
                     Exit Sub
                 End Try
-            Next
-            cn.Close()
+                For j = 0 To vetStrSQL.Length - 1
+                    cmd = New OleDbCommand(vetStrSQL(j), cn)
+                    Try
+                        nRighe = cmd.ExecuteNonQuery
+                    Catch ex As Exception
+                        MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                        cn.Close()
+                        Exit Sub
+                    End Try
+                Next
+                cn.Close()
+            End If
         Next
+        trasferito = True
     End Sub
     Sub generaInsert(ByRef strInsert As String, tabella As DataTable)
         Dim nomeTabella As String = tabella.TableName

@@ -6,7 +6,12 @@ Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
     Public strConn As String
     Public fileConfig As String
+    Public modDebug As Boolean = False
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If Application.StartupPath.EndsWith("Debug") Then
+            modDebug = True
+        End If
+
         If controlloPathConfig() = False Then
             Me.Close()
             Exit Sub
@@ -23,6 +28,18 @@ Public Class frmConsuntivazione
         txtTicket.Focus()
         lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
     End Sub
+    Function controlloPathConfig() As Boolean
+        If modDebug = True Then
+            fileConfig = Application.StartupPath.Replace("\bin\Debug", "\Config\config.ini")
+        Else
+            fileConfig = Application.StartupPath + "\Resources\Config\config.ini"
+        End If
+        If File.Exists(fileConfig) = False Then
+            MsgBox("Il file di config.ini non è stato trovato nella cartella Resources del progetto.", MsgBoxStyle.Critical)
+            Return False
+        End If
+        Return True
+    End Function
     Function controlloPathDB() As Boolean
         Dim sr As New StreamReader(fileConfig)
         Dim appoggio As String = sr.ReadLine
@@ -42,7 +59,12 @@ Public Class frmConsuntivazione
                 If appoggio.Contains("DB_PATH") Then
                     path = value
                     If path = "" Then
-                        strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
+                        If modDebug = True Then
+                            strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath.Replace("\bin\Debug", "\Database\Consuntivazione.accdb")
+                        Else
+                            strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath + "\Resources\Database\Consuntivazione.accdb"
+                        End If
+                        'strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
                     Else
                         strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & path
                     End If
@@ -71,15 +93,7 @@ Cambialo!", MsgBoxStyle.Critical)
         End If
         Return True
     End Function
-    Function controlloPathConfig() As Boolean
-        fileConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\Consultivazione\Config\config.ini"
-        If File.Exists(fileConfig) = False Then
-            MsgBox("Il file di config.ini non è stato trovato nella cartella di startup del progetto.
-P.S. Per una limitanza temporanea la cartella del progetto deve essere messa sotto 'Documenti\Altro'")
-            Return False
-        End If
-        Return True
-    End Function
+
     Public coloreIcone As String = ""
     Public AggAutDettaglio As Boolean
     Public AggAutGiornoAttuale As Boolean
@@ -1101,7 +1115,7 @@ ore di lavoro
             btnDividiXCliente.Visible = False
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, 0)
-            Call AggiornaDG(giornoOggi, False)
+            dtpData.Value = giornoOggi
             pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 35
             pnlFiltri.Width = pnlMensile.Width
         End If
@@ -1763,10 +1777,10 @@ ore di lavoro
 
     Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click, imgDocumentazione.Click
         Dim path As String = Application.StartupPath
-        If path.Contains("bin\Debug") Then
+        If path.EndsWith("Debug") Then
             path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
         Else
-            path += "\Documentazione\documentazione.html"
+            path += "\Resources\Documentazione\documentazione.html"
         End If
         Process.Start(path)
     End Sub
@@ -1855,15 +1869,15 @@ ore di lavoro
     End Sub
     Sub scaricaTemplate()
         Dim path As String = Application.StartupPath
-        If path.Contains("bin\Debug") Then
+        If path.EndsWith("Debug") Then
             path = path.Replace("bin\Debug", "Template\Template_Ticket.xlsx")
         Else
-            path += "\Template\Template_Ticket.xlsx"
+            path += "\Resources\Template\Template_Ticket.xlsx"
         End If
         Try
             My.Computer.FileSystem.CopyFile(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "/Template_Ticket.xlsx")
         Catch ex As Exception
-            MsgBox("Il template è gia sul Desktop", MsgBoxStyle.Exclamation)
+            MsgBox("Il template non è stato trasferito perche " + ex.Message, MsgBoxStyle.Exclamation)
             Exit Sub
         End Try
         MsgBox("Il template è stato salvato sul Desktop con il nome di 'Template_Ticket'. Completalo e fai l'upload", MsgBoxStyle.Information)

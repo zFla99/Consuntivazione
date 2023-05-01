@@ -209,7 +209,8 @@ Public Class frmTema
     End Sub
 
     Private Sub btnDefault_Click(sender As Object, e As EventArgs) Handles btnDefault.Click
-        If MsgBox("Sei sicuro di voler rimettere le impostazioni di default? Non potrai piu tornare indietro", MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation) = MsgBoxResult.Yes Then
+        If MsgBox("Sei sicuro di voler rimettere le impostazioni di default? Non potrai piu tornare indietro.
+Attualmente questo tasto ripristina tutte le configurazioni e non solo il colore.", MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation) = MsgBoxResult.Yes Then
             Dim fileConfigDefault As String = fileConfig
             fileConfigDefault = fileConfigDefault.Replace("\config.ini", "\configDefault.ini")
             File.Copy(fileConfigDefault, fileConfig, True)

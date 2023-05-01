@@ -358,15 +358,15 @@ Public Class frmInserisciCliente
     End Sub
     Sub scaricaTemplate()
         Dim path As String = Application.StartupPath
-        If path.Contains("bin\Debug") Then
+        If path.EndsWith("Debug") Then
             path = path.Replace("bin\Debug", "Template\Template_Commesse.xlsx")
         Else
-            path += "\Template\Template_Commesse.xlsx"
+            path += "\Resources\Template\Template_Commesse.xlsx"
         End If
         Try
             My.Computer.FileSystem.CopyFile(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "/Template_Commesse.xlsx")
         Catch ex As Exception
-            MsgBox("Il template è gia sul Desktop", MsgBoxStyle.Exclamation)
+            MsgBox("Il template non è stato trasferito perche " + ex.Message, MsgBoxStyle.Exclamation)
             Exit Sub
         End Try
         MsgBox("Il template è stato salvato sul Desktop con il nome di 'Template_Commesse'. Completalo e fai l'upload", MsgBoxStyle.Information)

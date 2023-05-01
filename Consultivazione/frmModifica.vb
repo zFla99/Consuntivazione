@@ -314,8 +314,32 @@ Public Class frmModifica
             Exit Sub
         End If
         dato = cmbCliente.Text
-        corretto = True
+        Call controllaCliente(dato)
     End Sub
+    Sub controllaCliente(cliente As String)
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT * FROM Clienti WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        If tabella.Rows.Count = 0 Then
+            MsgBox("Il Cliente inserito non esiste", MsgBoxStyle.Exclamation)
+            corretto = False
+        Else
+            corretto = True
+        End If
+    End Sub
+
     Dim notaExtra As String = ""
     Sub datoTempo()
         dato = cmbTempo.Text
