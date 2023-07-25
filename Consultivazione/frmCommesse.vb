@@ -2,6 +2,8 @@
 Imports System.IO
 Public Class frmCommesse
     ReadOnly strConn As String = frmConsuntivazione.strConn
+    ReadOnly logCommesseClienti As String = frmConsuntivazione.logCommesseClienti
+    Dim dataOraLog As String = ""
     Private Sub frmCommesse_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         dgvCommesse.RowCount = 2
         dgvCommesse.ColumnCount = 9
@@ -113,26 +115,37 @@ Public Class frmCommesse
         Dim sottFase As String = dgvCommesse.Rows(r).Cells(7).Value
         Dim link As String
 
-        If colonna = "COD.CLIENTE" Then
-            link = "Cliente=" & dato & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & sottFase
-        ElseIf colonna = "COMMESSA" Then
-            link = "Cliente=" & codCliente & "&Commessa=" & dato & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & sottFase
-        ElseIf colonna = "SOTT.COMMESSA" Then
-            link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & dato & "&Fase=" & fase & "&SottoFase=" & sottFase
-        ElseIf colonna = "FASE" Then
-            link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & dato & "&SottoFase=" & sottFase
-        Else
-            link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & dato
-        End If
-
+        Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+            If colonna = "COD.CLIENTE" Then
+                link = "Cliente=" & dato & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & sottFase
+                logFile.WriteLine(dataOraLog + "Modifica '" & colonna & "' da '" & codCliente & "' a '" & dato & "' per l'ID '" & dgvCommesse.Rows(r).Cells(8).Value & "'")
+            ElseIf colonna = "COMMESSA" Then
+                link = "Cliente=" & codCliente & "&Commessa=" & dato & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & sottFase
+                logFile.WriteLine(dataOraLog + "Modifica '" & colonna & "' da '" & commessa & "' a '" & dato & "' per l'ID '" & dgvCommesse.Rows(r).Cells(8).Value & "'")
+            ElseIf colonna = "SOTT.COMMESSA" Then
+                link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & dato & "&Fase=" & fase & "&SottoFase=" & sottFase
+                logFile.WriteLine(dataOraLog + "Modifica '" & colonna & "' da '" & sottCommessa & "' a '" & dato & "' per l'ID '" & dgvCommesse.Rows(r).Cells(8).Value & "'")
+            ElseIf colonna = "FASE" Then
+                link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & dato & "&SottoFase=" & sottFase
+                logFile.WriteLine(dataOraLog + "Modifica '" & colonna & "' da '" & fase & "' a '" & dato & "' per l'ID '" & dgvCommesse.Rows(r).Cells(8).Value & "'")
+            Else
+                link = "Cliente=" & codCliente & "&Commessa=" & commessa & "&SottComm=" & sottCommessa & "&Fase=" & fase & "&SottoFase=" & dato
+                logFile.WriteLine(dataOraLog + "Modifica '" & colonna & "' da '" & sottFase & "' a '" & dato & "' per l'ID '" & dgvCommesse.Rows(r).Cells(8).Value & "'")
+            End If
+            logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - OK")
+        End Using
 
         cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "UPDATE LinkGR SET Link = '" & link & "' WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
-        cmd = New OleDbCommand(str, cn)
+            cn.Open()
+            str = "UPDATE LinkGR SET Link = '" & link & "' WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
+            cmd = New OleDbCommand(str, cn)
         Try
             str = cmd.ExecuteNonQuery
         Catch ex As Exception
+            Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+                logFile.WriteLine(dataOraLog + "Errore. Modifica non effettuata per il seguente motivo: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - KO")
+            End Using
             MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
             cn.Close()
             Exit Sub
@@ -148,22 +161,40 @@ Public Class frmCommesse
         cn.Open()
         str = "DELETE * FROM LinkGR WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
         cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+
+        Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+            Try
+                str = cmd.ExecuteNonQuery
+            Catch ex As Exception
+            logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                Exit Sub
+            End Try
             cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
+            logFile.WriteLine(dataOraLog + "Camcellata correttamente commessa con id " & dgvCommesse.Rows(r).Cells(8).Value)
+            logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - OK")
+        End Using
     End Sub
     Private Sub dgvCommesse_CellMouseDown(sender As Object, e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgvCommesse.CellMouseDown
         If e.Button = MouseButtons.Right Then
             If e.RowIndex = -1 Then
                 Exit Sub
             End If
+
+            dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+            Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+                logFile.WriteLine(dataOraLog + "------------------------------------------")
+                logFile.WriteLine(dataOraLog + "Inizio scrittura log Commesse:")
+            End Using
             If e.ColumnIndex = -1 Then
                 If MsgBox("Vuoi eliminare questa commessa? (non sarà recuperabile)", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
+                    Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+                        logFile.WriteLine(dataOraLog + "Nessuna modifica effettuata")
+                        logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - OK")
+                    End Using
                     Exit Sub
                 Else
                     eliminaCommessa(e.RowIndex)
@@ -177,17 +208,25 @@ Public Class frmCommesse
             Else
                 Dim dato As String = InputBox("Modifica la " & dgvCommesse.Columns(e.ColumnIndex).HeaderText)
                 dato = dato.Replace("'", "")
-                If dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COD.CLIENTE" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COMMESSA" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "SOTT.COMMESSA" Then
-                    If dato = "" Or dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
-                        MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
-                        Exit Sub
+                Using logFile As New System.IO.StreamWriter(logCommesseClienti, True)
+                    If dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COD.CLIENTE" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "COMMESSA" Or dgvCommesse.Columns(e.ColumnIndex).HeaderText = "SOTT.COMMESSA" Then
+                        If dato = "" Or dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
+                            logFile.WriteLine(dataOraLog + "Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
+                            logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - KO")
+                            logFile.Close()
+                            MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
+                            Exit Sub
+                        End If
+                    Else
+                        If dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
+                            logFile.WriteLine(dataOraLog + "Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
+                            logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - KO")
+                            logFile.Close()
+                            MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
+                            Exit Sub
+                        End If
                     End If
-                Else
-                    If dato.Length > frmInserisciCliente.txtCommessa.MaxLength Then
-                        MsgBox("Dato inserito non valido (Max. " & frmInserisciCliente.txtCommessa.MaxLength & " car.)")
-                        Exit Sub
-                    End If
-                End If
+                End Using
                 modificaCommessa(dato, e.RowIndex, e.ColumnIndex)
             End If
             aggiornaDG()

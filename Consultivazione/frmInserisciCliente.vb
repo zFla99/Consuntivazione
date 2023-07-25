@@ -7,6 +7,10 @@ Public Class frmInserisciCliente
         impostaConfig()
     End Sub
     ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
+    ReadOnly logConfig As String = frmConsuntivazione.logConfig
+    Public logInsMassivTicket As String = frmConsuntivazione.logInsMassivTicket
+    Public logInsMassivComm As String = frmConsuntivazione.logInsMassivComm
+    Dim dataOraLog As String = ""
     Sub impostaConfig()
         Dim sr As New StreamReader(fileConfig)
         Dim appoggio As String = sr.ReadLine
@@ -119,6 +123,7 @@ Public Class frmInserisciCliente
             End If
         End If
 
+
         Dim nota As String = ""
         Dim link As String
         Dim cn As OleDbConnection
@@ -141,38 +146,53 @@ Public Class frmInserisciCliente
             vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
         Next
 
-        Dim conta As Integer = 0
-        Dim notaInput As String
-        If rdbVuota.Checked = True Then
-            nota = ""
-        ElseIf rdbFixed.Checked = True Then
-            nota = "Fixed"
-        ElseIf rdbFormazione.Checked = True Then
-            nota = "Formazione"
-        ElseIf rdbAltro.Checked = True Then
-            notaInput = InputBox("Inserisci una nota").Trim.ToLower
-            notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log ConfigClienti:")
 
-            If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)")
+            Dim conta As Integer = 0
+            Dim notaInput As String
+            If rdbVuota.Checked = True Then
+                nota = ""
+            ElseIf rdbFixed.Checked = True Then
+                nota = "Fixed"
+            ElseIf rdbFormazione.Checked = True Then
+                nota = "Formazione"
+            ElseIf rdbAltro.Checked = True Then
+                notaInput = InputBox("Inserisci una nota").Trim.ToLower
+                notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+
+                If notaInput.Length > 150 Then
+                    logFile.WriteLine(dataOraLog + "Nota '" & notaInput & "' non valida (Max 150 car.)")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (Max 150 car.)")
                 Exit Sub
             ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Or notaInput.ToLower.Contains("extra") Then
-                MsgBox("Nota non valida (non puoi inserire questa commessa)")
+                    logFile.WriteLine(dataOraLog + "Nota '" & notaInput & "' non valida (non puoi inserire questa commessa)")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (non puoi inserire questa commessa)")
+                Exit Sub
+                End If
+                nota = notaInput
+            End If
+
+            For i = 0 To tabella.Rows.Count - 1
+                If vetCommNota(i).ToLower = nota.ToLower Then
+                    conta += 1
+                End If
+            Next
+
+            If conta > 0 Then
+                logFile.WriteLine(dataOraLog + "La commessa '" & nota & "' è già presente per il cliente '" & cliente & "'")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                logFile.Close()
+                MsgBox("Questa commessa è gia presente per questo cliente")
                 Exit Sub
             End If
-            nota = notaInput
-        End If
-
-        For i = 0 To tabella.Rows.Count - 1
-            If vetCommNota(i).ToLower = nota.ToLower Then
-                conta += 1
-            End If
-        Next
-
-        If conta > 0 Then
-            MsgBox("Questa commessa è gia presente per questo cliente")
-            Exit Sub
-        End If
+        End Using
 
         cn = New OleDbConnection(strConn)
         cn.Open()
@@ -185,6 +205,10 @@ Public Class frmInserisciCliente
 
         If btnInserisci.Text = "Inserisci Commessa" Then
             If tabella.Rows.Count = 0 Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' non esiste")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                End Using
                 MsgBox("Questo cliente non esiste.")
                 Exit Sub
             End If
@@ -192,6 +216,10 @@ Public Class frmInserisciCliente
 
         If btnInserisci.Text <> "Inserisci Commessa" Then
             If tabella.Rows.Count = 1 Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' esiste già")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                End Using
                 MsgBox("Questo cliente esiste già.")
                 Exit Sub
             Else
@@ -221,36 +249,42 @@ Public Class frmInserisciCliente
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "INSERT into Clienti (Cliente) VALUES ('" & cliente & "')"
-        cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+            str = "INSERT into Clienti (Cliente) VALUES ('" & cliente & "')"
+            cmd = New OleDbCommand(str, cn)
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            Try
+                str = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore. Il cliente '" & cliente & "' non è stato inserito per questo motivo: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                inserito = False
+                Exit Sub
+            End Try
             cn.Close()
-            inserito = False
-            Exit Sub
-        End Try
-        cn.Close()
-
+            logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' è stato inserito.")
+            logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+        End Using
 
         cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
+            cn.Open()
+            str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+            cmd = New OleDbCommand(str, cn)
+            da = New OleDbDataAdapter(cmd)
+            tabella.Clear()
+            da.Fill(tabella)
+            cn.Close()
 
-        frmModifica.cmbCliente.Items.Clear()
-        frmConsuntivazione.cmbCliente.Items.Clear()
-        frmCommesse.cmbCliente.Items.Clear()
-        For i = 0 To tabella.Rows.Count - 1
-            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-        Next
+            frmModifica.cmbCliente.Items.Clear()
+            frmConsuntivazione.cmbCliente.Items.Clear()
+            frmCommesse.cmbCliente.Items.Clear()
+            For i = 0 To tabella.Rows.Count - 1
+                frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+                frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+                frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            Next
     End Sub
     Sub inserisciConfig(cliente As String, nota As String, link As String)
         Dim cn As OleDbConnection
@@ -266,15 +300,22 @@ Public Class frmInserisciCliente
         Else
             str = "INSERT into LinkGR (Cliente, Nota, Link) VALUES ('" & cliente & "','" & nota & "','" & link & "')"
         End If
-        cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            cmd = New OleDbCommand(str, cn)
+            Try
+                str = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore. La commessa con [Cliente='" & cliente & "'] [Nota='" & If(nota <> "", nota, "NULL") & "'] [Link='" & link & "'] non è stata inserita: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                Exit Sub
+            End Try
             cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
+            logFile.WriteLine(dataOraLog + "La commessa con [Cliente='" & cliente & "'] [Nota='" & If(nota <> "", nota, "NULL") & "'] [Link='" & link & "'] è stata inserita correttamente")
+            logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - OK")
+        End Using
     End Sub
     Dim clientiDaInserire As String = ""
     Dim inserito As Boolean
@@ -288,8 +329,8 @@ Public Class frmInserisciCliente
         ElseIf msgResult = MsgBoxResult.Cancel Then
             Exit Sub
         End If
-        ofdFile.ShowDialog()
 
+        ofdFile.ShowDialog()
         Dim filePath As String = ofdFile.FileName
 
         If filePath.EndsWith("Template_Commesse.xlsx") = False Then
@@ -310,10 +351,18 @@ Public Class frmInserisciCliente
         da.Fill(tabella)
         cn.Close()
 
-        If tabella.Rows.Count = 0 Then
-            MsgBox("Il template è vuoto")
-            Exit Sub
-        End If
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log InsMassivComm:")
+            If tabella.Rows.Count = 0 Then
+                logFile.WriteLine(dataOraLog + "Il template è vuoto")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivComm - OK")
+                logFile.Close()
+                MsgBox("Il template è vuoto")
+                Exit Sub
+            End If
+        End Using
 
         Dim cmd As OleDbCommand
         Dim str As String
@@ -346,14 +395,25 @@ Public Class frmInserisciCliente
             Next
             If presente = False Then
                 clientiDaInserire += tabellaClientiExcel.Rows(i).Item("CLIENTE").ToString & ";"
+                Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+                    logFile.WriteLine(dataOraLog + "Inizio inserimento clienti:")
+                    logFile.WriteLine(dataOraLog + "Clienti da inserire: " & clientiDaInserire)
+                End Using
             End If
         Next
 
         Call uploadTemplate(tabella)
-        If inserito = False Then
-            MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
-            Exit Sub
-        End If
+        Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+            If inserito = False Then
+                logFile.WriteLine(dataOraLog + "Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivComm - KO")
+                logFile.Close()
+                MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
+                Exit Sub
+            End If
+            logFile.WriteLine(dataOraLog + "Le commesse sono state inserite correttamente")
+            logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivComm - OK")
+        End Using
         MsgBox("Le commesse sono state inserite correttamente", MsgBoxStyle.Information)
     End Sub
     Sub scaricaTemplate()
@@ -377,6 +437,10 @@ Public Class frmInserisciCliente
             Dim vetClienti() As String = clientiDaInserire.Split(";")
             Call InserisciClienteMassivamente(vetClienti)
             If inserito = False And errore <> "" Then
+                Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+                    logFile.WriteLine(dataOraLog + errore)
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivComm - KO")
+                End Using
                 MsgBox(errore)
                 rigaExcel = 0
                 Exit Sub
@@ -392,13 +456,14 @@ Public Class frmInserisciCliente
         Dim nRighe As Integer
         Dim strSQL As String = ""
 
+
         For i = 0 To vetClienti.Length - 1
             strSQL += "INSERT into Clienti (Cliente) VALUES ('" & vetClienti(i) & "');"
         Next
         cn = New OleDbConnection(strConn)
         cn.Open()
         strSQL = strSQL.Substring(0, strSQL.Length - 1)
-        Dim vetStrSQL() As String = StrSQL.Split(";")
+        Dim vetStrSQL() As String = strSQL.Split(";")
         For i = 0 To vetStrSQL.Length - 1
             cmd = New OleDbCommand(vetStrSQL(i), cn)
             Try
@@ -409,6 +474,9 @@ Public Class frmInserisciCliente
                 inserito = False
                 Exit Sub
             End Try
+            Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+                logFile.WriteLine(dataOraLog & i + 1 & "/" & vetStrSQL.Length & "Inserito cliente: '" & vetClienti(i) & "'")
+            End Using
         Next
 
         strSQL = "SELECT Cliente FROM Clienti ORDER BY Cliente"
@@ -444,6 +512,11 @@ Public Class frmInserisciCliente
         Dim nRighe As Integer
         Dim str As String
         Dim strSQL As String = ""
+        Dim vetCommDaIns(tabellaExcel.Rows.Count) As String
+
+        Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+            logFile.WriteLine(dataOraLog + "Inizio inserimento commesse")
+        End Using
 
         For i = 0 To tabellaExcel.Rows.Count - 1
             inserito = False
@@ -521,6 +594,7 @@ Public Class frmInserisciCliente
             Else
                 strSQL += "INSERT into LinkGR (Cliente, Nota, Link) VALUES ('" & cliente & "','" & nota & "','" & link & "');"
             End If
+            vetCommDaIns(i) = "[Cliente: '" & cliente & "'] [Nota: '" & If(nota <> "", nota, "NULL") & "'] [Link: '" & link & "']"
         Next
 
         strSQL = strSQL.Substring(0, strSQL.Length - 1)
@@ -530,14 +604,19 @@ Public Class frmInserisciCliente
         cn.Open()
         For i = 0 To vetStrSQL.Length - 1
             cmd = New OleDbCommand(vetStrSQL(i), cn)
-            Try
-                nRighe = cmd.ExecuteNonQuery
-            Catch ex As Exception
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-                cn.Close()
-                inserito = False
-                Exit Sub
-            End Try
+            Using logFile As New System.IO.StreamWriter(logInsMassivComm, True)
+                Try
+                    nRighe = cmd.ExecuteNonQuery
+                Catch ex As Exception
+                    logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                    logFile.Close()
+                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                    cn.Close()
+                    inserito = False
+                    Exit Sub
+                End Try
+                logFile.WriteLine(dataOraLog & i + 1 & "/" & vetStrSQL.Length & "Inserita commessa: " & vetCommDaIns(i))
+            End Using
         Next
         cn.Close()
         inserito = True

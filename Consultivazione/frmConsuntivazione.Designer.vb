@@ -23,16 +23,13 @@ Partial Class frmConsuntivazione
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConsuntivazione))
         Me.dgvCalendario = New System.Windows.Forms.DataGridView()
-        Me.btnCarica = New System.Windows.Forms.Button()
-        Me.cmbTempo = New System.Windows.Forms.ComboBox()
         Me.cmbCliente = New System.Windows.Forms.ComboBox()
         Me.lblCliente = New System.Windows.Forms.Label()
-        Me.lblTempo = New System.Windows.Forms.Label()
         Me.lblGiorno = New System.Windows.Forms.Label()
         Me.dtpData = New System.Windows.Forms.DateTimePicker()
         Me.lblTicket = New System.Windows.Forms.Label()
@@ -66,15 +63,13 @@ Partial Class frmConsuntivazione
         Me.lblFiltriSelezionati = New System.Windows.Forms.Label()
         Me.lblSfondoColorato = New System.Windows.Forms.Label()
         Me.pnlInserisci = New System.Windows.Forms.Panel()
-        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.btnCancellaFiltri = New System.Windows.Forms.Button()
-        Me.rdbFormazione = New System.Windows.Forms.RadioButton()
-        Me.ckbAltro = New System.Windows.Forms.CheckBox()
         Me.ckbHome = New System.Windows.Forms.CheckBox()
-        Me.rdbFixed = New System.Windows.Forms.RadioButton()
-        Me.rdbCriticita = New System.Windows.Forms.RadioButton()
+        Me.cmbNota = New System.Windows.Forms.ComboBox()
+        Me.lblNota = New System.Windows.Forms.Label()
+        Me.btnCarica = New System.Windows.Forms.Button()
+        Me.cmbTempo = New System.Windows.Forms.ComboBox()
+        Me.lblTempo = New System.Windows.Forms.Label()
         Me.lblAggiungiCliente = New System.Windows.Forms.Label()
-        Me.TimerConsuntiva = New System.Windows.Forms.Timer(Me.components)
         Me.ofdFile = New System.Windows.Forms.OpenFileDialog()
         Me.pnlMenu = New System.Windows.Forms.Panel()
         Me.imgImpostazioni = New System.Windows.Forms.Label()
@@ -89,14 +84,13 @@ Partial Class frmConsuntivazione
         Me.lblCommesseMassive = New System.Windows.Forms.Label()
         Me.lblImpostazioni = New System.Windows.Forms.Label()
         Me.TimerSlide = New System.Windows.Forms.Timer(Me.components)
-        Me.lblSlide = New System.Windows.Forms.Label()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.lblSlide = New System.Windows.Forms.Label()
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMensile.SuspendLayout()
         Me.pnlFiltri.SuspendLayout()
         CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlInserisci.SuspendLayout()
-        Me.GroupBox1.SuspendLayout()
         Me.pnlMenu.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -104,63 +98,37 @@ Partial Class frmConsuntivazione
         '
         Me.dgvCalendario.AllowUserToAddRows = False
         Me.dgvCalendario.AllowUserToDeleteRows = False
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
-        Me.dgvCalendario.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
+        Me.dgvCalendario.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
         Me.dgvCalendario.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvCalendario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCalendario.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dgvCalendario.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.ControlLight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ControlLight
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCalendario.DefaultCellStyle = DataGridViewCellStyle5
         Me.dgvCalendario.Location = New System.Drawing.Point(45, 55)
         Me.dgvCalendario.Name = "dgvCalendario"
         Me.dgvCalendario.ReadOnly = True
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
-        Me.dgvCalendario.RowsDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.dgvCalendario.RowsDefaultCellStyle = DataGridViewCellStyle6
         Me.dgvCalendario.Size = New System.Drawing.Size(680, 426)
         Me.dgvCalendario.TabIndex = 17
-        '
-        'btnCarica
-        '
-        Me.btnCarica.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.btnCarica.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCarica.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnCarica.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnCarica.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnCarica.Location = New System.Drawing.Point(68, 251)
-        Me.btnCarica.Name = "btnCarica"
-        Me.btnCarica.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.btnCarica.Size = New System.Drawing.Size(138, 49)
-        Me.btnCarica.TabIndex = 5
-        Me.btnCarica.Text = "Carica"
-        Me.btnCarica.UseVisualStyleBackColor = False
-        '
-        'cmbTempo
-        '
-        Me.cmbTempo.AutoCompleteCustomSource.AddRange(New String() {"0,25", "0,5", "0,75", "1", "1,25", "1,5", "1,75", "2", "2,25", "2,5", "2,75", "3", "3,25", "3,5", "3,75", "4", "4,25", "4,5", "4,75", "5", "5,25", "5,5", "5,75", "6", "6,25", "6,5", "6,75", "7", "7,25", "7,5", "7,75", "8"})
-        Me.cmbTempo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
-        Me.cmbTempo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
-        Me.cmbTempo.FormattingEnabled = True
-        Me.cmbTempo.Location = New System.Drawing.Point(112, 187)
-        Me.cmbTempo.MaxLength = 4
-        Me.cmbTempo.Name = "cmbTempo"
-        Me.cmbTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmbTempo.Size = New System.Drawing.Size(110, 25)
-        Me.cmbTempo.TabIndex = 4
         '
         'cmbCliente
         '
         Me.cmbCliente.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
         Me.cmbCliente.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-        Me.cmbCliente.Location = New System.Drawing.Point(112, 137)
+        Me.cmbCliente.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.cmbCliente.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.cmbCliente.Location = New System.Drawing.Point(112, 165)
         Me.cmbCliente.MaxLength = 30
         Me.cmbCliente.Name = "cmbCliente"
         Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -172,31 +140,19 @@ Partial Class frmConsuntivazione
         Me.lblCliente.AutoSize = True
         Me.lblCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCliente.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblCliente.Location = New System.Drawing.Point(37, 137)
+        Me.lblCliente.Location = New System.Drawing.Point(37, 165)
         Me.lblCliente.Name = "lblCliente"
         Me.lblCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblCliente.Size = New System.Drawing.Size(59, 20)
         Me.lblCliente.TabIndex = 12
         Me.lblCliente.Text = "Cliente"
         '
-        'lblTempo
-        '
-        Me.lblTempo.AutoSize = True
-        Me.lblTempo.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTempo.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblTempo.Location = New System.Drawing.Point(37, 187)
-        Me.lblTempo.Name = "lblTempo"
-        Me.lblTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblTempo.Size = New System.Drawing.Size(55, 20)
-        Me.lblTempo.TabIndex = 11
-        Me.lblTempo.Text = "Tempo"
-        '
         'lblGiorno
         '
         Me.lblGiorno.AutoSize = True
         Me.lblGiorno.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblGiorno.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblGiorno.Location = New System.Drawing.Point(37, 37)
+        Me.lblGiorno.Location = New System.Drawing.Point(37, 65)
         Me.lblGiorno.Name = "lblGiorno"
         Me.lblGiorno.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblGiorno.Size = New System.Drawing.Size(57, 20)
@@ -207,9 +163,9 @@ Partial Class frmConsuntivazione
         '
         Me.dtpData.CustomFormat = "dd/MM/yyyy"
         Me.dtpData.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtpData.Location = New System.Drawing.Point(112, 35)
+        Me.dtpData.Location = New System.Drawing.Point(112, 63)
         Me.dtpData.Name = "dtpData"
-        Me.dtpData.Size = New System.Drawing.Size(102, 23)
+        Me.dtpData.Size = New System.Drawing.Size(110, 23)
         Me.dtpData.TabIndex = 10
         '
         'lblTicket
@@ -217,7 +173,7 @@ Partial Class frmConsuntivazione
         Me.lblTicket.AutoSize = True
         Me.lblTicket.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTicket.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblTicket.Location = New System.Drawing.Point(37, 87)
+        Me.lblTicket.Location = New System.Drawing.Point(37, 115)
         Me.lblTicket.Name = "lblTicket"
         Me.lblTicket.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblTicket.Size = New System.Drawing.Size(51, 20)
@@ -227,7 +183,7 @@ Partial Class frmConsuntivazione
         'txtTicket
         '
         Me.txtTicket.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtTicket.Location = New System.Drawing.Point(112, 87)
+        Me.txtTicket.Location = New System.Drawing.Point(112, 115)
         Me.txtTicket.MaxLength = 10
         Me.txtTicket.Name = "txtTicket"
         Me.txtTicket.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -606,74 +562,23 @@ Partial Class frmConsuntivazione
         '
         Me.pnlInserisci.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.pnlInserisci.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
-        Me.pnlInserisci.Controls.Add(Me.GroupBox1)
+        Me.pnlInserisci.Controls.Add(Me.ckbHome)
+        Me.pnlInserisci.Controls.Add(Me.cmbNota)
+        Me.pnlInserisci.Controls.Add(Me.lblNota)
+        Me.pnlInserisci.Controls.Add(Me.btnCarica)
+        Me.pnlInserisci.Controls.Add(Me.cmbTempo)
+        Me.pnlInserisci.Controls.Add(Me.lblTempo)
         Me.pnlInserisci.Controls.Add(Me.lblGiorno)
         Me.pnlInserisci.Controls.Add(Me.txtTicket)
         Me.pnlInserisci.Controls.Add(Me.lblTicket)
         Me.pnlInserisci.Controls.Add(Me.dtpData)
         Me.pnlInserisci.Controls.Add(Me.lblAggiungiCliente)
         Me.pnlInserisci.Controls.Add(Me.lblCliente)
-        Me.pnlInserisci.Controls.Add(Me.btnCarica)
         Me.pnlInserisci.Controls.Add(Me.cmbCliente)
-        Me.pnlInserisci.Controls.Add(Me.cmbTempo)
-        Me.pnlInserisci.Controls.Add(Me.lblTempo)
         Me.pnlInserisci.Location = New System.Drawing.Point(26, 55)
         Me.pnlInserisci.Name = "pnlInserisci"
         Me.pnlInserisci.Size = New System.Drawing.Size(265, 482)
         Me.pnlInserisci.TabIndex = 22
-        '
-        'GroupBox1
-        '
-        Me.GroupBox1.Controls.Add(Me.btnCancellaFiltri)
-        Me.GroupBox1.Controls.Add(Me.rdbFormazione)
-        Me.GroupBox1.Controls.Add(Me.ckbAltro)
-        Me.GroupBox1.Controls.Add(Me.ckbHome)
-        Me.GroupBox1.Controls.Add(Me.rdbFixed)
-        Me.GroupBox1.Controls.Add(Me.rdbCriticita)
-        Me.GroupBox1.Location = New System.Drawing.Point(25, 319)
-        Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(221, 155)
-        Me.GroupBox1.TabIndex = 15
-        Me.GroupBox1.TabStop = False
-        '
-        'btnCancellaFiltri
-        '
-        Me.btnCancellaFiltri.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCancellaFiltri.FlatStyle = System.Windows.Forms.FlatStyle.System
-        Me.btnCancellaFiltri.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.btnCancellaFiltri.Location = New System.Drawing.Point(16, 120)
-        Me.btnCancellaFiltri.Name = "btnCancellaFiltri"
-        Me.btnCancellaFiltri.Size = New System.Drawing.Size(181, 25)
-        Me.btnCancellaFiltri.TabIndex = 6
-        Me.btnCancellaFiltri.Text = "Cancella Filtri"
-        Me.btnCancellaFiltri.UseVisualStyleBackColor = True
-        '
-        'rdbFormazione
-        '
-        Me.rdbFormazione.AutoSize = True
-        Me.rdbFormazione.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.rdbFormazione.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.rdbFormazione.ForeColor = System.Drawing.SystemColors.Control
-        Me.rdbFormazione.Location = New System.Drawing.Point(16, 68)
-        Me.rdbFormazione.Name = "rdbFormazione"
-        Me.rdbFormazione.Size = New System.Drawing.Size(88, 20)
-        Me.rdbFormazione.TabIndex = 14
-        Me.rdbFormazione.TabStop = True
-        Me.rdbFormazione.Text = "Formazione"
-        Me.rdbFormazione.UseVisualStyleBackColor = True
-        '
-        'ckbAltro
-        '
-        Me.ckbAltro.AutoSize = True
-        Me.ckbAltro.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.ckbAltro.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.ckbAltro.ForeColor = System.Drawing.SystemColors.Control
-        Me.ckbAltro.Location = New System.Drawing.Point(16, 94)
-        Me.ckbAltro.Name = "ckbAltro"
-        Me.ckbAltro.Size = New System.Drawing.Size(54, 20)
-        Me.ckbAltro.TabIndex = 14
-        Me.ckbAltro.Text = "Altro"
-        Me.ckbAltro.UseVisualStyleBackColor = True
         '
         'ckbHome
         '
@@ -681,40 +586,80 @@ Partial Class frmConsuntivazione
         Me.ckbHome.Cursor = System.Windows.Forms.Cursors.Hand
         Me.ckbHome.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
         Me.ckbHome.ForeColor = System.Drawing.SystemColors.Control
-        Me.ckbHome.Location = New System.Drawing.Point(138, 58)
+        Me.ckbHome.Location = New System.Drawing.Point(113, 309)
         Me.ckbHome.Name = "ckbHome"
         Me.ckbHome.Size = New System.Drawing.Size(59, 20)
-        Me.ckbHome.TabIndex = 14
+        Me.ckbHome.TabIndex = 21
         Me.ckbHome.Text = "Home"
         Me.ckbHome.UseVisualStyleBackColor = True
         '
-        'rdbFixed
+        'cmbNota
         '
-        Me.rdbFixed.AutoSize = True
-        Me.rdbFixed.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.rdbFixed.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.rdbFixed.ForeColor = System.Drawing.SystemColors.Control
-        Me.rdbFixed.Location = New System.Drawing.Point(16, 42)
-        Me.rdbFixed.Name = "rdbFixed"
-        Me.rdbFixed.Size = New System.Drawing.Size(53, 20)
-        Me.rdbFixed.TabIndex = 14
-        Me.rdbFixed.TabStop = True
-        Me.rdbFixed.Text = "Fixed"
-        Me.rdbFixed.UseVisualStyleBackColor = True
+        Me.cmbNota.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cmbNota.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
+        Me.cmbNota.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.cmbNota.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.cmbNota.FormattingEnabled = True
+        Me.cmbNota.Location = New System.Drawing.Point(112, 269)
+        Me.cmbNota.MaxLength = 150
+        Me.cmbNota.Name = "cmbNota"
+        Me.cmbNota.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbNota.Size = New System.Drawing.Size(110, 25)
+        Me.cmbNota.TabIndex = 6
         '
-        'rdbCriticita
+        'lblNota
         '
-        Me.rdbCriticita.AutoSize = True
-        Me.rdbCriticita.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.rdbCriticita.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.rdbCriticita.ForeColor = System.Drawing.SystemColors.Control
-        Me.rdbCriticita.Location = New System.Drawing.Point(16, 16)
-        Me.rdbCriticita.Name = "rdbCriticita"
-        Me.rdbCriticita.Size = New System.Drawing.Size(70, 20)
-        Me.rdbCriticita.TabIndex = 14
-        Me.rdbCriticita.TabStop = True
-        Me.rdbCriticita.Text = "Criticità"
-        Me.rdbCriticita.UseVisualStyleBackColor = True
+        Me.lblNota.AutoSize = True
+        Me.lblNota.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblNota.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblNota.Location = New System.Drawing.Point(38, 270)
+        Me.lblNota.Name = "lblNota"
+        Me.lblNota.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblNota.Size = New System.Drawing.Size(43, 20)
+        Me.lblNota.TabIndex = 20
+        Me.lblNota.Text = "Nota"
+        '
+        'btnCarica
+        '
+        Me.btnCarica.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.btnCarica.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCarica.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnCarica.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
+        Me.btnCarica.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btnCarica.Location = New System.Drawing.Point(68, 344)
+        Me.btnCarica.Name = "btnCarica"
+        Me.btnCarica.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.btnCarica.Size = New System.Drawing.Size(138, 49)
+        Me.btnCarica.TabIndex = 7
+        Me.btnCarica.Text = "Carica"
+        Me.btnCarica.UseVisualStyleBackColor = False
+        '
+        'cmbTempo
+        '
+        Me.cmbTempo.AutoCompleteCustomSource.AddRange(New String() {"0,25", "0,5", "0,75", "1", "1,25", "1,5", "1,75", "2", "2,25", "2,5", "2,75", "3", "3,25", "3,5", "3,75", "4", "4,25", "4,5", "4,75", "5", "5,25", "5,5", "5,75", "6", "6,25", "6,5", "6,75", "7", "7,25", "7,5", "7,75", "8"})
+        Me.cmbTempo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cmbTempo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
+        Me.cmbTempo.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.cmbTempo.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.cmbTempo.FormattingEnabled = True
+        Me.cmbTempo.Location = New System.Drawing.Point(112, 217)
+        Me.cmbTempo.MaxLength = 4
+        Me.cmbTempo.Name = "cmbTempo"
+        Me.cmbTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmbTempo.Size = New System.Drawing.Size(110, 25)
+        Me.cmbTempo.TabIndex = 5
+        '
+        'lblTempo
+        '
+        Me.lblTempo.AutoSize = True
+        Me.lblTempo.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTempo.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblTempo.Location = New System.Drawing.Point(37, 217)
+        Me.lblTempo.Name = "lblTempo"
+        Me.lblTempo.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblTempo.Size = New System.Drawing.Size(55, 20)
+        Me.lblTempo.TabIndex = 18
+        Me.lblTempo.Text = "Tempo"
         '
         'lblAggiungiCliente
         '
@@ -722,16 +667,12 @@ Partial Class frmConsuntivazione
         Me.lblAggiungiCliente.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lblAggiungiCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblAggiungiCliente.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblAggiungiCliente.Location = New System.Drawing.Point(225, 139)
+        Me.lblAggiungiCliente.Location = New System.Drawing.Point(225, 167)
         Me.lblAggiungiCliente.Name = "lblAggiungiCliente"
         Me.lblAggiungiCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblAggiungiCliente.Size = New System.Drawing.Size(19, 20)
         Me.lblAggiungiCliente.TabIndex = 12
         Me.lblAggiungiCliente.Text = "+"
-        '
-        'TimerConsuntiva
-        '
-        Me.TimerConsuntiva.Interval = 1500
         '
         'ofdFile
         '
@@ -898,6 +839,10 @@ Partial Class frmConsuntivazione
         '
         Me.TimerSlide.Interval = 10
         '
+        'ToolTip1
+        '
+        Me.ToolTip1.IsBalloon = True
+        '
         'lblSlide
         '
         Me.lblSlide.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(106, Byte), Integer), CType(CType(189, Byte), Integer))
@@ -909,10 +854,6 @@ Partial Class frmConsuntivazione
         Me.lblSlide.Size = New System.Drawing.Size(32, 32)
         Me.lblSlide.TabIndex = 24
         Me.lblSlide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'ToolTip1
-        '
-        Me.ToolTip1.IsBalloon = True
         '
         'frmConsuntivazione
         '
@@ -926,11 +867,12 @@ Partial Class frmConsuntivazione
         Me.Controls.Add(Me.pnlMensile)
         Me.Controls.Add(Me.lblSfondoColorato)
         Me.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MinimumSize = New System.Drawing.Size(1120, 620)
         Me.Name = "frmConsuntivazione"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Consuntivazione"
+        Me.Text = "Consuntivazione - 2.0.0"
         CType(Me.dgvCalendario, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlMensile.ResumeLayout(False)
         Me.pnlMensile.PerformLayout()
@@ -939,8 +881,6 @@ Partial Class frmConsuntivazione
         CType(Me.nudAnno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlInserisci.ResumeLayout(False)
         Me.pnlInserisci.PerformLayout()
-        Me.GroupBox1.ResumeLayout(False)
-        Me.GroupBox1.PerformLayout()
         Me.pnlMenu.ResumeLayout(False)
         Me.pnlMenu.PerformLayout()
         Me.ResumeLayout(False)
@@ -948,11 +888,8 @@ Partial Class frmConsuntivazione
     End Sub
 
     Friend WithEvents dgvCalendario As DataGridView
-    Friend WithEvents btnCarica As Button
-    Friend WithEvents cmbTempo As ComboBox
     Friend WithEvents cmbCliente As ComboBox
     Friend WithEvents lblCliente As Label
-    Friend WithEvents lblTempo As Label
     Friend WithEvents lblGiorno As Label
     Friend WithEvents dtpData As DateTimePicker
     Friend WithEvents lblTicket As Label
@@ -968,15 +905,7 @@ Partial Class frmConsuntivazione
     Friend WithEvents btnDividiXCliente As Button
     Friend WithEvents lblSfondoColorato As Label
     Friend WithEvents pnlInserisci As Panel
-    Friend WithEvents GroupBox1 As GroupBox
-    Friend WithEvents rdbFormazione As RadioButton
-    Friend WithEvents rdbFixed As RadioButton
-    Friend WithEvents rdbCriticita As RadioButton
-    Friend WithEvents ckbHome As CheckBox
-    Friend WithEvents btnCancellaFiltri As Button
-    Friend WithEvents TimerConsuntiva As Timer
     Friend WithEvents lblAggiungiCliente As Label
-    Friend WithEvents ckbAltro As CheckBox
     Friend WithEvents nudAnno As NumericUpDown
     Friend WithEvents lblAnno As Label
     Friend WithEvents ofdFile As OpenFileDialog
@@ -1011,4 +940,10 @@ Partial Class frmConsuntivazione
     Friend WithEvents imgImpostazioni As Label
     Friend WithEvents lblImpostazioni As Label
     Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents ckbHome As CheckBox
+    Friend WithEvents cmbNota As ComboBox
+    Friend WithEvents lblNota As Label
+    Friend WithEvents btnCarica As Button
+    Friend WithEvents cmbTempo As ComboBox
+    Friend WithEvents lblTempo As Label
 End Class

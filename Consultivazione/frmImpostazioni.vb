@@ -3,9 +3,11 @@ Imports System.Data.OleDb
 
 Public Class frmImpostazioni
     Private Declare Function HideCaret Lib "user32.dll" (ByVal hWnd As IntPtr) As Boolean
-    Dim fileConfig As String = frmConsuntivazione.fileConfig
+    ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
     Dim vetModifiche() As String
     Dim contaModifiche As Integer = -1
+    ReadOnly logConfig As String = frmConsuntivazione.logConfig
+    Dim dataOraLog As String = ""
     Private Sub TextBox1_GotFocus(sender As Object, e As EventArgs) Handles txtPathDB.GotFocus
         HideCaret(txtPathDB.Handle)
     End Sub
@@ -38,7 +40,7 @@ Public Class frmImpostazioni
                     DBDefault = dato
                     If DBDefault = "" Then
                         DBDefault = txtPathDB.Text.Replace("Consuntivazione.accdb", "DB Default\Consuntivazione.accdb")
-                        valorizzaVetModifiche("DBDefault", DBDefault)
+                        valorizzaVetModifiche("DB_DEFAULT", DBDefault)
                     End If
                 ElseIf appoggio.Contains("AggAutGiornoAttuale") Then
                     ckbGiornoAttuale.Checked = CBool(dato)
@@ -120,6 +122,11 @@ Public Class frmImpostazioni
             Exit Sub
         End If
 
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log Config:")
+        End Using
         Dim restart As Boolean = False
         For i = 0 To vetModifiche.Length - 1
             If vetModifiche(i).StartsWith("DB") Then
@@ -128,6 +135,10 @@ Public Class frmImpostazioni
         Next
         If restart = True Then
             If MsgBox("Vuoi applicare le modifiche? Il programma verrà chiuso per apportarle.", MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation) = MsgBoxResult.No Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Nessuna modifica effettuata")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+                End Using
                 Exit Sub
             End If
             Call applicaModifiche(vetModifiche)
@@ -136,6 +147,10 @@ Public Class frmImpostazioni
             Me.Close()
         Else
             If AggAutDettaglio = ckbAggDettaglio.Checked And AggAutGiornoAttuale = ckbGiornoAttuale.Checked Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Nessuna modifica effettuata")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+                End Using
                 MsgBox("Non è stata fatta nessuna modifica", MsgBoxStyle.Exclamation)
                 vetModifiche = Nothing
                 contaModifiche = -1
@@ -160,18 +175,22 @@ Public Class frmImpostazioni
             Dim sw As New StreamWriter(Path.ChangeExtension(fileConfig, "tmp"))
             Dim appoggio As String = sr.ReadLine()
 
-            Do
-                If appoggio.Contains(voce) Then
-                    sw.WriteLine(voce + "=" + testo)
-                Else
-                    sw.WriteLine(appoggio)
-                End If
-                appoggio = sr.ReadLine()
-            Loop Until appoggio = Nothing
-            sr.Close()
-            sw.Close()
-            File.Copy(Path.ChangeExtension(fileConfig, "tmp"), fileConfig, True)
-            File.Delete(Path.ChangeExtension(fileConfig, "tmp"))
+            Using logFile As New System.IO.StreamWriter(logConfig, True)
+                Do
+                    If appoggio.Contains(voce) Then
+                        sw.WriteLine(voce + "=" + testo)
+                        logFile.WriteLine(dataOraLog + "Modificata config da " & appoggio & " a " & voce & "=" & testo)
+                    Else
+                        sw.WriteLine(appoggio)
+                    End If
+                    appoggio = sr.ReadLine()
+                Loop Until appoggio = Nothing
+                sr.Close()
+                sw.Close()
+                File.Copy(Path.ChangeExtension(fileConfig, "tmp"), fileConfig, True)
+                File.Delete(Path.ChangeExtension(fileConfig, "tmp"))
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+            End Using
         Next
     End Sub
     Sub applicaModifiche(pathDefault As String)

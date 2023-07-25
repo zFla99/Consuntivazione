@@ -6,6 +6,8 @@ Public Class frmTema
     End Function
 
     ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
+    ReadOnly logConfig As String = frmConsuntivazione.logConfig
+    Dim dataOraLog As String = ""
     Sub impostaConfig()
         Dim sr As New StreamReader(fileConfig)
         Dim appoggio As String = sr.ReadLine
@@ -107,18 +109,23 @@ Public Class frmTema
             Dim sw As New StreamWriter(Path.ChangeExtension(fileConfig, "tmp"))
             Dim appoggio As String = sr.ReadLine()
 
-            Do
-                If appoggio.Contains(voce) Then
-                    sw.WriteLine(testo)
-                Else
-                    sw.WriteLine(appoggio)
-                End If
-                appoggio = sr.ReadLine()
-            Loop Until appoggio = Nothing
-            sr.Close()
-            sw.Close()
-            File.Copy(Path.ChangeExtension(fileConfig, "tmp"), fileConfig, True)
-            File.Delete(Path.ChangeExtension(fileConfig, "tmp"))
+            Using logFile As New System.IO.StreamWriter(logConfig, True)
+                logFile.WriteLine(dataOraLog + "Nessuna modifica effettuata")
+                Do
+                    If appoggio.Contains(voce) Then
+                        sw.WriteLine(testo)
+                        logFile.WriteLine(dataOraLog + "Modificata config da " & appoggio & " a " & testo)
+                    Else
+                        sw.WriteLine(appoggio)
+                    End If
+                    appoggio = sr.ReadLine()
+                Loop Until appoggio = Nothing
+                sr.Close()
+                sw.Close()
+                File.Copy(Path.ChangeExtension(fileConfig, "tmp"), fileConfig, True)
+                File.Delete(Path.ChangeExtension(fileConfig, "tmp"))
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+            End Using
         Next
     End Sub
 
@@ -191,8 +198,17 @@ Public Class frmTema
             valorizzaVetColori(voce, testo)
         End If
 
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log Config:")
+        End Using
         If vetColori Is Nothing Then
             MsgBox("Non è stata fatta nessuna modifica", MsgBoxStyle.Exclamation)
+            Using logFile As New System.IO.StreamWriter(logConfig, True)
+                logFile.WriteLine(dataOraLog + "Nessuna modifica effettuata")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+            End Using
             Exit Sub
         End If
 
@@ -216,6 +232,10 @@ Attualmente questo tasto ripristina tutte le configurazioni e non solo il colore
             File.Copy(fileConfigDefault, fileConfig, True)
             MsgBox("I colori sono stati modificati correttamente. L'applicazione verrà chiusa per apportare le modifiche.", MsgBoxStyle.Information)
             coloriModificati = True
+            Using logFile As New System.IO.StreamWriter(logConfig, True)
+                logFile.WriteLine(dataOraLog + "Impostati config di Default")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Config - OK")
+            End Using
             Me.Close()
         End If
     End Sub

@@ -1,5 +1,7 @@
 ﻿Imports System.Data.OleDb
 Imports System.IO
+Imports System.Runtime.CompilerServices
+
 Public Class frmModifica
     Dim tabellaDB As String
     Dim colonna As String
@@ -9,6 +11,8 @@ Public Class frmModifica
     Dim id As String
     Dim cliente As String = frmConsuntivazione.clienteCondiviso
     ReadOnly strConn As String = frmConsuntivazione.strConn
+    ReadOnly logModifica As String = frmConsuntivazione.logModifica
+    Dim dataOraLog As String = frmConsuntivazione.dataOraLog
     Private Sub Modifica_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         tabellaDB = frmConsuntivazione.tabellaCondivisa
         colonna = frmConsuntivazione.colonnaCondivisa
@@ -18,6 +22,7 @@ Public Class frmModifica
         End If
         id = frmConsuntivazione.idCondiviso
         cliente = frmConsuntivazione.clienteCondiviso
+
         impostaTabModifica()
         impostaConfig()
         PulisciCampi()
@@ -155,12 +160,20 @@ Public Class frmModifica
     Private Sub btnModifica_Click(sender As Object, e As EventArgs) Handles btnModifica.Click
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
 
         If colonna = "TEMPO" Then
             colonna += "_RISOLUZIONE"
         End If
+
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logModifica, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log Modifica:")
+            logFile.WriteLine(dataOraLog + "Colonna: " & colonna)
+        End Using
 
         Select Case colonna
             Case "CLIENTE"
@@ -205,6 +218,14 @@ Public Class frmModifica
 
         cn = New OleDbConnection(strConn)
         cn.Open()
+        str = "SELECT " & colonna & " FROM " & tabellaDB & " WHERE ID =" & id
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+        Dim vecchioDato As String = tabella.Rows(0).Item(colonna).ToString
+
         If dato = "" Then
             str = "UPDATE " & tabellaDB & " SET " & colonna & "= NULL WHERE ID = " & id
         ElseIf colonna = "TEMPO_RISOLUZIONE" And nota <> "" Then
@@ -214,18 +235,24 @@ Public Class frmModifica
         Else
             str = "UPDATE " & tabellaDB & " SET " & colonna & "='" & dato & "' WHERE ID = " & id
         End If
+        cn.Open()
         cmd = New OleDbCommand(str, cn)
         cmd.ExecuteNonQuery()
         cn.Close()
+        Using logFile As New System.IO.StreamWriter(logModifica, True)
+            logFile.WriteLine(dataOraLog + "Modificata colonna '" & colonna & "' impostando '" & dato & "' al posto di '" & vecchioDato & "' - ID: '" & id & "'")
+            logFile.WriteLine(dataOraLog + "Fine Modifica - OK")
+        End Using
         If tabellaDB = "Consuntivazione" Then
             Call modificaTutteNote()
-            If colonna = "TEMPO_RISOLUZIONE" Then
-                Call controllaExtra()
-            End If
+            'If colonna = "TEMPO_RISOLUZIONE" Then
+            'Call controllaExtra()
+            'End If
         End If
-        If frmConsuntivazione.AggAutDettaglio = False Then
+        If frmConsuntivazione.AggAutDettaglio = False And tabellaDB <> "LinkGR" Then
             frmConsuntivazione.dgvCalendario.Rows(riga).Cells(c).Value = dato
         End If
+
         Me.Close()
     End Sub
     Sub modificaTutteNote()
@@ -244,11 +271,11 @@ Public Class frmModifica
         tabella.Clear()
         da.Fill(tabella)
         cn.Close()
-        Dim giorno As String = tabella.Rows(0).Item("DATA").ToString
+        Dim giorno As Date = tabella.Rows(0).Item("DATA").ToString
 
 
         cn.Open()
-        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
+        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA = #" & Format(giorno, "MM/dd/yyyy") & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -313,7 +340,7 @@ Public Class frmModifica
             corretto = False
             Exit Sub
         End If
-        dato = cmbCliente.Text
+        dato = StrConv(cmbCliente.Text.Replace("'", "").Trim, VbStrConv.ProperCase)
         Call controllaCliente(dato)
     End Sub
     Sub controllaCliente(cliente As String)
@@ -333,6 +360,10 @@ Public Class frmModifica
         cn.Close()
 
         If tabella.Rows.Count = 0 Then
+            Using logFile As New System.IO.StreamWriter(logModifica, True)
+                logFile.WriteLine(dataOraLog + "Cliente non modificato. Il cliente '" & cliente & "' non esiste")
+                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+            End Using
             MsgBox("Il Cliente inserito non esiste", MsgBoxStyle.Exclamation)
             corretto = False
         Else
@@ -343,14 +374,14 @@ Public Class frmModifica
     Dim notaExtra As String = ""
     Sub datoTempo()
         dato = cmbTempo.Text
-        If IsNumeric(dato) = False Then
-            MsgBox("Inserisci un tempo di risoluzione valido")
-            corretto = False
-            Exit Sub
-        End If
         dato = dato.Replace(".", ",")
         If IsNumeric(dato) = False Then
+            Using logFile As New System.IO.StreamWriter(logModifica, True)
+                logFile.WriteLine(dataOraLog + "Tempo di risoluzione '" & dato & "' non valido")
+                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+            End Using
             MsgBox("Non è un tempo valido", MsgBoxStyle.Exclamation)
+            corretto = False
             Exit Sub
         End If
         Dim vecchioTempo As String = frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value
@@ -414,11 +445,11 @@ Public Class frmModifica
         tabella.Clear()
         da.Fill(tabella)
         cn.Close()
-        Dim giorno As String = tabella.Rows(0).Item("DATA").ToString
+        Dim giorno As Date = tabella.Rows(0).Item("DATA").ToString
 
 
         cn.Open()
-        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA = #" & giorno & "#"
+        str = "SELECT TEMPO_RISOLUZIONE, DATA, NOTA, ID FROM Consuntivazione WHERE DATA = #" & Format(giorno, "MM/dd/yyyy") & "#"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -451,8 +482,13 @@ Public Class frmModifica
                     Try
                         str = cmd.ExecuteNonQuery
                     Catch ex As Exception
+                        Using logFile As New System.IO.StreamWriter(logModifica, True)
+                            logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                            logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                        End Using
                         MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                         cn.Close()
+                        corretto = False
                         Exit Sub
                     End Try
                     cn.Close()
@@ -511,7 +547,12 @@ Public Class frmModifica
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per il Bug Fix", MsgBoxStyle.Exclamation)
+                Using logFile As New System.IO.StreamWriter(logModifica, True)
+                    logFile.WriteLine(dataOraLog + "'" & cliente & "' non ha la commessa per il Bug Fix")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                End Using
+                MsgBox("'" & cliente & "' non ha la commessa per il Bug Fix", MsgBoxStyle.Exclamation)
+                corretto = False
                 Exit Sub
             End If
 
@@ -527,7 +568,12 @@ Public Class frmModifica
                 End If
             Next
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
+                Using logFile As New System.IO.StreamWriter(logModifica, True)
+                    logFile.WriteLine(dataOraLog + "'" & cliente & "' non ha la commessa per la Formazione")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                End Using
+                MsgBox("'" & cliente & "' non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
+                corretto = False
                 Exit Sub
             End If
             If dato = "" Then
@@ -546,37 +592,66 @@ Public Class frmModifica
         If ckbAltro.Checked = True Then
             Dim notaInput As String
             notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = notaInput.Replace("'", "")
+            notaInput = notaInput.Replace(",", "")
             notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
-            If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
-                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("extra") Then
-                Dim tempoExtra As String = InputBox("Inserisci un tempo extra")
-                tempoExtra = tempoExtra.Replace(".", ",")
-                If IsNumeric(tempoExtra) = False Then
-                    MsgBox("Tempo extra non valido (non è un numero)")
+            Using logFile As New System.IO.StreamWriter(logModifica, True)
+                If notaInput.Length > 150 Then
+                    logFile.WriteLine(dataOraLog + "Nota non valida (Max 150 car.)")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
+                    corretto = False
                     Exit Sub
-                ElseIf tempoExtra > CDbl(frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value) Then
-                    MsgBox("Tempo extra non valido (non può essere maggiore del tempo di risoluzione)", MsgBoxStyle.Exclamation)
+                ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
+                    logFile.WriteLine(dataOraLog + "Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
+                    corretto = False
                     Exit Sub
-                ElseIf tempoExtra <= 0 Then
-                    MsgBox("Tempo extra non valido (non può essere minore o uguale a 0)", MsgBoxStyle.Exclamation)
-                    Exit Sub
+                ElseIf notaInput.ToLower.Contains("extra") Then
+                    Dim tempoExtra As String = InputBox("Inserisci un tempo extra")
+                    tempoExtra = tempoExtra.Replace(".", ",")
+                    If IsNumeric(tempoExtra) = False Then
+                        logFile.WriteLine(dataOraLog + "Tempo extra " & tempoExtra & " non valido (non è un numero)")
+                        logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                        logFile.Close()
+                        MsgBox("Tempo extra non valido (non è un numero)")
+                        corretto = False
+                        Exit Sub
+                    ElseIf tempoExtra > CDbl(frmConsuntivazione.dgvCalendario.Rows(riga).Cells(3).Value) Then
+                        logFile.WriteLine(dataOraLog + "Tempo extra " & tempoExtra & " non valido (non può essere maggiore del tempo di risoluzione)")
+                        logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                        logFile.Close()
+                        MsgBox("Tempo extra non valido (non può essere maggiore del tempo di risoluzione)", MsgBoxStyle.Exclamation)
+                        corretto = False
+                        Exit Sub
+                    ElseIf tempoExtra <= 0 Then
+                        logFile.WriteLine(dataOraLog + "Tempo extra " & tempoExtra & " non valido (non può essere minore o uguale a 0)")
+                        logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                        logFile.Close()
+                        MsgBox("Tempo extra non valido (non può essere minore o uguale a 0)", MsgBoxStyle.Exclamation)
+                        corretto = False
+                        Exit Sub
+                    End If
+                    notaInput = "Extra(" & tempoExtra & ")"
+                    notaInput = notaInput.Replace("'", "")
                 End If
-                notaInput = "Extra(" & tempoExtra & ")"
-                notaInput = notaInput.Replace("'", "")
-            End If
+            End Using
             For i = 0 To tabella.Rows.Count - 1
                 If vetCommNota(i) = notaInput Then
                     conta += 1
                 End If
             Next
             If conta > 1 And nota <> "" Then
+                Using logFile As New System.IO.StreamWriter(logModifica, True)
+                    logFile.WriteLine(dataOraLog + "Non è consentito inserire 2 commesse nelle note!")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                End Using
                 MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
+                corretto = False
                 Exit Sub
             End If
             If dato = "" Then
@@ -586,7 +661,12 @@ Public Class frmModifica
             End If
         End If
         If conta = 0 Then
+            Using logFile As New System.IO.StreamWriter(logModifica, True)
+                logFile.WriteLine(dataOraLog + "'" & cliente & "' non ha la commessa standard")
+                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+            End Using
             MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
+            corretto = False
             Exit Sub
         End If
         corretto = True
@@ -598,7 +678,7 @@ Public Class frmModifica
         Dim tabella As New DataTable
         Dim str As String
         cliente = frmCommesse.dgvCommesse.Rows(riga).Cells(1).Value
-
+        nota = frmCommesse.dgvCommesse.Rows(riga).Cells(2).Value
 
         cn = New OleDbConnection(strConn)
         cn.Open()
@@ -609,63 +689,79 @@ Public Class frmModifica
         da.Fill(tabella)
         cn.Close()
 
-        Dim vetCommNota(tabella.Rows.Count) As String
+        Dim vetCommNota(tabella.Rows.Count - 1) As String
         For i = 0 To tabella.Rows.Count - 1
             vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
         Next
 
         Dim conta As Integer = 0
-        If rdbVuota.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "" Then
-                    conta += 1
-                End If
-            Next
-            dato = ""
-        ElseIf rdbFixed.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "Fixed" Then
-                    conta += 1
-                End If
-            Next
-            dato = "Fixed"
-        ElseIf rdbFormazione.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "Formazione" Then
-                    conta += 1
-                End If
-            Next
-            dato = "Formazione"
-        ElseIf ckbAltro.Checked = True Then
-            Dim notaInput As String
-            notaInput = InputBox("Inserisci una nota").Trim.ToLower
-            notaInput = StrConv(notaInput, VbStrConv.ProperCase)
+        Using logFile As New System.IO.StreamWriter(logModifica, True)
+            If rdbVuota.Checked = True Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "" And vetCommNota(i).ToLower <> nota.ToLower Then
+                        conta += 1
+                    End If
+                Next
+                dato = ""
+            ElseIf rdbFixed.Checked = True Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "Fixed" And vetCommNota(i).ToLower <> nota.ToLower Then
+                        conta += 1
+                    End If
+                Next
+                dato = "Fixed"
+            ElseIf rdbFormazione.Checked = True Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "Formazione" And vetCommNota(i).ToLower <> nota.ToLower Then
+                        conta += 1
+                    End If
+                Next
+                dato = "Formazione"
+            ElseIf ckbAltro.Checked = True Then
+                Dim notaInput As String
+                notaInput = InputBox("Inserisci una nota").Trim.ToLower
+                notaInput = notaInput.Replace("'", "")
+                notaInput = notaInput.Replace(",", "")
+                notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
-            If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)")
-                corretto = False
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
-                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
-                corretto = False
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("extra") Then
-                MsgBox("Non puoi inserire questa commessa")
-                Exit Sub
-                corretto = False
-            End If
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i).ToLower = notaInput.ToLower Then
-                    conta += 1
+                If notaInput.Length > 150 Then
+                    logFile.WriteLine(dataOraLog + "Nota non valida (Max 150 car.)")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (Max 150 car.)")
+                    corretto = False
+                    Exit Sub
+                ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
+                    logFile.WriteLine(dataOraLog + "Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                    logFile.Close()
+                    MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                    corretto = False
+                    Exit Sub
+                ElseIf notaInput.ToLower.Contains("extra") Then
+                    logFile.WriteLine(dataOraLog + "Non puoi inserire '" & notaInput & "' come commessa")
+                    logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                    logFile.Close()
+                    MsgBox("Non puoi inserire questa commessa")
+                    Exit Sub
+                    corretto = False
                 End If
-            Next
-            dato = notaInput
-        End If
-        If conta > 0 Then
-            MsgBox("Questa commessa è gia presente")
-            corretto = False
-            Exit Sub
-        End If
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i).ToLower = notaInput.ToLower And vetCommNota(i).ToLower <> nota.ToLower Then
+                        conta += 1
+                    End If
+                Next
+                dato = notaInput
+            End If
+            If conta > 0 Then
+                logFile.WriteLine(dataOraLog + "Questa commessa è gia presente")
+                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                logFile.Close()
+                MsgBox("Questa commessa è gia presente")
+                corretto = False
+                Exit Sub
+            End If
+        End Using
         corretto = True
     End Sub
 

@@ -1,96 +1,238 @@
 ﻿Imports System.IO
 Imports System.Data.OleDb
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar
+Imports System.Net
+Imports System.Xml
+Imports System.Runtime.InteropServices
 
 Public Class frmConsuntivazione
     ReadOnly giornoOggi As String = Now.ToShortDateString
     Public strConn As String
     Public fileConfig As String
     Public modDebug As Boolean = False
-    Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If Application.StartupPath.EndsWith("Debug") Then
-            modDebug = True
-        End If
 
-        If controlloPathConfig() = False Then
+    Dim logPath As String
+    Dim logLoad As String
+    Dim logTicket As String
+    Dim logConsuntivaTutto As String
+    Public logModifica As String
+    Public logConfig As String
+    Public logCommesseClienti As String
+    Public logInsMassivTicket As String
+    Public logInsMassivComm As String
+
+    Public dataOraLog As String = ""
+    Dim updatePath As String = Application.ExecutablePath.Replace("Consuntivazione.exe", "CheckUpdates.exe")
+
+    Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        modDebug = Application.StartupPath.EndsWith("Debug")
+
+        inizializzazioneLogPath()
+
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log Consuntivazione Load:")
+        End Using
+        If Not controlloPathConfig() OrElse Not controlloPathDB() Then
+            Using logFile As New System.IO.StreamWriter(logLoad, True)
+                logFile.WriteLine(dataOraLog + "Fine scrittura log Consuntivazione Load - KO")
+            End Using
             Me.Close()
             Exit Sub
-        Else
-            If controlloPathDB() = False Then
+        End If
+        impostaConfig()
+
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Verifica Aggiornamenti:")
+        End Using
+
+        Dim processName As String = Path.GetFileNameWithoutExtension(updatePath)
+        If CheckForUpdates() Then
+            If Process.GetProcessesByName(processName).Length = 0 Then
+                Process.Start(updatePath)
+            End If
+            If obbligatorio Then
                 Me.Close()
                 Exit Sub
             End If
-            Call impostaConfig()
         End If
-        Call caricaClientiTempo()
-        Call DataGrid()
+
+        caricaClientiTempo()
+        DataGrid()
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
         lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
+
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Fine scrittura log Consuntivazione Load - OK")
+        End Using
     End Sub
-    Function controlloPathConfig() As Boolean
-        If modDebug = True Then
-            fileConfig = Application.StartupPath.Replace("\bin\Debug", "\Config\config.ini")
+
+    Sub inizializzazioneLogPath()
+        If modDebug Then
+            logPath = Application.StartupPath.Replace("\bin\Debug", "\Log")
         Else
-            fileConfig = Application.StartupPath + "\Resources\Config\config.ini"
+            logPath = Application.StartupPath + "\Resources\Log"
         End If
-        If File.Exists(fileConfig) = False Then
-            MsgBox("Il file di config.ini non è stato trovato nella cartella Resources del progetto.", MsgBoxStyle.Critical)
+
+        If Not Directory.Exists(logPath) Then
+            Directory.CreateDirectory(logPath)
+        End If
+
+        logLoad = logPath + "\ApplicationLoad.log"
+        If Not File.Exists(logLoad) Then
+            Using fs As FileStream = File.Create(logLoad)
+            End Using
+        End If
+
+        logTicket = logPath + "\InsTicket.log"
+        If Not File.Exists(logTicket) Then
+            Using fs As FileStream = File.Create(logTicket)
+            End Using
+        End If
+
+        logConsuntivaTutto = logPath + "\ConsuntivaTutto.log"
+        If Not File.Exists(logConsuntivaTutto) Then
+            Using fs As FileStream = File.Create(logConsuntivaTutto)
+            End Using
+        End If
+
+        logModifica = logPath + "\ModifTicket.log"
+        If Not File.Exists(logModifica) Then
+            Using fs As FileStream = File.Create(logModifica)
+            End Using
+        End If
+
+        logConfig = logPath + "\Config.log"
+        If Not File.Exists(logConfig) Then
+            Using fs As FileStream = File.Create(logConfig)
+            End Using
+        End If
+
+        logCommesseClienti = logPath + "\CommesseClienti.log"
+        If Not File.Exists(logCommesseClienti) Then
+            Using fs As FileStream = File.Create(logCommesseClienti)
+            End Using
+        End If
+
+        logInsMassivComm = logPath + "\InsMassivComm.log"
+        If Not File.Exists(logInsMassivComm) Then
+            Using fs As FileStream = File.Create(logInsMassivComm)
+            End Using
+        End If
+
+        logInsMassivTicket = logPath + "\InsMassivTicket.log"
+        If Not File.Exists(logInsMassivTicket) Then
+            Using fs As FileStream = File.Create(logInsMassivTicket)
+            End Using
+        End If
+    End Sub
+
+    Dim currentVersion As String = "0.0.0.0"
+    Dim latestVersion As String = "0.0.0.0"
+    Dim obbligatorio As Boolean = True
+    Function CheckForUpdates()
+        Dim xmlURL As String = "https://raw.githubusercontent.com/zFla99/Consuntivazione_Portable/main/versione.xml"
+        Dim client As New WebClient()
+        Dim data As String = client.DownloadString(xmlURL)
+        Dim xmlDoc As New XmlDocument()
+        xmlDoc.LoadXml(data)
+        latestVersion = xmlDoc.SelectSingleNode("//version").InnerText
+        obbligatorio = xmlDoc.SelectSingleNode("//mandatory").InnerText
+
+        If latestVersion > currentVersion Then
+            Using logFile As New System.IO.StreamWriter(logLoad, True)
+                logFile.WriteLine(dataOraLog + "Nuovo aggiornamento disponibile: " & latestVersion)
+                logFile.WriteLine(dataOraLog + "Fine Aggiornamenti - OK")
+            End Using
+            Return True
+        Else
+            Using logFile As New System.IO.StreamWriter(logLoad, True)
+                logFile.WriteLine(dataOraLog + "Nessun aggiornamento disponibile")
+                logFile.WriteLine(dataOraLog + "Fine Aggiornamenti - OK")
+            End Using
             Return False
         End If
+    End Function
+
+    Function controlloPathConfig() As Boolean
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Inizio controllo path config:")
+
+            fileConfig = If(modDebug, Application.StartupPath.Replace("\bin\Debug", "\Config\config.ini"), Application.StartupPath + "\Resources\Config\config.ini")
+
+            If Not File.Exists(fileConfig) Then
+                logFile.WriteLine(dataOraLog + "Errore: Il file di config.ini non è stato trovato nella cartella Resources del progetto")
+                logFile.Close()
+                MsgBox("Il file di config.ini non è stato trovato nella cartella Resources del progetto.", MsgBoxStyle.Critical)
+                Return False
+            End If
+            logFile.WriteLine(dataOraLog + "Fiine controllo path config - OK")
+        End Using
         Return True
     End Function
+
     Function controlloPathDB() As Boolean
         Dim sr As New StreamReader(fileConfig)
         Dim appoggio As String = sr.ReadLine
         Dim selezionaModifica As String = ""
         Dim path As String = ""
 
-        Do
-            If appoggio.StartsWith("[") Then
-                selezionaModifica = appoggio.Replace("[", "")
-                selezionaModifica = selezionaModifica.Replace("]", "")
-                appoggio = sr.ReadLine()
-            End If
-            If selezionaModifica = "ConfigImp" Then
-                Dim index As Integer = appoggio.IndexOf("=") + 1
-                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Inizio controllo path DB:")
+            Do
+                If appoggio.StartsWith("[") Then
+                    selezionaModifica = appoggio.Replace("[", "")
+                    selezionaModifica = selezionaModifica.Replace("]", "")
+                    appoggio = sr.ReadLine()
+                End If
+                If selezionaModifica = "ConfigImp" Then
+                    Dim index As Integer = appoggio.IndexOf("=") + 1
+                    Dim value As String = appoggio.Substring(index, appoggio.Length - index)
 
-                If appoggio.Contains("DB_PATH") Then
-                    path = value
-                    If path = "" Then
-                        If modDebug = True Then
-                            strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath.Replace("\bin\Debug", "\Database\Consuntivazione.accdb")
+                    If appoggio.Contains("DB_PATH") Then
+                        path = value
+                        If path = "" Then
+                            If modDebug = True Then
+                                strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath.Replace("\bin\Debug", "\Database\Consuntivazione.accdb")
+                            Else
+                                strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath + "\Resources\Database\Consuntivazione.accdb"
+                            End If
+                            'strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
                         Else
-                            strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Application.StartupPath + "\Resources\Database\Consuntivazione.accdb"
+                            strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & path
                         End If
-                        'strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) & "\Altro\Consuntivazione\published\Database\Consuntivazione.accdb"
-                    Else
-                        strConn = "Provider=Microsoft.ACE.OLEDB.12.0; Data source=" & path
                     End If
                 End If
-            End If
-            appoggio = sr.ReadLine()
-        Loop Until appoggio = Nothing
+                appoggio = sr.ReadLine()
+            Loop Until appoggio = Nothing
 
-        sr.Close()
-        Dim pathFile As String
-        pathFile = strConn.Substring(47, strConn.Length - 47)
-        If pathFile.EndsWith("Consuntivazione.accdb") = False Then
-            MsgBox("Il file selezionato non è il Database di 'Consuntivazione.accdb'. 
+            sr.Close()
+            Dim pathFile As String
+            pathFile = strConn.Substring(47, strConn.Length - 47)
+            If pathFile.EndsWith("Consuntivazione.accdb") = False Then
+                logFile.WriteLine(dataOraLog + "Errore: Il file selezionato non è il Database di 'Consuntivazione.accdb")
+                logFile.Close()
+                MsgBox("Il file selezionato non è il Database di 'Consuntivazione.accdb'. 
 Cambialo!", MsgBoxStyle.Critical)
-            frmImpostazioni.ShowDialog()
-            Return False
-        End If
-        If File.Exists(pathFile) = False Then
-            MsgBox("Database non trovato nel seguente path: " & pathFile & ".
+                frmImpostazioni.ShowDialog()
+                Return False
+            End If
+            If File.Exists(pathFile) = False Then
+                logFile.WriteLine(dataOraLog + "Errore: Database non trovato nel seguente path: " & pathFile & ".")
+                logFile.Close()
+                MsgBox("Database non trovato nel seguente path: " & pathFile & ".
 Cambialo!", MsgBoxStyle.Critical)
-            frmImpostazioni.ShowDialog()
-            Return False
-        End If
-        If path = "" Then
-            frmImpostazioni.applicaModifiche(pathFile)
-        End If
+                frmImpostazioni.ShowDialog()
+                Return False
+            End If
+            If path = "" Then
+                frmImpostazioni.applicaModifiche(pathFile)
+            End If
+            logFile.WriteLine(dataOraLog + "Fine controllo path DB - OK")
+        End Using
         Return True
     End Function
 
@@ -102,106 +244,125 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim appoggio As String = sr.ReadLine
         Dim selezionaModifica As String = ""
 
-        Do
-            If appoggio.StartsWith("[") Then
-                selezionaModifica = appoggio.Replace("[", "")
-                selezionaModifica = selezionaModifica.Replace("]", "")
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Inizio impostazione config:")
+            Do
+                If appoggio.StartsWith("[") Then
+                    selezionaModifica = appoggio.Replace("[", "")
+                    selezionaModifica = selezionaModifica.Replace("]", "")
+                    appoggio = sr.ReadLine()
+                End If
+                If selezionaModifica = "ApplicationInfo" Then
+                    Dim index As Integer = appoggio.IndexOf("=") + 1
+                    Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+                    If appoggio.Contains("Versione") Then
+                        currentVersion = value
+                        Me.Text = "Consuntivazione - " & currentVersion.Substring(0, currentVersion.Length - 2)
+                    End If
+                End If
+                If selezionaModifica = "ItemColor" Then
+                    Dim index As Integer = appoggio.IndexOf("=") + 1
+                    Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+
+                    If appoggio.Contains("InserisciMenu_BackColor") Then
+                        lblSfondoColorato.BackColor = ColorTranslator.FromHtml(value)
+                        lblSlide.BackColor = ColorTranslator.FromHtml(value)
+                        pnlInserisci.BackColor = ColorTranslator.FromHtml(value)
+                        pnlMenu.BackColor = ColorTranslator.FromHtml(value)
+
+                        logFile.WriteLine(dataOraLog + "Impostati colori [InserisciMenu_BackColor]")
+                    ElseIf appoggio.Contains("InserisciMenu_ForeColor") Then
+                        lblGiorno.ForeColor = ColorTranslator.FromHtml(value)
+                        lblTicket.ForeColor = ColorTranslator.FromHtml(value)
+                        lblCliente.ForeColor = ColorTranslator.FromHtml(value)
+                        lblAggiungiCliente.ForeColor = ColorTranslator.FromHtml(value)
+                        lblTempo.ForeColor = ColorTranslator.FromHtml(value)
+                        lblNota.ForeColor = ColorTranslator.FromHtml(value)
+                        ckbHome.ForeColor = ColorTranslator.FromHtml(value)
+
+                        lblTicketMssivi.ForeColor = ColorTranslator.FromHtml(value)
+                        lblCommesseMassive.ForeColor = ColorTranslator.FromHtml(value)
+                        lblSeparatore.ForeColor = ColorTranslator.FromHtml(value)
+                        lblTema.ForeColor = ColorTranslator.FromHtml(value)
+                        lblDocumentazione.ForeColor = ColorTranslator.FromHtml(value)
+                        lblImpostazioni.ForeColor = ColorTranslator.FromHtml(value)
+
+                        logFile.WriteLine(dataOraLog + "Impostati colori [InserisciMenu_ForeColor]")
+                    ElseIf appoggio.Contains("Form_BackColor") Then
+                        Me.BackColor = ColorTranslator.FromHtml(value)
+
+                        Dim red As Integer = ColorTranslator.FromHtml(value).R
+                        Dim green As Integer = ColorTranslator.FromHtml(value).G
+                        Dim blu As Integer = ColorTranslator.FromHtml(value).B
+
+                        Call colorHover(red, green, blu)
+                        pnlFiltri.BackColor = Color.FromArgb(red, green, blu)
+
+                        Dim t As Double = ColorTranslator.FromHtml(value).GetBrightness
+                        If t <= 0.41 Then
+                            lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_bianco
+                        Else
+                            lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
+                        End If
+
+                        logFile.WriteLine(dataOraLog + "Impostati colori [Form_BackColor]")
+                    ElseIf appoggio.Contains("From_ForeColor") Then
+                        lblFiltriSelezionati.ForeColor = ColorTranslator.FromHtml(value)
+                        lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
+                        lblTempoTot.ForeColor = ColorTranslator.FromHtml(value)
+
+                        lblTicketFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblClienteFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblConsuntivatoFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblNotaFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblDataDaFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblDataAFiltro.ForeColor = ColorTranslator.FromHtml(value)
+                        lblAnno.ForeColor = ColorTranslator.FromHtml(value)
+                        lblMesi.ForeColor = ColorTranslator.FromHtml(value)
+
+                        logFile.WriteLine(dataOraLog + "Impostati colori [From_ForeColor]")
+                    End If
+                End If
+                If selezionaModifica = "IconColor" Then
+                    If appoggio.Contains("IconsColor") Then
+                        If appoggio.Contains("white") Then
+                            imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
+                            imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
+                            imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
+                            imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
+                            imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
+                            lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
+                            coloreIcone = "white"
+                        Else
+                            imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_nero
+                            imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_nero
+                            imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_nero
+                            imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_nero
+                            imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_nero
+                            lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
+                            coloreIcone = "black"
+                        End If
+                    End If
+
+                    logFile.WriteLine(dataOraLog + "Impostate icone [IconColor]")
+                End If
+                If selezionaModifica = "ConfigImp" Then
+                    Dim index As Integer = appoggio.IndexOf("=") + 1
+                    Dim value As String = appoggio.Substring(index, appoggio.Length - index)
+                    If appoggio.Contains("AggAutGiornoAttuale") Then
+                        AggAutGiornoAttuale = value
+                        logFile.WriteLine(dataOraLog + "Impostate impostazioni [AggAutGiornoAttuale]")
+                    ElseIf appoggio.Contains("AggAutDettaglio") Then
+                        AggAutDettaglio = value
+                        logFile.WriteLine(dataOraLog + "Impostate impostazioni [AggAutDettaglio]")
+                    End If
+                End If
                 appoggio = sr.ReadLine()
-            End If
-            If selezionaModifica = "ItemColor" Then
-                Dim index As Integer = appoggio.IndexOf("=") + 1
-                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
-
-                If appoggio.Contains("InserisciMenu_BackColor") Then
-                    lblSfondoColorato.BackColor = ColorTranslator.FromHtml(value)
-                    lblSlide.BackColor = ColorTranslator.FromHtml(value)
-                    pnlInserisci.BackColor = ColorTranslator.FromHtml(value)
-                    pnlMenu.BackColor = ColorTranslator.FromHtml(value)
-
-                ElseIf appoggio.Contains("InserisciMenu_ForeColor") Then
-                    lblGiorno.ForeColor = ColorTranslator.FromHtml(value)
-                    lblTicket.ForeColor = ColorTranslator.FromHtml(value)
-                    lblCliente.ForeColor = ColorTranslator.FromHtml(value)
-                    lblAggiungiCliente.ForeColor = ColorTranslator.FromHtml(value)
-                    lblTempo.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbCriticita.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbFixed.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbFormazione.ForeColor = ColorTranslator.FromHtml(value)
-                    ckbAltro.ForeColor = ColorTranslator.FromHtml(value)
-                    ckbHome.ForeColor = ColorTranslator.FromHtml(value)
-
-                    lblTicketMssivi.ForeColor = ColorTranslator.FromHtml(value)
-                    lblCommesseMassive.ForeColor = ColorTranslator.FromHtml(value)
-                    lblSeparatore.ForeColor = ColorTranslator.FromHtml(value)
-                    lblTema.ForeColor = ColorTranslator.FromHtml(value)
-                    lblDocumentazione.ForeColor = ColorTranslator.FromHtml(value)
-
-                ElseIf appoggio.Contains("Form_BackColor") Then
-                    Me.BackColor = ColorTranslator.FromHtml(value)
-
-                    Dim red As Integer = ColorTranslator.FromHtml(value).R
-                    Dim green As Integer = ColorTranslator.FromHtml(value).G
-                    Dim blu As Integer = ColorTranslator.FromHtml(value).B
-
-                    Call colorHover(red, green, blu)
-                    pnlFiltri.BackColor = Color.FromArgb(red, green, blu)
-
-                    Dim t As Double = ColorTranslator.FromHtml(value).GetBrightness
-                    If t <= 0.41 Then
-                        lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_bianco
-                    Else
-                        lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
-                    End If
-
-                ElseIf appoggio.Contains("From_ForeColor") Then
-                    lblFiltriSelezionati.ForeColor = ColorTranslator.FromHtml(value)
-                    lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
-                    lblTempoTot.ForeColor = ColorTranslator.FromHtml(value)
-
-                    lblTicketFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblClienteFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblConsuntivatoFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblNotaFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblDataDaFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblDataAFiltro.ForeColor = ColorTranslator.FromHtml(value)
-                    lblAnno.ForeColor = ColorTranslator.FromHtml(value)
-                    lblMesi.ForeColor = ColorTranslator.FromHtml(value)
-                End If
-            End If
-            If selezionaModifica = "IconColor" Then
-                If appoggio.Contains("IconsColor") Then
-                    If appoggio.Contains("white") Then
-                        imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
-                        imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
-                        imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
-                        imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
-                        imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
-                        lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
-                        coloreIcone = "white"
-                    Else
-                        imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_nero
-                        imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_nero
-                        imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_nero
-                        imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_nero
-                        imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_nero
-                        lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
-                        coloreIcone = "black"
-                    End If
-                End If
-            End If
-            If selezionaModifica = "ConfigImp" Then
-                Dim index As Integer = appoggio.IndexOf("=") + 1
-                Dim value As String = appoggio.Substring(index, appoggio.Length - index)
-                If appoggio.Contains("AggAutGiornoAttuale") Then
-                    AggAutGiornoAttuale = value
-                ElseIf appoggio.Contains("AggAutDettaglio") Then
-                    AggAutDettaglio = value
-                End If
-            End If
-            appoggio = sr.ReadLine()
-        Loop Until appoggio = Nothing
-
-        sr.Close()
+            Loop Until appoggio = Nothing
+            sr.Close()
+            logFile.WriteLine(dataOraLog + "Fine impostazione config - OK")
+        End Using
     End Sub
     Private Sub Consuntivazione_Resize(sender As Object, e As EventArgs) Handles Me.Resize
         frmSfondoNero.Location = New Point(Me.Location.X + 206, Me.Location.Y + 31)
@@ -254,38 +415,48 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim tabella As New DataTable
         Dim str As String
 
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logLoad, True)
+            logFile.WriteLine(dataOraLog + "Inizio caricamento Clienti e Tempo:")
+            Try
+                cn = New OleDbConnection(strConn)
+                cn.Open()
+                str = "Select Cliente FROM Clienti ORDER BY Cliente"
+                cmd = New OleDbCommand(str, cn)
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.Close()
+                Exit Sub
+            End Try
 
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "Select Cliente FROM Clienti ORDER BY Cliente"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
+            cmbCliente.Items.Clear()
+            cmbClienteFiltro.Items.Clear()
+            frmModifica.cmbCliente.Items.Clear()
+            frmCommesse.cmbCliente.Items.Clear()
+            For i = 0 To tabella.Rows.Count - 1
+                cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+                cmbClienteFiltro.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+                frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+                frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            Next
 
-        cmbCliente.Items.Clear()
-        cmbClienteFiltro.Items.Clear()
-        frmModifica.cmbCliente.Items.Clear()
-        frmCommesse.cmbCliente.Items.Clear()
-        For i = 0 To tabella.Rows.Count - 1
-            cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            cmbClienteFiltro.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-        Next
+            'Tempo
+            cmbTempo.Items.Clear()
+            cmbTempo.Items.Add("0,25")
+            cmbTempo.Items.Add("0,5")
+            cmbTempo.Items.Add("0,75")
+            cmbTempo.Items.Add("1")
+            cmbTempo.Items.Add("1,25")
+            cmbTempo.Items.Add("1,5")
+            cmbTempo.Items.Add("1,75")
+            cmbTempo.Items.Add("2")
 
-        'Tempo
-        cmbTempo.Items.Clear()
-        cmbTempo.Items.Add("0,25")
-        cmbTempo.Items.Add("0,5")
-        cmbTempo.Items.Add("0,75")
-        cmbTempo.Items.Add("1")
-        cmbTempo.Items.Add("1,25")
-        cmbTempo.Items.Add("1,5")
-        cmbTempo.Items.Add("1,75")
-        cmbTempo.Items.Add("2")
-
+            logFile.WriteLine(dataOraLog + "Fine caricamento Clienti e Tempo - OK")
+        End Using
     End Sub
     Sub RedimDGV()
         dgvCalendario.Columns(5).Width = dgvCalendario.Width * 17 / 100
@@ -298,12 +469,12 @@ Cambialo!", MsgBoxStyle.Critical)
     Private Sub txtTicket_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtTicket.KeyPress, txtTicketFiltro.KeyPress
         If (Not Char.IsControl(e.KeyChar) _
                      AndAlso (Not Char.IsDigit(e.KeyChar) _
-                     AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "/") Then
+                     AndAlso (e.KeyChar <> Microsoft.VisualBasic.ChrW(46))) AndAlso e.KeyChar <> "/" AndAlso e.KeyChar <> "C" AndAlso e.KeyChar <> "c") Then
             e.Handled = True
         End If
     End Sub
     Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress, cmbClienteFiltro.KeyPress, cmbConsuntivazioneFiltro.KeyPress, cmbNotaFiltro.KeyPress
-        If e.KeyChar = "'" Then
+        If e.KeyChar = "'" Or e.KeyChar = "," Then
             e.KeyChar = ""
             Exit Sub
         End If
@@ -315,9 +486,16 @@ Cambialo!", MsgBoxStyle.Critical)
             e.Handled = True
         End If
     End Sub
+    Private Sub cmbNota_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbNota.KeyPress
+        If e.KeyChar = "'" Or e.KeyChar = "," Then
+            e.KeyChar = ""
+            Exit Sub
+        End If
+    End Sub
 
     Dim notaExtra As String = ""
-    Private Sub btnCarica_Click(sender As Object, e As EventArgs) Handles btnCarica.Click
+    Private Sub BtnCarica_Click(sender As Object, e As EventArgs) Handles btnCarica.Click
+
         If txtTicket.Text = "" Then
             MsgBox("Inserisci un Ticket")
             txtTicket.Focus()
@@ -337,11 +515,11 @@ Cambialo!", MsgBoxStyle.Critical)
             Exit Sub
         End If
 
-        ticket = txtTicket.Text.Replace("'", "").Trim
+        ticket = txtTicket.Text.Replace("'", "").Trim.ToUpper
         If ticket.Contains("/") Then
             ticket = "/"
         End If
-        cliente = cmbCliente.Text.Replace("'", "").Trim
+        cliente = StrConv(cmbCliente.Text.Replace("'", "").Trim, VbStrConv.ProperCase)
         tempo = cmbTempo.Text.Replace(".", ",").Trim
         giorno = dtpData.Text
 
@@ -387,6 +565,7 @@ Cambialo!", MsgBoxStyle.Critical)
 
         Call AggiornaDG(giornoOggi, False)
     End Sub
+
     Sub InserisciTicket()
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
@@ -398,6 +577,12 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim duplicato As Boolean = False
         Dim id As String = ""
 
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logTicket, True)
+            logFile.WriteLine(dataOraLog + "--------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio inserimento ticket:")
+        End Using
+
         If ticket <> "/" Then
             ControlloDoppioniGiornalieri(ticket, duplicato, id)
             If duplicato = True Then
@@ -406,164 +591,183 @@ Cambialo!", MsgBoxStyle.Critical)
             End If
         End If
 
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
-
-        Dim vetCommNota(tabella.Rows.Count) As String
-        For i = 0 To tabella.Rows.Count - 1
-            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
-        Next
-
-        Dim conta As Integer = 0
-        If ckbHome.Checked = True Then
-            nota = "Home"
-        Else
-            nota = ""
-        End If
-
-        If rdbCriticita.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "" Then
-                    conta += 1
-                End If
-            Next
-            If nota = "" Then
-                nota = "Criticità"
-            Else
-                nota += ", Criticità"
-            End If
-        ElseIf rdbFixed.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "Fixed" Then
-                    conta += 1
-                End If
-            Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per il Bug Fix", MsgBoxStyle.Exclamation)
+        Using logFile As New System.IO.StreamWriter(logTicket, True)
+            cn = New OleDbConnection(strConn)
+            Try
+                ' Utilizzo di parametri per evitare l'iniezione SQL
+                cn.Open()
+                str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = ?"
+                cmd = New OleDbCommand(str, cn)
+                cmd.Parameters.AddWithValue("Cliente", cliente)
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 Exit Sub
+            End Try
+
+            Dim vetCommNota(tabella.Rows.Count) As String
+            For i = 0 To tabella.Rows.Count - 1
+                vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
+            Next
+
+            Dim conta As Integer = 0
+            If ckbHome.Checked = True Then
+                nota = "Home"
+            Else
+                nota = ""
             End If
 
-            If nota = "" Then
-                nota = "Fixed"
-            Else
-                nota += ", Fixed"
-            End If
-        ElseIf rdbFormazione.Checked = True Then
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "Formazione" Then
-                    conta += 1
-                End If
-            Next
-            If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa per la Formazione", MsgBoxStyle.Exclamation)
-                Exit Sub
-            End If
-            If nota = "" Then
-                nota = "Formazione"
-            Else
-                nota += ", Formazione"
-            End If
-        Else
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = "" Then
-                    conta += 1
-                End If
-            Next
-        End If
-
-        If ckbAltro.Checked = True Then
             Dim notaInput As String
-            notaInput = InputBox("Inserisci una nota").Trim.ToLower
+            notaInput = cmbNota.Text.Trim.ToLower
             notaInput = notaInput.Replace("'", "")
             notaInput = notaInput.Replace(",", "")
             notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
-            If notaInput.Length > 150 Then
-                MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
-                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
-                Exit Sub
-            ElseIf notaInput.ToLower.Contains("extra") Then
-                MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)", MsgBoxStyle.Exclamation)
-                Exit Sub
-            End If
-            For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i) = notaInput Then
-                    conta += 1
+            If notaInput = "Criticità" Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "" Then
+                        conta += 1
+                    End If
+                Next
+                If nota = "" Then
+                    nota = "Criticità"
+                Else
+                    nota += ", Criticità"
                 End If
-            Next
-            If conta > 1 And nota <> "" Then
-                MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
+            ElseIf notaInput = "" Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "" Then
+                        conta += 1
+                    End If
+                Next
+            End If
+
+            If notaInput <> "" And notaInput <> "Criticità" Then
+                If notaInput.Length > 150 Then
+                    MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
+                    logFile.WriteLine(dataOraLog + "Errore: Nota non valida (Max 150 car.)")
+                    logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                    logFile.Close()
+                    Exit Sub
+                ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Then
+                    MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
+                    logFile.WriteLine(dataOraLog + "Errore: Nota non valida (non puo essere uno dei valori gia predefiniti)")
+                    logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                    logFile.Close()
+                    Exit Sub
+                ElseIf notaInput.ToLower.Contains("extra") Then
+                    MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)", MsgBoxStyle.Exclamation)
+                    logFile.WriteLine(dataOraLog + "Errore: Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)")
+                    logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                    logFile.Close()
+                    Exit Sub
+                End If
+
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = notaInput Then
+                        conta += 1
+                    End If
+                Next
+
+                If conta > 1 And nota <> "" Then
+                    MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
+                    logFile.WriteLine(dataOraLog + "Errore: Non è consentito inserire 2 commesse nelle note!")
+                    logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                    logFile.Close()
+                    Exit Sub
+                End If
+
+                If nota = "" Then
+                    nota = notaInput
+                Else
+                    nota += ", " & notaInput
+                End If
+            End If
+
+            If conta = 0 And notaInput <> "" Then
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i) = "" Then
+                        conta += 1
+                    End If
+                Next
+            End If
+            If conta = 0 Then
+                MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
+                logFile.WriteLine(dataOraLog + "Errore: " & cliente & " non ha la commessa standard")
+                logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                logFile.Close()
                 Exit Sub
             End If
-            If nota = "" Then
-                nota = notaInput
-            Else
-                nota += ", " & notaInput
+
+            If notaExtra <> "" Then
+                Dim tempoExtra As String
+                Dim vetDividiNota() As String
+                If nota.ToLower.Contains("extra(") Then
+                    vetDividiNota = nota.Split("(")
+                    tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                    nota = nota.Replace("Extra(" & tempoExtra & ")", "")
+                End If
+
+                If nota = "" Then
+                    nota = notaExtra
+                Else
+                    nota += ", " + notaExtra
+                End If
+
+                notaExtra = ""
             End If
-        End If
-        If conta = 0 Then
-            MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
-            Exit Sub
-        End If
 
-        If notaExtra <> "" Then
-            Dim tempoExtra As String
-            Dim vetDividiNota() As String
-            If nota.ToLower.Contains("extra(") Then
-                vetDividiNota = nota.Split("(")
-                tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
-                nota = nota.Replace("Extra(" & tempoExtra & ")", "")
-            End If
-            If nota = "" Then
-                nota = notaExtra
-            Else
-                nota += ", " + notaExtra
-            End If
-            notaExtra = ""
-        End If
+            ' Utilizzo di parametri per evitare l'iniezione SQL e riduzione del numero di chiamate al database raggruppando le query quando possibile.
+            Try
+                cn.Open()
+                cmd.Parameters.Clear()
 
-        cn = New OleDbConnection(strConn)
-        Try
-            cn.Open()
-        Catch ex As Exception
-            MsgBox("Errore di connessione. Codice Errore: " & ex.Message)
-            Exit Sub
-        End Try
-        If nota = "" Then
-            StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO',NULL)"
-        Else
-            StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','NO','" & nota & "')"
-        End If
-        cmd = New OleDbCommand(StrSQL, cn)
-        Try
-            nRighe = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-            cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
+                If nota = "" Then
+                    StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES (?, ?, ?, ?, 'NO', NULL)"
+                Else
+                    StrSQL = "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES (?, ?, ?, ?, 'NO', ?)"
+                End If
 
-        cn.Open()
-        str = "SELECT MAX(ID) AS ID_MAX FROM Consuntivazione"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
+                cmd.CommandText = StrSQL
+                cmd.Parameters.AddWithValue("TICKET", ticket)
+                cmd.Parameters.AddWithValue("CLIENTE", cliente)
+                cmd.Parameters.AddWithValue("TEMPO_RISOLUZIONE", tempo)
+                cmd.Parameters.AddWithValue("DATA", giorno)
 
-        id = tabella.Rows(0).Item("ID_MAX")
+                If nota <> "" Then
+                    cmd.Parameters.AddWithValue("NOTA", nota)
+                End If
+
+                nRighe = cmd.ExecuteNonQuery()
+
+                str = "SELECT MAX(ID) AS ID_MAX FROM Consuntivazione"
+                cmd.CommandText = str
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+
+                id = tabella.Rows(0).Item("ID_MAX")
+            Catch ex As Exception
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                logFile.Close()
+                Exit Sub
+            End Try
+
+            logFile.WriteLine(dataOraLog + "Inserito [Ticket: " & ticket & "] - [Cliente: " & cliente & "] - [Tempo: " & tempo & "] - [Data: " & giorno & "] - [Nota: " & If(nota = "", "''", nota) & "]")
+        End Using
         Call modificaTutteNote(id)
     End Sub
+
+
     Sub modificaTutteNote(id As Integer)
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
@@ -571,66 +775,83 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim tabella As New DataTable
         Dim str As String
 
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
-
-        Dim numGiorni As Integer = tabella.Rows.Count - 1
-        Dim vetNota(numGiorni) As String
-        Dim notaID As String = ""
-        Dim contiene As Boolean = False
-
-        For i = 0 To numGiorni
-            vetNota(i) = tabella.Rows(i).Item("NOTA").ToString
-            If tabella.Rows(i).Item("ID") = id Then
-                notaID = vetNota(i)
-            End If
-        Next
-
-        If notaID.Contains("Home") Then
-            contiene = True
-        End If
-
-        For i = 0 To numGiorni
-            If tabella.Rows(i).Item("ID") <> id Then
+        Using logFile As New System.IO.StreamWriter(logTicket, True)
+            cn = New OleDbConnection(strConn)
+            Try
                 cn.Open()
-                If contiene = True Then
-                    If vetNota(i).ToString = "" Then
-                        nota = "Home"
-                    ElseIf vetNota(i).ToString.Contains("Home") Then
-                        nota = vetNota(i)
-                    Else
-                        nota = "Home, " & vetNota(i)
-                    End If
-                Else
-                    If vetNota(i).ToString = "Home" Then
-                        nota = ""
-                    Else
-                        nota = vetNota(i).ToString.Replace("Home, ", "")
-                    End If
-                End If
-                If nota = "" Then
-                    str = "UPDATE Consuntivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
-                Else
-                    str = "UPDATE Consuntivazione SET NOTA ='" & nota & "' WHERE ID = " & tabella.Rows(i).Item("ID")
-                End If
+                str = "SELECT DATA, NOTA, ID FROM Consuntivazione WHERE DATA =#" & giorno & "#"
                 cmd = New OleDbCommand(str, cn)
-                Try
-                    str = cmd.ExecuteNonQuery
-                Catch ex As Exception
-                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-                    cn.Close()
-                    Exit Sub
-                End Try
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
                 cn.Close()
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                Exit Sub
+            End Try
+
+            Dim numGiorni As Integer = tabella.Rows.Count - 1
+            Dim vetNota(numGiorni) As String
+            Dim notaID As String = ""
+            Dim contiene As Boolean = False
+
+            For i = 0 To numGiorni
+                vetNota(i) = tabella.Rows(i).Item("NOTA").ToString
+                If tabella.Rows(i).Item("ID") = id Then
+                    notaID = vetNota(i)
+                End If
+            Next
+
+            If notaID.Contains("Home") Then
+                contiene = True
             End If
-        Next
+
+            For i = 0 To numGiorni
+                If tabella.Rows(i).Item("ID") <> id Then
+                    cn.Open()
+                    If contiene Then
+                        If vetNota(i).ToString = "" Then
+                            nota = "Home"
+                        ElseIf vetNota(i).ToString.Contains("Home") Then
+                            nota = vetNota(i)
+                        Else
+                            nota = "Home, " & vetNota(i)
+                        End If
+                    Else
+                        If vetNota(i).ToString = "Home" Then
+                            nota = ""
+                        Else
+                            nota = vetNota(i).ToString.Replace("Home, ", "")
+                        End If
+                    End If
+                    If nota = "" Then
+                        str = "UPDATE Consuntivazione SET NOTA = NULL WHERE ID = " & tabella.Rows(i).Item("ID")
+                    Else
+                        str = "UPDATE Consuntivazione SET NOTA ='" & nota & "' WHERE ID = " & tabella.Rows(i).Item("ID")
+                    End If
+                    cmd = New OleDbCommand(str, cn)
+                    Try
+                        str = cmd.ExecuteNonQuery
+                    Catch ex As Exception
+                        logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                        logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
+                        logFile.Close()
+                        MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                        Exit Sub
+                    End Try
+                    cn.Close()
+                End If
+            Next
+            If contiene Then
+                logFile.WriteLine(dataOraLog + "Impostato Home in tutte le note del " & giorno)
+            Else
+                logFile.WriteLine(dataOraLog + "Rimosso Home in tutte le note del " & giorno)
+            End If
+            logFile.WriteLine(dataOraLog + "Fine inserimento ticket - OK")
+        End Using
     End Sub
     Sub VisTemp()
         If giorno <> giornoOggi Then
@@ -743,10 +964,13 @@ Cambialo!", MsgBoxStyle.Critical)
         txtTicket.Text = ""
         cmbCliente.Text = ""
         cmbTempo.Text = ""
+        cmbNota.Text = ""
         txtTicket.Focus()
-        btnCancellaFiltri_Click(sender:=New EventArgs, e:=New EventArgs)
     End Sub
     Private Sub dtpData_ValueChanged(sender As Object, e As EventArgs) Handles dtpData.ValueChanged
+        If aggiornaByData = False Then
+            Exit Sub
+        End If
         If TimerVisualizzazione.Enabled Then
             Exit Sub
         End If
@@ -794,91 +1018,177 @@ Cambialo!", MsgBoxStyle.Critical)
                 Else
                     Exit Sub
                 End If
-                Dim tempo As String = dgvCalendario.Rows(e.RowIndex).Cells(3).Value.ToString.Replace(",", ".")
-                Dim nota As String = dgvCalendario.Rows(e.RowIndex).Cells(6).Value
 
-                Dim home As String = "SEDE"
-                If nota.Contains("Home") Then
-                    home = "SW"
-                    nota = nota.Replace("Home, ", "")
-                End If
-
-                Dim extra As Boolean = False
-                Dim tempoExtra As String = ""
-                Dim vetDividiNota() As String
-                If nota.ToLower.Contains("extra(") Then
-                    vetDividiNota = nota.Split("(")
-                    tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
-                    nota = nota.Replace("Extra(" & tempoExtra & ")", "")
-                    tempoExtra = tempoExtra.Replace(",", ".")
-                    extra = True
-                End If
-
-                Dim vetNota() = nota.Split(",")
-                For i = 0 To vetNota.Length - 1
-                    If vetNota(i).ToLower.Trim = "fixed" Then
-                        nota = "Fixed"
-                    ElseIf vetNota(i).ToLower.Trim = "formazione" Then
-                        nota = "Formazione"
+                dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+                Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
+                    If RDC > 0 Then
+                        logFile.WriteLine(dataOraLog + "--------------------------")
+                        logFile.WriteLine(dataOraLog + "Inizio consuntivazione ticket:")
+                        logFile.WriteLine(dataOraLog + "Ticket da consuntivare: 1")
                     End If
-                Next
 
-                Dim dataInvertitaMatrice() As String
-                dataInvertitaMatrice = data.Split("/")
-                Dim dataInvertita As String = dataInvertitaMatrice(2) & "-" & dataInvertitaMatrice(1) & "-" & dataInvertitaMatrice(0)
-                Dim link As String = "http://goldenring.tesisquare.com/client/procedure/ra/fra080formoremese.cfm?"
+                    Dim tempo As String = dgvCalendario.Rows(e.RowIndex).Cells(3).Value.ToString.Replace(",", ".")
+                    Dim nota As String = dgvCalendario.Rows(e.RowIndex).Cells(6).Value
 
-                Dim cn As OleDbConnection
-                Dim cmd As OleDbCommand
-                Dim da As OleDbDataAdapter
-                Dim tabella As New DataTable
-                Dim str As String
+                    Dim home As String = "SEDE"
+                    If nota.Contains("Home") Then
+                        home = "SW"
+                        nota = nota.Replace("Home, ", "")
+                    End If
+
+                    Dim extra As Boolean = False
+                    Dim tempoExtra As String = ""
+                    Dim vetDividiNota() As String
+                    If nota.ToLower.Contains("extra(") Then
+                        vetDividiNota = nota.Split("(")
+                        tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+                        nota = nota.Replace("Extra(" & tempoExtra & ")", "")
+                        tempoExtra = tempoExtra.Replace(",", ".")
+                        extra = True
+                    End If
+
+                    Dim vetNota() = nota.Split(",")
+                    For i = 0 To vetNota.Length - 1
+                        If vetNota(i).ToLower.Trim = "fixed" Then
+                            nota = "Fixed"
+                        ElseIf vetNota(i).ToLower.Trim = "formazione" Then
+                            nota = "Formazione"
+                        End If
+                    Next
+
+                    Dim dataInvertitaMatrice() As String
+                    dataInvertitaMatrice = data.Split("/")
+                    Dim dataInvertita As String = dataInvertitaMatrice(2) & "-" & dataInvertitaMatrice(1) & "-" & dataInvertitaMatrice(0)
+                    Dim link As String = "http://goldenring.tesisquare.com/client/procedure/ra/fra080formoremese.cfm?"
+
+                    Dim cn As OleDbConnection
+                    Dim cmd As OleDbCommand
+                    Dim da As OleDbDataAdapter
+                    Dim tabella As New DataTable
+                    Dim str As String
 
 
-                cn = New OleDbConnection(strConn)
-                cn.Open()
-                If nota = "" Or nota = "Home" Then
-                    str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota IS NULL"
-                Else
-                    str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota='" & nota & "'"
-                End If
-                cmd = New OleDbCommand(str, cn)
-                da = New OleDbDataAdapter(cmd)
-                tabella.Clear()
-                da.Fill(tabella)
-                cn.Close()
+                    cn = New OleDbConnection(strConn)
+                    cn.Open()
+                    If nota = "" Or nota = "Home" Then
+                        str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota IS NULL"
+                    Else
+                        str = "SELECT Link FROM LinkGR WHERE Cliente ='" & cliente & "' AND Nota='" & nota & "'"
+                    End If
+                    cmd = New OleDbCommand(str, cn)
+                    da = New OleDbDataAdapter(cmd)
+                    tabella.Clear()
+                    da.Fill(tabella)
+                    cn.Close()
 
-                link += tabella.Rows(0).Item("Link").ToString
+                    link += tabella.Rows(0).Item("Link").ToString
 
-                link += "&Data=" & data & "&Sede=" & home & "&Ora=" & dataInvertita & "%2000:00:00.0&Oreviaggio=0&Indrec=0&Note=" & ticket & "&CentroCosto=&IdProcedura=%20&AnnoRichiesta=0&IDRichiesta=0&OreDiRecupero=0"
+                    link += "&Data=" & data & "&Sede=" & home & "&Ora=" & dataInvertita & "%2000:00:00.0&Oreviaggio=0&Indrec=0&Note=" & ticket & "&CentroCosto=&IdProcedura=%20&AnnoRichiesta=0&IDRichiesta=0&OreDiRecupero=0"
 
-                If extra = True And tempoExtra = tempo Then
-                    link += "&Orelav=" & tempoExtra & "&OreStra=" & tempoExtra & "&OreOrd=0"
-                ElseIf extra = True And tempoExtra <> tempo Then
-                    link += "&Orelav=" & tempo & "&OreStra=" & tempoExtra & "&OreOrd=" & CStr(CDbl(tempo.Replace(".", ",")) - CDbl(tempoExtra.Replace(".", ","))).Replace(",", ".")
-                Else
-                    link += "&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo
-                End If
+                    If extra = True And tempoExtra = tempo Then
+                        link += "&Orelav=" & tempoExtra & "&OreStra=" & tempoExtra & "&OreOrd=0"
+                    ElseIf extra = True And tempoExtra <> tempo Then
+                        link += "&Orelav=" & tempo & "&OreStra=" & tempoExtra & "&OreOrd=" & CStr(CDbl(tempo.Replace(".", ",")) - CDbl(tempoExtra.Replace(".", ","))).Replace(",", ".")
+                    Else
+                        link += "&Orelav=" & tempo & "&OreStra=0&OreOrd=" & tempo
+                    End If
 
-                If home = "SEDE" Then
-                    link += "&flag_lavorodacasa=N"
-                Else
-                    link += "&flag_lavorodacasa=Y"
-                End If
-                Process.Start(link)
-                Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
-                dgvCalendario.Rows(e.RowIndex).Cells(5).Value = consuntivato
+                    If home = "SEDE" Then
+                        link += "&flag_lavorodacasa=N"
+                    Else
+                        link += "&flag_lavorodacasa=Y"
+                    End If
+
+                    Process.Start(link)
+
+                    Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
+                    dgvCalendario.Rows(e.RowIndex).Cells(5).Value = consuntivato
+                    If RDC > 0 Then
+                        logFile.WriteLine("Consuntivato [Ticket: " & ticket.Replace("%2C", ",") & "] - [Cliente: " & cliente & "] - [Tempo: " & If(IsNumeric(tempo), tempo, "0") & "] - TempoExtra: [" & If(IsNumeric(tempoExtra), tempoExtra, "0") & "] - [Data: " & data & "] - [Nota: " & If(nota = "", "''", nota) & "] - [Luogo: " & home & "]")
+                    Else
+                        logFile.WriteLine(dataOraLog & "1/1 - Consuntivato [Ticket: " & ticket.Replace("%2C", ",") & "] - [Cliente: " & cliente & "] - [Tempo: " & If(IsNumeric(tempo), tempo, "0") & "] - TempoExtra: [" & If(IsNumeric(tempoExtra), tempoExtra, "0") & "] - [Data: " & data & "] - [Nota: " & If(nota = "", "''", nota) & "] - [Luogo: " & home & "]")
+                        logFile.WriteLine(dataOraLog + "Fine consuntivazione ticket - OK")
+                    End If
+                End Using
             End If
         Else
             If e.ColumnIndex = 1 Then
                 If dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString <> "/" Then
-                    Process.Start("https://support.tesisquare.com/mantis/mdev/view.php?id=" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString)
+                    Process.Start("https://hda.tesisquare.com/HDAPortal/#/WSCView/Detail/" & dgvCalendario.Item(e.ColumnIndex, e.RowIndex).Value.ToString & "$entity=Incident")
                 End If
                 Exit Sub
             End If
             Exit Sub
         End If
     End Sub
+
+    Dim vetRConsuntivare() As Integer
+    Dim RDC As Integer = 0
+    Private Async Sub BtnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
+        If MsgBox("Sei sicuro di voler consuntivare TUTTE le righe?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
+            logFile.WriteLine(dataOraLog + "--------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio consuntivazione ticket:")
+
+            Dim conta As Integer = 0
+            For i = 0 To dgvCalendario.Rows.Count - 1
+                If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
+                    conta += 1
+                End If
+            Next
+
+            If conta = 0 Then
+                MsgBox("Non ci sono righe da consuntivare")
+                logFile.WriteLine(dataOraLog + "Non ci sono righe da consuntivare")
+                logFile.WriteLine(dataOraLog + "Fine consuntivazione ticket - OK")
+                logFile.Close()
+                Exit Sub
+            End If
+
+            ReDim vetRConsuntivare(conta)
+            conta = 0
+            For i = 0 To dgvCalendario.Rows.Count - 1
+                If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
+                    vetRConsuntivare(conta) = i
+                    conta += 1
+                End If
+            Next
+            RDC = conta
+            logFile.WriteLine(dataOraLog + "Ticket da consuntivare: " & RDC)
+        End Using
+
+        For CCons = 0 To RDC - 1
+            Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
+                Try
+                    logFile.Write(dataOraLog & CCons + 1 & "/" & RDC & " - ")
+                    logFile.Close()
+                    clickSinistro(sender, New DataGridViewCellMouseEventArgs(5, vetRConsuntivare(CCons), 0, 0, New MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0)))
+                Catch ex As Exception
+                    logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                    logFile.WriteLine(dataOraLog + "Fine consuntivazione ticket - KO")
+                    logFile.Close()
+                    MsgBox("Errore: " & ex.Message & ". Chiedere a Flavio")
+                    RDC = 0
+                    Exit Sub
+                End Try
+            End Using
+
+            ' Attendi un secondo prima di eseguire il codice successivo
+            Await Task.Delay(1500)
+        Next
+
+        ' Esegui il codice finale quando il ciclo for è terminato
+        RDC = 0
+        MsgBox("Consuntivazione Ticket Completata")
+        Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
+            logFile.WriteLine(dataOraLog + "Fine consuntivazione ticket - OK")
+        End Using
+    End Sub
+
     Sub clickDestro(sender As Object, e As System.Windows.Forms.DataGridViewCellMouseEventArgs)
         Dim r, c, id As Integer
         r = e.RowIndex
@@ -982,7 +1292,7 @@ Cambialo!", MsgBoxStyle.Critical)
             Dim dato As String
             If colonnaCondivisa = "TICKET" Then
                 dato = InputBox("Inserisci un numero ticket")
-                dato = dato.Replace("'", "").Trim
+                dato = dato.Replace("'", "").Trim.ToUpper
                 If dato = "" Or dato.Length > txtTicket.MaxLength Then
                     MsgBox("Ticket non valido (Max " & txtTicket.MaxLength & " car.)")
                     annulla = True
@@ -1021,21 +1331,31 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim tabella As New DataTable
         Dim str As String
 
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logModifica, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log Modifica:")
 
-        cn = New OleDbConnection(strConn)
+            cn = New OleDbConnection(strConn)
         cn.Open()
         str = "DELETE * FROM Consuntivazione WHERE ID =" & id
         cmd = New OleDbCommand(str, cn)
         Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                str = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                Exit Sub
+            End Try
             cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
+            logFile.WriteLine(dataOraLog + "Cancellata riga con ID: '" & id & "'")
+            logFile.WriteLine(dataOraLog + "Fine Modifica - OK")
+        End Using
     End Sub
-
+    Dim aggiornaByData = True
     Private Sub lblGiorno_Mese_Click(sender As Object, e As EventArgs) Handles lblGiorno_Mese.Click
         If noSpam = True Then
             Exit Sub
@@ -1065,7 +1385,6 @@ ore di lavoro
             pnlMensile.Left = 0
             pnlMensile.Width = Me.Width - 15
             pnlFiltri.Width = dgvCalendario.Width
-            'pnlMensile.Left = (pnlMensile.Parent.Width \ 2) - (pnlMensile.Width \ 2)
             Dim Mese As String
             Dim Anno As Integer
             If resoconto = False Then
@@ -1115,7 +1434,11 @@ ore di lavoro
             btnDividiXCliente.Visible = False
 
             pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 30, 0)
+            aggiornaByData = False
             dtpData.Value = giornoOggi
+            AggiornaDG(giornoOggi, False)
+            aggiornaByData = True
+
             pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 35
             pnlFiltri.Width = pnlMensile.Width
         End If
@@ -1181,68 +1504,55 @@ ore di lavoro
         Dim tabella As New DataTable
         Dim str As String
 
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE ID=" & id
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
+        Using logFile As New System.IO.StreamWriter(logTicket, True)
+            cn = New OleDbConnection(strConn)
+            logFile.WriteLine(dataOraLog + "Modifica Ticket")
+            Try
+                cn.Open()
+                str = "SELECT * FROM Consuntivazione WHERE ID=" & id
+                cmd = New OleDbCommand(str, cn)
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                Exit Sub
+            End Try
 
-        Dim vecchioTempo As Double = tabella.Rows(0).Item("TEMPO_RISOLUZIONE")
-        Dim colonna As String = dgvCalendario.Columns(c).HeaderText
-        If colonna = "TEMPO" Then
-            colonna += "_RISOLUZIONE"
-        End If
+            Dim vecchioTempo As Double = tabella.Rows(0).Item("TEMPO_RISOLUZIONE")
+            Dim colonna As String = dgvCalendario.Columns(c).HeaderText
+            If colonna = "TEMPO" Then
+                colonna += "_RISOLUZIONE"
+            End If
 
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "UPDATE Consuntivazione SET " & colonna & "='" & dato + vecchioTempo & "' WHERE ID = " & id
-        cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+            Try
+                cn.Open()
+                str = "UPDATE Consuntivazione SET " & colonna & "='" & dato + vecchioTempo & "' WHERE ID = " & id
+                cmd = New OleDbCommand(str, cn)
+                str = cmd.ExecuteNonQuery
+            Catch ex As Exception
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.Close()
+                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                cn.Close()
+                Exit Sub
+            End Try
             cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
+            logFile.WriteLine(dataOraLog + "Modificato tempo del ticket " & tabella.Rows(0).Item("TICKET") & " da " & vecchioTempo & " a " & dato)
+            logFile.WriteLine(dataOraLog + "Fine inserimento ticket - OK")
+        End Using
     End Sub
-
-    'Private Sub lstMesi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstMesi.SelectedIndexChanged
-    '    Dim Anno As Integer = nudAnno.Value
-    '    Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
-    '    If Mese.Length = 1 Then
-    '        Mese = "0" + Mese
-    '    End If
-    '    Call AggiornaDGMensile(Mese, Anno)
-    'End Sub
-
-    'Private Sub nudAnno_ValueChanged(sender As Object, e As EventArgs) Handles nudAnno.ValueChanged
-    '    If nudAnno.Enabled = False Then
-    '        Exit Sub
-    '    End If
-    '    Dim Anno As Integer = nudAnno.Value
-    '    Dim Mese As String = lstMesi.SelectedItem.ToString.Trim
-    '    If Mese.Length = 1 Then
-    '        Mese = "0" + Mese
-    '    End If
-    '    Call AggiornaDGMensile(Mese, Anno)
-    'End Sub
 
     Private Sub btnDividiXCliente_Click(sender As Object, e As EventArgs) Handles btnDividiXCliente.Click
         If btnDividiXCliente.Text = "Dividi per Cliente" Then
             btnDividiXCliente.Text = "Ritorna al Mese"
             btnConsuntivaTutto.Visible = True
         Else
-            Dim a As Integer = nudAnno.Value
-            Dim m As String = lstMesi.SelectedItem.ToString.Trim
-            If m.Length = 1 Then
-                m = "0" + m
-            End If
-            Call AggiornaDGMensile(m, a)
+            BtnCerca_Click(sender, e)
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnConsuntivaTutto.Visible = False
             Exit Sub
@@ -1253,11 +1563,6 @@ ore di lavoro
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
-        Dim Anno As Integer = nudAnno.Value
-        Dim Mese As String = lstMesi.SelectedIndex + 1
-        If lstMesi.SelectedIndex < 10 Then
-            Mese = "0" & Mese
-        End If
 
         cn = New OleDbConnection(strConn)
         cn.Open()
@@ -1283,7 +1588,7 @@ ore di lavoro
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT Cliente, Nota FROM LinkGR WHERE Nota IS NOT NULL ORDER BY Cliente"
+        str = "SELECT Cliente, Nota, Link FROM LinkGR WHERE Nota IS NOT NULL OR Link LIKE '%Commessa=/%' ORDER BY Cliente"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -1292,9 +1597,11 @@ ore di lavoro
 
         Dim vetClienteComm(tabella.Rows.Count) As String
         Dim vetNotaComm(tabella.Rows.Count) As String
+        Dim vetLinkComm(tabella.Rows.Count) As String
         For i = 0 To tabella.Rows.Count - 1
             vetClienteComm(i) = tabella.Rows(i).Item("Cliente").ToString
             vetNotaComm(i) = tabella.Rows(i).Item("Nota").ToString
+            vetLinkComm(i) = tabella.Rows(i).Item("Link").ToString
         Next
 
 
@@ -1312,8 +1619,14 @@ ore di lavoro
         Dim clientePrec As String = ""
         Dim data As String
         Dim dataPrec As String = ""
-        Dim nota As String
+        Dim nota As String = ""
+        Dim notaPrec As String = ""
         Dim comm As Boolean = False
+        Dim notaComm As String = ""
+        Dim commPrec As Boolean = False
+        Dim notaCommPrec As String
+
+        Call riordinaTabella(vetClienteComm, vetNotaComm, tabella, notaComm)
 
         For i = 0 To tabella.Rows.Count - 1
             cliente = tabella.Rows(i).Item("CLIENTE").ToString
@@ -1322,23 +1635,32 @@ ore di lavoro
 
             comm = False
             For k = 0 To vetClienteComm.Length - 2
-                If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
+                If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) And vetLinkComm(k).Contains("Commessa=/") And data = dataPrec And tabella.Rows.Count - 1 > 0 Then
+                    TabellaNoDoppi -= 1
+                ElseIf vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
                     If vetNotaComm(k) = "" And nota = "" Then
-                        comm = True
-                    ElseIf vetNotaComm(k) <> "" Then
-                        comm = True
+                            comm = True
+                            notaComm = vetClienteComm(k)
+                        ElseIf vetNotaComm(k) <> "" Then
+                            comm = True
+                            notaComm = vetClienteComm(k)
+                        End If
                     End If
-                End If
             Next
 
             If i > 0 Then
-                If cliente = clientePrec And data = dataPrec And comm = False Then
-                    TabellaNoDoppi -= 1
+                If cliente = clientePrec And data = dataPrec And comm = commPrec Then
+                    If nota = notaPrec Or comm = False Then
+                        TabellaNoDoppi -= 1
+                    End If
                 End If
             End If
 
             clientePrec = cliente
             dataPrec = data
+            commPrec = comm
+
+            notaComm = ""
         Next
 
         dgvCalendario.RowCount = TabellaNoDoppi + DateLavorative.Length
@@ -1360,216 +1682,316 @@ ore di lavoro
         Call controllaNota(tabella, nuovaTabella)
 
         clientePrec = ""
-        Dim notaPrec As String = ""
         Dim ticket As String = ""
         Dim tempo As Double
         Dim tempoTot As Double
         Dim sommaTempoExtra As Double
-        Dim notaExtra As String = ""
         Dim notaExtraBoolean As Boolean = False
-        Dim commPrec As Boolean = False
+        Dim noComm As Boolean
+        notaComm = ""
+        notaCommPrec = ""
 
         Dim conta As Integer = -1
         Dim j As Integer = 1
 
+        Call riordinaTabella(vetClienteComm, vetNotaComm, tabella, notaComm)
+
         For i = 0 To DateLavorative.Length - 2
             Do
                 conta += 1
-                If conta <= tabella.Rows.Count - 1 Then 'AndAlso DateLavorative(i) <> tabella.Rows(conta).Item("DATA").ToString
-
+                If conta <= tabella.Rows.Count - 1 Then
                     cliente = tabella.Rows(conta).Item("CLIENTE").ToString
                     nota = tabella.Rows(conta).Item("NOTA").ToString
-                    comm = False
-                    For k = 0 To vetClienteComm.Length - 2
-                        If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
-                            If vetNotaComm(k) = "" And nota = "" Then
-                                comm = True
-                            ElseIf vetNotaComm(k) <> "" Then
-                                comm = True
-                            End If
-                        End If
-                    Next
+                    comm = CheckComm(vetClienteComm, vetNotaComm, cliente, nota, notaComm)
+                    noComm = CheckNoComm(vetClienteComm, vetNotaComm, vetLinkComm, cliente, nota)
                     If conta <> 0 Then
-                        If cliente = clientePrec And (nota = notaPrec Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "") Then
-                            If nota.Contains("Criticità") Then
-                                ticket += "," & "Criticità"
-                                If nota.Contains("Home") Then
-                                    nota = nota.Replace("Home", "")
-                                End If
-                            Else
-                                ticket += "," & tabella.Rows(conta).Item("TICKET").ToString
-                            End If
-                            tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+                        If CheckIfSameClient(cliente, clientePrec, noComm) And (CheckIfSameNota(nota, notaPrec, comm, commPrec, noComm, notaComm, notaCommPrec) Or comm = False) AndAlso DateLavorative(i) = tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "") Then
+                            UpdateTicketAndTempo(nota, tabella, conta, ticket, tempo, noComm)
                         Else
-                            dgvCalendario.Rows(j).Cells(1).Value = ticket
-                            dgvCalendario.Rows(j).Cells(2).Value = clientePrec
-                            dgvCalendario.Rows(j).Cells(3).Value = tempo
-                            dgvCalendario.Rows(j).Cells(4).Value = DateLavorative(i)
-                            dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
-
-                            If notaPrec.Contains("Criticità") Then
-                                If notaPrec.Contains("Home") Then
-                                    notaPrec = notaPrec.Replace(", Criticità", "")
-                                    dgvCalendario.Rows(j).Cells(6).Value = notaPrec
-                                Else
-                                    dgvCalendario.Rows(j).Cells(6).Value = ""
-                                End If
-                            ElseIf notaPrec.ToLower.Contains("extra") = False Then
-                                If notaPrec.Contains("Home") Or commPrec = True Then
-                                    dgvCalendario.Rows(j).Cells(6).Value = notaPrec
-                                Else
-                                    dgvCalendario.Rows(j).Cells(6).Value = ""
-                                End If
-                            End If
-                            If notaExtraBoolean = True Then
-                                notaExtraBoolean = False
-                                If notaPrec.ToLower.Contains("extra") Then
-                                    Dim indice As Integer = notaPrec.IndexOf("(") + 1
-                                    Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
-                                    notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
-                                End If
-                                If notaPrec = "" Or notaPrec.Trim = "Criticità," Then
-                                    dgvCalendario.Rows(j).Cells(6).Value = notaExtra
-                                Else
-                                    If notaPrec.Trim.EndsWith(",") Then
-                                        dgvCalendario.Rows(j).Cells(6).Value = notaPrec.Trim & " " & notaExtra
-                                    Else
-                                        dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
-                                    End If
-                                End If
-                            End If
-
-                            sommaTempoExtra = 0
-                            tempoTot += tempo
-                            tempo = 0
-                            j += 1
-
-                            If nota.Contains("Criticità") Then
-                                ticket = "Criticità"
-                            Else
-                                ticket = tabella.Rows(conta).Item("TICKET").ToString
-                            End If
-                            tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+                            UpdateDgvCalendario(j, ticket, clientePrec, tempo, DateLavorative(i), tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString)
+                            UpdateDgvCalendarioNota(j, notaPrec, commPrec)
+                            UpdateDgvCalendarioExtra(j, notaExtraBoolean, notaPrec)
+                            ResetVariables(sommaTempoExtra, tempoTot, tempo)
+                            UpdateTicketAndTempo(nota, tabella, conta, ticket, tempo, noComm)
                         End If
-                        If nota.ToLower.Contains("extra(") Then
-                            Dim tempoExtra As String
-                            Dim vetDividiNota() As String
-                            vetDividiNota = nota.Split("(")
-                            tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
-                            sommaTempoExtra += tempoExtra
-                            notaExtra = "Extra(" & sommaTempoExtra & ")"
-                            nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
-                            notaExtraBoolean = True
-                        End If
+                        UpdateExtra(nota, sommaTempoExtra, notaExtraBoolean)
                     Else
-                        If nota.Contains("Criticità") Then
-                            ticket = "Criticità"
-                        Else
-                            ticket = tabella.Rows(conta).Item("TICKET").ToString
-                        End If
-                        tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+                        UpdateTicketAndTempo(nota, tabella, conta, ticket, tempo, noComm)
                     End If
 
-                    commPrec = False
-                    For k = 0 To vetClienteComm.Length - 2
-                        If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
-                            If vetNotaComm(k) = "" And nota = "" Then
-                                commPrec = True
-                            ElseIf vetNotaComm(k) <> "" Then
-                                commPrec = True
-                            End If
+                    commPrec = comm
+                    If Not noComm Then
+                        clientePrec = cliente
+                        If commPrec Then
+                            notaPrec = nota
+                        ElseIf nota.StartsWith("Home") Then
+                            notaPrec = "Home"
+                        Else
+                            notaPrec = ""
                         End If
-                    Next
-                    clientePrec = tabella.Rows(conta).Item("CLIENTE").ToString
-                    notaPrec = tabella.Rows(conta).Item("NOTA").ToString
+                        notaCommPrec = notaComm
+                        notaComm = ""
+                    End If
                 Else
-                    dgvCalendario.Rows(j).Cells(1).Value = ticket
-                    dgvCalendario.Rows(j).Cells(2).Value = clientePrec
-                    dgvCalendario.Rows(j).Cells(3).Value = tempo
-                    dgvCalendario.Rows(j).Cells(4).Value = DateLavorative(i)
-                    dgvCalendario.Rows(j).Cells(5).Value = tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString
-                    If nota.ToLower.Contains("extra(") Then
-                        Dim tempoExtra As String
-                        Dim vetDividiNota() As String
-                        vetDividiNota = nota.Split("(")
-                        tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
-                        sommaTempoExtra += tempoExtra
-                        notaExtra = "Extra(" & sommaTempoExtra & ")"
-                        nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
-                        notaExtraBoolean = True
-                    End If
-                    If notaPrec.Contains("Criticità") Then
-                        If notaPrec.Contains("Home") Then
-                            notaPrec = notaPrec.Replace(", Criticità", "")
-                            dgvCalendario.Rows(j).Cells(6).Value = notaPrec
-                        Else
-                            dgvCalendario.Rows(j).Cells(6).Value = ""
-                        End If
-                    ElseIf notaPrec.ToLower.Contains("extra") = False Then
-                        If notaPrec.Contains("Home") Or comm = True Then
-                            dgvCalendario.Rows(j).Cells(6).Value = notaPrec
-                        Else
-                            dgvCalendario.Rows(j).Cells(6).Value = ""
-                        End If
-                    End If
-                    If notaExtraBoolean = True Then
-                        notaExtraBoolean = False
-                        If notaPrec.ToLower.Contains("extra") Then
-                            Dim indice As Integer = notaPrec.IndexOf("(") + 1
-                            Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
-                            notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
-                        End If
-                        If notaPrec = "" Or notaPrec.Trim = "Criticità," Then
-                            dgvCalendario.Rows(j).Cells(6).Value = notaExtra
-                        Else
-                            If notaPrec.Trim.EndsWith(",") Then
-                                dgvCalendario.Rows(j).Cells(6).Value = notaPrec.Trim & " " & notaExtra
-                            Else
-                                dgvCalendario.Rows(j).Cells(6).Value = notaPrec & ", " & notaExtra
-                            End If
-                        End If
-                    End If
-
-                    sommaTempoExtra = 0
-                    tempoTot += tempo
-                    tempo = 0
-                    j += 1
-                    'conta = tabella.Rows.Count - 1
+                    UpdateDgvCalendario(j, ticket, clientePrec, tempo, DateLavorative(i), tabella.Rows(conta - 1).Item("CONSUNTIVATO").ToString)
+                    UpdateDgvCalendarioNota(j, notaPrec, comm)
+                    UpdateDgvCalendarioExtra(j, notaExtraBoolean, notaPrec)
+                    ResetVariables(sommaTempoExtra, tempoTot, tempo)
                 End If
             Loop Until conta > tabella.Rows.Count - 1 OrElse DateLavorative(i) <> tabella.Rows(conta).Item("DATA").ToString.Replace(" 00:00:00", "")
 
-            dgvCalendario.Rows(j).Cells(1).Value = ""
-            dgvCalendario.Rows(j).Cells(2).Value = "TOTALE:"
-            dgvCalendario.Rows(j).Cells(3).Value = tempoTot
-            dgvCalendario.Rows(j).Cells(4).Value = ""
-            dgvCalendario.Rows(j).Cells(5).Value = ""
-            dgvCalendario.Rows(j).Cells(6).Value = ""
-
-            Dim color As Color
-            Dim converter As System.ComponentModel.TypeConverter = System.ComponentModel.TypeDescriptor.GetConverter(color)
-            dgvCalendario.Rows(j).DefaultCellStyle.BackColor = converter.ConvertFromString("51; 136; 202")
-            dgvCalendario.Rows(j).DefaultCellStyle.ForeColor = Color.White
-            dgvCalendario.Rows(j).DefaultCellStyle.Font = New Font("Microsoft Sans Serif", 8, FontStyle.Bold)
-
-            If tempoTot < 8 Then
-                dgvCalendario.Rows(j).Cells(3).Style.BackColor = converter.ConvertFromString("255; 216; 26")
-                dgvCalendario.Rows(j).Cells(3).Style.ForeColor = Color.Black
-            ElseIf tempoTot = 8 Then
-                dgvCalendario.Rows(j).Cells(3).Style.BackColor = converter.ConvertFromString("60; 202; 51")
-                dgvCalendario.Rows(j).Cells(3).Style.ForeColor = Color.Black
-            Else
-                dgvCalendario.Rows(j).Cells(3).Style.BackColor = converter.ConvertFromString("202; 51; 60")
-            End If
-
+            UpdateDgvCalendarioTotale(j, tempoTot)
             j += 1
             tempoTot = 0
         Next
+
         If menuFiltriChiuso = False Then
             lblFiltri_Click(sender, e)
         End If
     End Sub
-    Dim vetRConsuntivare() As Integer
-    Dim RDC As Integer = 0
+
+    Sub riordinaTabella(vetClienteComm() As String, vetNotaComm() As String, ByRef tabella As DataTable, ByRef notaComm As String)
+        Dim c As String
+        Dim n As String
+        Dim conta As Integer = 0
+
+        ' Ottieni l'elenco delle date univoche nella tabella
+        Dim dateUnivoche = tabella.AsEnumerable().[Select](Function(row) row.Field(Of DateTime)("DATA").Date).Distinct().ToList()
+
+        ' Ciclo For per ogni giorno del mese
+        For Each dataUnivoca In dateUnivoche
+            ' Filtra la tabella per la data corrente e crea una copia della raccolta di righe
+            Dim righeDataCorrente = tabella.AsEnumerable().Where(Function(row) row.Field(Of DateTime)("DATA").Date = dataUnivoca).ToList()
+
+            ' Trova l'indice dell'ultima riga per la data corrente
+            Dim ultimaRigaDataCorrente = tabella.Rows.IndexOf(righeDataCorrente.Last())
+
+            ' Ciclo For per ogni ticket del giorno
+            For Each riga In righeDataCorrente
+                c = riga.Field(Of String)("CLIENTE")
+                n = If(riga.Field(Of String)("NOTA"), "")
+
+                If CheckComm(vetClienteComm, vetNotaComm, c, n, notaComm) Then
+                    Dim newRow As DataRow = tabella.NewRow()
+                    newRow.ItemArray = riga.ItemArray
+                    tabella.Rows.Remove(riga)
+                    tabella.Rows.InsertAt(newRow, ultimaRigaDataCorrente)
+                End If
+            Next
+        Next
+    End Sub
+
+    ' DA TENERE
+    'Sub riordinaTabella_DA_AGGIUSTARE(vetClienteComm() As String, vetNotaComm() As String, ByRef tabella As DataTable, ByRef notaComm As String)
+    '    Dim g As String
+    '    Dim c As String
+    '    Dim n As String
+    '    Dim conta As Integer = 0
+
+    '    ' Ottieni l'elenco delle date univoche nella tabella
+    '    Dim dateUnivoche = tabella.AsEnumerable().[Select](Function(row) row.Field(Of DateTime)("DATA").Date).Distinct().ToList()
+
+    '    ' Ciclo For per ogni giorno del mese
+    '    For Each dataUnivoca In dateUnivoche
+    '        ' Filtra la tabella per la data corrente e crea una copia della raccolta di righe
+    '        Dim righeDataCorrente = tabella.AsEnumerable().Where(Function(row) row.Field(Of DateTime)("DATA").Date = dataUnivoca).ToList()
+
+    '        ' Ottieni l'elenco dei clienti univoci per la data corrente
+    '        Dim clientiUnivoci = righeDataCorrente.[Select](Function(row) row.Field(Of String)("CLIENTE")).Distinct().ToList()
+
+    '        ' Ciclo For per ogni cliente del giorno
+    '        For Each clienteUnivoco In clientiUnivoci
+    '            ' Filtra le righe per il cliente corrente e crea una copia della raccolta di righe
+    '            Try
+    '                Dim righeClienteCorrente = righeDataCorrente.Where(Function(row) row.Field(Of String)("CLIENTE") = clienteUnivoco).ToList()
+
+
+    '                ' Trova l'indice dell'ultima riga per il cliente corrente
+    '                Dim ultimaRigaClienteCorrente = tabella.Rows.IndexOf(righeClienteCorrente.Last())
+
+    '                ' Crea una lista per memorizzare le righe da spostare
+    '                Dim righeDaSpostare As New List(Of DataRow)
+
+    '                ' Ciclo For per ogni ticket del cliente
+    '                For Each riga In righeClienteCorrente.ToList()
+    '                    c = riga.Field(Of String)("CLIENTE")
+    '                    If riga.Field(Of String)("NOTA") Is Nothing Then
+    '                        n = ""
+    '                    Else
+    '                        n = riga.Field(Of String)("NOTA")
+    '                    End If
+    '                    If CheckComm(vetClienteComm, vetNotaComm, c, n, notaComm) Then
+    '                        ' Aggiungi la riga alla lista delle righe da spostare
+    '                        righeDaSpostare.Add(riga)
+    '                    End If
+    '                Next
+
+    '                ' Sposta le righe dalla lista delle righe da spostare alla fine dei ticket del cliente per il giorno corrente
+    '                For Each riga In righeDaSpostare
+    '                    Dim newRow As DataRow = tabella.NewRow()
+    '                    newRow.ItemArray = riga.ItemArray
+
+    '                    ' Rimuovi la riga corrente dalla tabella prima di accedere ai suoi dati
+    '                    tabella.Rows.Remove(riga)
+
+    '                    tabella.Rows.InsertAt(newRow, ultimaRigaClienteCorrente)
+    '                Next
+    '            Catch ex As Exception
+    '                MsgBox(ex.Message & " Data: " & dataUnivoca & " Cliente: " & clienteUnivoco & ". Chiedere a Flavio di verificare")
+    '                Exit Sub
+    '            End Try
+    '        Next
+    '    Next
+    'End Sub
+
+
+    Function CheckComm(vetClienteComm() As String, vetNotaComm() As String, cliente As String, nota As String, ByRef notaComm As String) As Boolean
+        Dim comm As Boolean = False
+        For k = 0 To vetClienteComm.Length - 2
+            If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
+                If vetNotaComm(k) = "" And nota = "" Then
+                    comm = True
+                    notaComm = vetClienteComm(k)
+                ElseIf vetNotaComm(k) <> "" Then
+                    comm = True
+                    notaComm = vetClienteComm(k)
+                End If
+            End If
+        Next
+        Return comm
+    End Function
+    Function CheckNoComm(vetClienteComm() As String, vetNotaComm() As String, vetLinkComm() As String, cliente As String, nota As String) As Boolean
+        Dim comm As Boolean = False
+        For k = 0 To vetClienteComm.Length - 2
+            If vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) And vetLinkComm(k).Contains("Commessa=/") Then
+                comm = True
+            End If
+        Next
+        Return comm
+    End Function
+
+    Function CheckIfSameClient(cliente As String, clientePrec As String, noComm As Boolean) As Boolean
+        Return (cliente = clientePrec Or noComm = True)
+    End Function
+
+    Function CheckIfSameNota(nota As String, notaPrec As String, comm As Boolean, commPrec As Boolean, noComm As Boolean, notaComm As String, notaCommPrec As String) As Boolean
+        If comm And commPrec And Not noComm Then
+            Return (notaComm = notaCommPrec And nota = notaPrec)
+        Else
+            Return nota = notaPrec
+        End If
+    End Function
+
+    Sub UpdateTicketAndTempo(ByRef nota As String, tabella As DataTable, conta As Integer, ByRef ticket As String, ByRef tempo As Double, noComm As Boolean)
+        If nota.Contains("Criticità") Then
+            ticket += "," & "Criticità"
+        Else
+            If tabella.Rows(conta).Item("TICKET").ToString = "/" And tabella.Rows(conta).Item("NOTA").ToString.Replace("Home", "").Replace(",", "").Trim <> "" Then
+                ticket += "," & tabella.Rows(conta).Item("NOTA").ToString.Replace("Home", "").Replace(",", "").Trim
+            Else
+                If noComm Then
+                    ticket += "," & tabella.Rows(conta).Item("CLIENTE").ToString
+                Else
+                    ticket += "," & tabella.Rows(conta).Item("TICKET").ToString
+                End If
+            End If
+        End If
+
+            tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+    End Sub
+
+    Sub UpdateDgvCalendario(row As Integer, ByRef ticket As String, cliente As String, ByRef tempo As Double, dataLavorativa As String, consuntivato As String)
+        If ticket.StartsWith(",") Then
+            ticket = ticket.Substring(1, ticket.Length - 1)
+        End If
+
+        dgvCalendario.Rows(row).Cells(1).Value = ticket
+        dgvCalendario.Rows(row).Cells(2).Value = cliente
+        dgvCalendario.Rows(row).Cells(3).Value = tempo
+        dgvCalendario.Rows(row).Cells(4).Value = dataLavorativa
+        dgvCalendario.Rows(row).Cells(5).Value = consuntivato
+
+        ticket = ""
+    End Sub
+    Sub UpdateDgvCalendarioNota(row As Integer, ByRef notaPrec As String, comm As Boolean)
+        If notaPrec.Contains("Criticità") Then
+            If notaPrec.Contains("Home") Then
+                notaPrec = notaPrec.Replace(", Criticità", "")
+                dgvCalendario.Rows(row).Cells(6).Value = notaPrec
+            Else
+                dgvCalendario.Rows(row).Cells(6).Value = ""
+            End If
+        ElseIf notaPrec.ToLower.Contains("extra") = False Then
+            If notaPrec.Contains("Home") Or comm = True Then
+                dgvCalendario.Rows(row).Cells(6).Value = notaPrec
+            Else
+                dgvCalendario.Rows(row).Cells(6).Value = ""
+            End If
+        End If
+    End Sub
+    Sub UpdateDgvCalendarioExtra(ByRef row As Integer, ByRef notaExtraBoolean As Boolean, notaPrec As String)
+        If notaExtraBoolean = True Then
+            notaExtraBoolean = False
+            If notaPrec.ToLower.Contains("extra") Then
+                Dim indice As Integer = notaPrec.IndexOf("(") + 1
+                Dim tempoNotaPrec = notaPrec.Substring(indice, notaPrec.Length - indice - 1)
+                notaPrec = notaPrec.Replace("Extra(" & tempoNotaPrec & ")", "")
+            End If
+            If notaPrec = "" Or notaPrec.Trim = "Criticità," Then
+                dgvCalendario.Rows(row).Cells(6).Value = notaExtra
+            Else
+                If notaPrec.Trim.EndsWith(",") Then
+                    dgvCalendario.Rows(row).Cells(6).Value = notaPrec.Trim & " " & notaExtra
+                Else
+                    dgvCalendario.Rows(row).Cells(6).Value = notaPrec & ", " & notaExtra
+                End If
+            End If
+        End If
+        row += 1
+    End Sub
+    Sub ResetVariables(ByRef sommaTempoExtra As Double, ByRef tempoTot As Double, ByRef tempo As Double)
+        sommaTempoExtra = 0
+        tempoTot += tempo
+        tempo = 0
+    End Sub
+    Sub UpdateExtra(ByRef nota As String, ByRef sommaTempoExtra As Double, ByRef notaExtraBoolean As Boolean)
+        If nota.ToLower.Contains("extra(") Then
+            Dim tempoExtra As String
+            Dim vetDividiNota() As String
+            vetDividiNota = nota.Split("(")
+            tempoExtra = CDbl(vetDividiNota(1).Substring(0, vetDividiNota(1).Length - 1))
+            sommaTempoExtra += tempoExtra
+            notaExtra = "Extra(" & sommaTempoExtra & ")"
+            nota = nota.Replace("Extra(" & tempoExtra & ")", notaExtra)
+            notaExtraBoolean = True
+        End If
+    End Sub
+    Sub UpdateDgvCalendarioTotale(row As Integer, tempoTot As Double)
+
+        dgvCalendario.Rows(row).Cells(1).Value = ""
+        dgvCalendario.Rows(row).Cells(2).Value = "TOTALE:"
+        dgvCalendario.Rows(row).Cells(3).Value = tempoTot
+        dgvCalendario.Rows(row).Cells(4).Value = ""
+        dgvCalendario.Rows(row).Cells(5).Value = ""
+        dgvCalendario.Rows(row).Cells(6).Value = ""
+
+        Dim color As Color
+        Dim converter As System.ComponentModel.TypeConverter = System.ComponentModel.TypeDescriptor.GetConverter(color)
+        dgvCalendario.Rows(row).DefaultCellStyle.BackColor = converter.ConvertFromString("51; 136; 202")
+        dgvCalendario.Rows(row).DefaultCellStyle.ForeColor = Color.White
+        dgvCalendario.Rows(row).DefaultCellStyle.Font = New Font("Microsoft Sans Serif", 8, FontStyle.Bold)
+
+        If tempoTot < 8 Then
+            dgvCalendario.Rows(row).Cells(3).Style.BackColor = converter.ConvertFromString("255; 216; 26")
+            dgvCalendario.Rows(row).Cells(3).Style.ForeColor = Color.Black
+        ElseIf tempoTot = 8 Then
+            dgvCalendario.Rows(row).Cells(3).Style.BackColor = converter.ConvertFromString("60; 202; 51")
+            dgvCalendario.Rows(row).Cells(3).Style.ForeColor = Color.Black
+        Else
+            dgvCalendario.Rows(row).Cells(3).Style.BackColor = converter.ConvertFromString("202; 51; 60")
+        End If
+    End Sub
+
     Sub controllaNota(ByRef tabella As DataTable, nuovaTabella As DataTable)
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
@@ -1685,90 +2107,47 @@ ore di lavoro
 
     End Sub
 
-    Private Sub btnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
-        If MsgBox("Sei sicuro di voler consuntivare TUTTE le righe?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
-            Exit Sub
-        End If
-
-        Dim conta As Integer = 0
-        For i = 0 To dgvCalendario.Rows.Count - 1
-            If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
-                conta += 1
-            End If
-        Next
-
-        If conta = 0 Then
-            MsgBox("Non ci sono righe da consuntivare")
-            Exit Sub
-        End If
-
-        ReDim vetRConsuntivare(conta)
-        conta = 0
-        For i = 0 To dgvCalendario.Rows.Count - 1
-            If dgvCalendario.Rows(i).Cells(5).Value = "NO" Then
-                vetRConsuntivare(conta) = i
-                conta += 1
-            End If
-        Next
-        RDC = conta
-        TimerConsuntiva.Start()
-    End Sub
-    Dim CCons As Integer = 0
-    Private Sub TimerConsuntiva_Tick(sender As Object, e As EventArgs) Handles TimerConsuntiva.Tick
-        If RDC = CCons Then
-            RDC = 0
-            CCons = 0
-            TimerConsuntiva.Stop()
-            Exit Sub
-        End If
-        clickSinistro(sender, New DataGridViewCellMouseEventArgs(5, vetRConsuntivare(CCons), 0, 0, New MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0)))
-        CCons += 1
-    End Sub
-
     Private Sub txtTicket_KeyDown(sender As Object, e As KeyEventArgs) Handles txtTicket.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCarica_Click(sender, e)
+            BtnCarica_Click(sender, e)
         End If
     End Sub
     Private Sub txtTicketFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles txtTicketFiltro.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCerca_Click(sender, e)
+            BtnCerca_Click(sender, e)
         End If
     End Sub
 
     Private Sub cmbCliente_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCarica_Click(sender, e)
+            BtnCarica_Click(sender, e)
         End If
     End Sub
     Private Sub cmbClienteFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbClienteFiltro.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCerca_Click(sender, e)
+            BtnCerca_Click(sender, e)
         End If
     End Sub
-
     Private Sub cmbTempo_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbTempo.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCarica_Click(sender, e)
+            BtnCarica_Click(sender, e)
+        End If
+    End Sub
+    Private Sub cmbNota_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbNota.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            BtnCarica_Click(sender, e)
         End If
     End Sub
 
     Private Sub cmbConsuntivazioneFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbConsuntivazioneFiltro.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCerca_Click(sender, e)
+            BtnCerca_Click(sender, e)
         End If
     End Sub
     Private Sub cmbNotaFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbNotaFiltro.KeyDown
         If e.KeyCode = Keys.Enter Then
-            btnCerca_Click(sender, e)
+            BtnCerca_Click(sender, e)
         End If
-    End Sub
-
-    Private Sub btnCancellaFiltri_Click(sender As Object, e As EventArgs) Handles btnCancellaFiltri.Click
-        rdbCriticita.Checked = False
-        rdbFixed.Checked = False
-        rdbFormazione.Checked = False
-        ckbAltro.Checked = False
     End Sub
 
     Private Sub lblAggiungiCliente_Click(sender As Object, e As EventArgs) Handles lblAggiungiCliente.Click
@@ -1819,10 +2198,17 @@ ore di lavoro
         da.Fill(tabella)
         cn.Close()
 
-        If tabella.Rows.Count = 0 Then
-            MsgBox("Il template è vuoto")
-            Exit Sub
-        End If
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logInsMassivTicket, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log InsMassivTicket:")
+            If tabella.Rows.Count = 0 Then
+                logFile.WriteLine(dataOraLog + "Il template è vuoto")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivTicket - OK")
+                MsgBox("Il template è vuoto")
+                Exit Sub
+            End If
+        End Using
 
         Dim cmd As OleDbCommand
         Dim str As String
@@ -1846,24 +2232,35 @@ ore di lavoro
         da.Fill(tabellaClientiExcel)
         cn.Close()
 
-        Dim presente As Boolean = False
-        For i = 0 To tabellaClientiExcel.Rows.Count - 1
-            For j = 0 To tabellaClientiDB.Rows.Count - 1
-                If tabellaClientiExcel.Rows(i).Item("CLIENTE") = tabellaClientiDB.Rows(j).Item("Cliente") Then
-                    presente = True
+        Using logFile As New System.IO.StreamWriter(logInsMassivTicket, True)
+            logFile.WriteLine(dataOraLog + "Inizio controllo clienti:")
+            Dim presente As Boolean = False
+            For i = 0 To tabellaClientiExcel.Rows.Count - 1
+                For j = 0 To tabellaClientiDB.Rows.Count - 1
+                    If tabellaClientiExcel.Rows(i).Item("CLIENTE") = tabellaClientiDB.Rows(j).Item("Cliente") Then
+                        presente = True
+                    End If
+                Next
+                If presente = False Then
+                    logFile.WriteLine(dataOraLog + "Il cliente " & tabellaClientiExcel.Rows(i).Item("CLIENTE") & " non è presente a sistema. Importazione interrotta")
+                    logFile.WriteLine(dataOraLog + "Fine controllo clienti - KO")
+                    logFile.Close()
+                    MsgBox("Il cliente " & tabellaClientiExcel.Rows(i).Item("CLIENTE") & " non è presente a sistema. Importazione interrotta", MsgBoxStyle.Exclamation)
+                    Exit Sub
                 End If
             Next
-            If presente = False Then
-                MsgBox("Il cliente " & tabellaClientiExcel.Rows(i).Item("CLIENTE") & " non è presente a sistema. Importazione interrotta", MsgBoxStyle.Exclamation)
-                Exit Sub
-            End If
-        Next
+            logFile.WriteLine(dataOraLog + "Fine controllo clienti - OK")
+        End Using
 
         Call uploadTemplate(tabella)
-        If inserito = False Then
-            MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
-            Exit Sub
-        End If
+        Using logFile As New System.IO.StreamWriter(logInsMassivTicket, True)
+            If inserito = False Then
+                logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivTicket - KO")
+                MsgBox("Importazione interrotta alla riga " & rigaExcel + 2 & " dell'Excel. " & errore, MsgBoxStyle.Critical)
+                Exit Sub
+            End If
+            logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivTicket - OK")
+        End Using
         Call AggiornaDG(giornoOggi, False)
         MsgBox("I ticket sono stati inseriti correttamente", MsgBoxStyle.Information)
     End Sub
@@ -1894,99 +2291,120 @@ ore di lavoro
         Dim nRighe As Integer
         Dim StrSQL As String = ""
         Dim consuntivato As String
+        Dim vetTicketDaIns(tabellaExcel.Rows.Count) As String
 
-        For i = 0 To tabellaExcel.Rows.Count - 1
-            inserito = False
-            ticket = tabellaExcel.Rows(i).Item("TICKET")
-            cliente = tabellaExcel.Rows(i).Item("CLIENTE")
-            tempo = tabellaExcel.Rows(i).Item("TEMPO")
-            giorno = tabellaExcel.Rows(i).Item("DATA")
-            consuntivato = tabellaExcel.Rows(i).Item("CONSUNTIVATO")
-            nota = tabellaExcel.Rows(i).Item("NOTA").ToString
+        Using logFile As New System.IO.StreamWriter(logInsMassivTicket, True)
+            logFile.WriteLine(dataOraLog + "Inizio scrittura ticket:")
+            logFile.WriteLine(dataOraLog + "Ticket da inserire: " & tabellaExcel.Rows.Count)
+            For i = 0 To tabellaExcel.Rows.Count - 1
+                inserito = False
+                ticket = tabellaExcel.Rows(i).Item("TICKET")
+                cliente = tabellaExcel.Rows(i).Item("CLIENTE")
+                tempo = tabellaExcel.Rows(i).Item("TEMPO")
+                giorno = tabellaExcel.Rows(i).Item("DATA")
+                consuntivato = tabellaExcel.Rows(i).Item("CONSUNTIVATO")
+                nota = tabellaExcel.Rows(i).Item("NOTA").ToString
+
+                cn = New OleDbConnection(strConn)
+                cn.Open()
+                str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+                cmd = New OleDbCommand(str, cn)
+                da = New OleDbDataAdapter(cmd)
+                tabella.Clear()
+                da.Fill(tabella)
+                cn.Close()
+
+                Dim vetCommNota(tabella.Rows.Count) As String
+                For j = 0 To tabella.Rows.Count - 1
+                    vetCommNota(j) = tabella.Rows(j).Item("Nota").ToString
+                Next
+
+                Dim conta As Integer = 0
+                If nota.Contains("Criticità") Then
+                    For j = 0 To tabella.Rows.Count - 1
+                        If vetCommNota(j) = "" Then
+                            conta += 1
+                        End If
+                    Next
+                    If conta = 0 Then
+                        logFile.WriteLine(dataOraLog + "Il cliente " & cliente & " non ha la commessa standard")
+                        logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
+                        logFile.Close()
+                        errore = "Il cliente " & cliente & " non ha la commessa standard"
+                        rigaExcel = i
+                        Exit Sub
+                    End If
+                ElseIf nota.Contains("Fixed") Then
+                    For j = 0 To tabella.Rows.Count - 1
+                        If vetCommNota(j) = "Fixed" Then
+                            conta += 1
+                        End If
+                    Next
+                    If conta = 0 Then
+                        logFile.WriteLine(dataOraLog + "Il cliente " & cliente & " non ha la commessa per il Bug Fix")
+                        logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
+                        logFile.Close()
+                        errore = "Il cliente " & cliente & " non ha la commessa per il Bug Fix"
+                        rigaExcel = i
+                        Exit Sub
+                    End If
+                ElseIf nota.Contains("Formazione") Then
+                    For j = 0 To tabella.Rows.Count - 1
+                        If vetCommNota(j) = "Formazione" Then
+                            conta += 1
+                        End If
+                    Next
+                    If conta = 0 Then
+                        logFile.WriteLine(dataOraLog + "Il cliente " & cliente & " non ha la commessa per la Formazione")
+                        logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
+                        logFile.Close()
+                        errore = "Il cliente " & cliente & " non ha la commessa per la Formazione"
+                        rigaExcel = i
+                        Exit Sub
+                    End If
+                Else
+                    For j = 0 To tabella.Rows.Count - 1
+                        If vetCommNota(j) = "" Then
+                            conta += 1
+                        End If
+                    Next
+                    If conta = 0 Then
+                        logFile.WriteLine(dataOraLog + "Il cliente " & cliente & " non ha la commessa standard")
+                        logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
+                        logFile.Close()
+                        errore = "Il cliente " & cliente & " non ha la commessa standard"
+                        rigaExcel = i
+                        Exit Sub
+                    End If
+                End If
+                If nota = "" Then
+                    StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "',NULL);"
+                Else
+                    StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "','" & nota & "');"
+                End If
+                vetTicketDaIns(i) = "Inserito [TICKET: '" & ticket & "'] " & "[CLIENTE: '" & cliente & "'] " & "[TEMPO_RISOLUZIONE: '" & tempo & "'] " & "[DATA: '" & giorno & "'] " & "[CONSUNTIVATO: '" & consuntivato & "'] " & "[NOTA: '" & If(nota <> "", nota, "NULL") & "']"
+                inserito = True
+            Next
 
             cn = New OleDbConnection(strConn)
             cn.Open()
-            str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
-            cmd = New OleDbCommand(str, cn)
-            da = New OleDbDataAdapter(cmd)
-            tabella.Clear()
-            da.Fill(tabella)
-            cn.Close()
-
-            Dim vetCommNota(tabella.Rows.Count) As String
-            For j = 0 To tabella.Rows.Count - 1
-                vetCommNota(j) = tabella.Rows(j).Item("Nota").ToString
+            StrSQL = StrSQL.Substring(0, StrSQL.Length - 1)
+            Dim vetStrSQL() As String = StrSQL.Split(";")
+            For i = 0 To vetStrSQL.Length - 1
+                cmd = New OleDbCommand(vetStrSQL(i), cn)
+                Try
+                    nRighe = cmd.ExecuteNonQuery
+                Catch ex As Exception
+                    logFile.WriteLine(dataOraLog + "Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                    logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
+                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
+                    cn.Close()
+                    inserito = False
+                    Exit Sub
+                End Try
+                logFile.WriteLine(dataOraLog & i + 1 & "/" & vetStrSQL(i).Length & " " & vetTicketDaIns(i))
             Next
-
-            Dim conta As Integer = 0
-            If nota.Contains("Criticità") Then
-                For j = 0 To tabella.Rows.Count - 1
-                    If vetCommNota(j) = "" Then
-                        conta += 1
-                    End If
-                Next
-                If conta = 0 Then
-                    errore = "Il cliente " & cliente & " non ha la commessa standard"
-                    rigaExcel = i
-                    Exit Sub
-                End If
-            ElseIf nota.Contains("Fixed") Then
-                For j = 0 To tabella.Rows.Count - 1
-                    If vetCommNota(j) = "Fixed" Then
-                        conta += 1
-                    End If
-                Next
-                If conta = 0 Then
-                    errore = "Il cliente " & cliente & " non ha la commessa per il Bug Fix"
-                    rigaExcel = i
-                    Exit Sub
-                End If
-            ElseIf nota.Contains("Formazione") Then
-                For j = 0 To tabella.Rows.Count - 1
-                    If vetCommNota(j) = "Formazione" Then
-                        conta += 1
-                    End If
-                Next
-                If conta = 0 Then
-                    errore = "Il cliente " & cliente & " non ha la commessa per la Formazione"
-                    rigaExcel = i
-                    Exit Sub
-                End If
-            Else
-                For j = 0 To tabella.Rows.Count - 1
-                    If vetCommNota(j) = "" Then
-                        conta += 1
-                    End If
-                Next
-                If conta = 0 Then
-                    errore = "Il cliente " & cliente & " non ha la commessa standard"
-                    rigaExcel = i
-                    Exit Sub
-                End If
-            End If
-            If nota = "" Then
-                StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "',NULL);"
-            Else
-                StrSQL += "INSERT into Consuntivazione (TICKET, CLIENTE, TEMPO_RISOLUZIONE, DATA, CONSUNTIVATO, NOTA) VALUES ('" & ticket & "','" & cliente & "','" & tempo & "','" & giorno & "','" & consuntivato & "','" & nota & "');"
-            End If
-            inserito = True
-        Next
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        StrSQL = StrSQL.Substring(0, StrSQL.Length - 1)
-        Dim vetStrSQL() As String = StrSQL.Split(";")
-        For i = 0 To vetStrSQL.Length - 1
-            cmd = New OleDbCommand(vetStrSQL(i), cn)
-            Try
-                nRighe = cmd.ExecuteNonQuery
-            Catch ex As Exception
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-                cn.Close()
-                inserito = False
-                Exit Sub
-            End Try
-        Next
+        End Using
         cn.Close()
         inserito = True
     End Sub
@@ -2193,7 +2611,7 @@ ore di lavoro
     End Sub
 
     Dim strWhere As String = ""
-    Private Sub btnCerca_Click(sender As Object, e As EventArgs) Handles btnCerca.Click
+    Private Sub BtnCerca_Click(sender As Object, e As EventArgs) Handles btnCerca.Click
         If btnDividiXCliente.Text = "Ritorna al Mese" Then
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnConsuntivaTutto.Visible = False
@@ -2322,20 +2740,54 @@ ore di lavoro
         ToolTip1.Active = True
         If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
             If sommaExtra > 0 And CDbl(lblTempoTot.Text) < 8 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Rimasto: " & 8 - CDbl(lblTempoTot.Text))
+                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Rimasto: " & 8 - CDbl(lblTempoTot.Text))
             ElseIf sommaExtra > 0 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra)
+                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra)
             ElseIf CDbl(lblTempoTot.Text) < 8 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Tempo Rimasto: " & 8 - lblTempoTot.Text)
+                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Rimasto: " & 8 - lblTempoTot.Text)
             Else
-                ToolTip1.Active = False
+                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1)
             End If
         Else
             If sommaExtra > 0 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Ordinario: " & CDbl(lblTempoTot.Text) - sommaExtra)
+                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Ordinario: " & CDbl(lblTempoTot.Text) - sommaExtra)
             Else
                 ToolTip1.Active = False
             End If
+        End If
+    End Sub
+
+    Private Sub cmbCliente_SelectedValueChanged(sender As Object, e As EventArgs) Handles cmbCliente.SelectedValueChanged
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+        Dim cliente As String = cmbCliente.Text
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Nota FROM LinkGR WHERE Cliente = '" & cliente & "' ORDER BY Nota"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        cmbNota.Items.Clear()
+
+        For i = 0 To tabella.Rows.Count() - 1
+            cmbNota.Items.Add(tabella.Rows(i).Item("Nota"))
+        Next
+    End Sub
+
+    Private Sub frmConsuntivazione_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        If Not obbligatorio Then
+            Dim processName As String = Path.GetFileNameWithoutExtension(updatePath)
+            Dim processes() As Process = Process.GetProcessesByName(processName)
+            For Each p As Process In processes
+                p.Kill()
+            Next
         End If
     End Sub
 End Class
