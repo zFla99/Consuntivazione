@@ -1,10 +1,95 @@
 ﻿Imports System.Data.OleDb
 Imports System.IO
+Imports System.Runtime.CompilerServices
+Imports System.Runtime.InteropServices
 Public Class frmInserisciCliente
     ReadOnly strConn As String = frmConsuntivazione.strConn
+    <DllImport("Gdi32.dll", EntryPoint:="CreateRoundRectRgn")>
+    Private Shared Function CreateRoundRectRgn(ByVal iLeft As Integer, ByVal iTop As Integer, ByVal iRight As Integer, ByVal iBottom As Integer, ByVal iWidth As Integer, ByVal iHeight As Integer) As IntPtr
+    End Function
+    Private Sub cmbNota_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbNota.KeyPress
+        If e.KeyChar = "," Then
+            e.Handled = True
+        End If
+    End Sub
+    Private Sub disabilitaFreccie(sender As Object, e As KeyEventArgs) Handles txtCliente.KeyDown, txtCodCliente.KeyDown, cmbNota.KeyDown, txtCommessa.KeyDown, txtSottoCommessa.KeyDown, txtFase.KeyDown, txtSottoFase.KeyDown
+        If e.KeyCode = Keys.Left OrElse e.KeyCode = Keys.Right OrElse e.KeyCode = Keys.Up OrElse e.KeyCode = Keys.Down Then
+            e.Handled = True
+        End If
+    End Sub
     Private Sub frmInserisciCliente_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         pulisciCampi()
         impostaConfig()
+
+        arrotondaBordi()
+        frmSfondoNero.Show()
+        impostaLocation()
+        txtCliente.Focus()
+    End Sub
+    Private Sub frmInserisciCliente_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        pulisciCampi()
+        frmSfondoNero.Close()
+    End Sub
+    Function controllaFormAttivo()
+        If Me.Visible = False Then
+            Return True
+        End If
+
+        Dim formAttivo As Boolean = False
+        For Each control As Control In Me.Controls
+            If control.ContainsFocus Then
+                formAttivo = True
+                Exit For
+            End If
+        Next
+        Return formAttivo
+    End Function
+    Sub arrotondaBordi()
+        Me.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Me.Width, Me.Height, 15, 15))
+
+        lblBordoCliente.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoCliente.Width, lblBordoCliente.Height, 5, 5))
+        lblInsCliente.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsCliente.Width, lblInsCliente.Height, 5, 5))
+
+        lblBordoCodCliente.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoCodCliente.Width, lblBordoCodCliente.Height, 5, 5))
+        lblInsCodCliente.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsCodCliente.Width, lblInsCodCliente.Height, 5, 5))
+
+        lblBordoNota.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoNota.Width, lblBordoNota.Height, 5, 5))
+        lblInsNota.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsNota.Width, lblInsNota.Height, 5, 5))
+
+        lblBordoCommessa.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoCommessa.Width, lblBordoCommessa.Height, 5, 5))
+        lblInsCommessa.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsCommessa.Width, lblInsCommessa.Height, 5, 5))
+
+        lblBordoSottoCommessa.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoSottoCommessa.Width, lblBordoSottoCommessa.Height, 5, 5))
+        lblInsSottoCommessa.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsSottoCommessa.Width, lblInsSottoCommessa.Height, 5, 5))
+
+        lblBordoFase.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoFase.Width, lblBordoFase.Height, 5, 5))
+        lblInsFase.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsFase.Width, lblInsFase.Height, 5, 5))
+
+        lblBordoSottoFase.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoSottoCommessa.Width, lblBordoSottoCommessa.Height, 5, 5))
+        lblInsSottoFase.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblInsSottoCommessa.Width, lblInsSottoCommessa.Height, 5, 5))
+
+        lblBordoInserisci.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoInserisci.Width, lblBordoInserisci.Height, 5, 5))
+        btnInserisci.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnInserisci.Width, btnInserisci.Height, 5, 5))
+
+        lblBordoAnnulla.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoAnnulla.Width, lblBordoAnnulla.Height, 5, 5))
+        btnAnnulla.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAnnulla.Width, btnAnnulla.Height, 5, 5))
+
+        lblBordoClientiCommesse.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoClientiCommesse.Width, lblBordoClientiCommesse.Height, 5, 5))
+        btnClientiCommesse.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnClientiCommesse.Width, btnClientiCommesse.Height, 5, 5))
+
+    End Sub
+    Sub impostaLocation()
+        impostaSfondoNero()
+        Dim locationY As Integer = frmConsuntivazione.Location.Y + 31
+        Dim locationX As Integer = frmConsuntivazione.Location.X + 8
+        locationY += frmConsuntivazione.pnlMensile.Location.Y + frmConsuntivazione.pnlDataGrid.Location.Y + frmConsuntivazione.dgvCalendario.Location.Y
+        locationX += frmConsuntivazione.pnlMensile.Location.X + frmConsuntivazione.pnlDataGrid.Location.X + frmConsuntivazione.dgvCalendario.Location.X
+
+        Me.Location = New Point(((frmConsuntivazione.dgvCalendario.Width - Me.Width) / 2) + locationX, ((frmConsuntivazione.dgvCalendario.Height - Me.Height) / 2) + locationY)
+    End Sub
+    Sub impostaSfondoNero()
+        frmSfondoNero.Location = New Point(frmConsuntivazione.Location.X + 8, frmConsuntivazione.Location.Y + 31)
+        frmSfondoNero.Size = New Size(frmConsuntivazione.Width - 16, frmConsuntivazione.Height - 39)
     End Sub
     ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
     ReadOnly logConfig As String = frmConsuntivazione.logConfig
@@ -31,6 +116,7 @@ Public Class frmInserisciCliente
                 ElseIf appoggio.Contains("From_ForeColor") Then
                     lblCliente.ForeColor = ColorTranslator.FromHtml(value)
                     lblCodCliente.ForeColor = ColorTranslator.FromHtml(value)
+                    lblNota.ForeColor = ColorTranslator.FromHtml(value)
                     lblCommessa.ForeColor = ColorTranslator.FromHtml(value)
                     lblSottCommessa.ForeColor = ColorTranslator.FromHtml(value)
                     lblFase.ForeColor = ColorTranslator.FromHtml(value)
@@ -39,11 +125,6 @@ Public Class frmInserisciCliente
                     rdbClienteConfig.ForeColor = ColorTranslator.FromHtml(value)
                     rdbCliente.ForeColor = ColorTranslator.FromHtml(value)
                     rdbConfig.ForeColor = ColorTranslator.FromHtml(value)
-
-                    rdbVuota.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbFixed.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbFormazione.ForeColor = ColorTranslator.FromHtml(value)
-                    rdbAltro.ForeColor = ColorTranslator.FromHtml(value)
                 End If
             End If
             appoggio = sr.ReadLine()
@@ -53,84 +134,115 @@ Public Class frmInserisciCliente
     Sub pulisciCampi()
         txtCliente.Text = ""
         txtCodCliente.Text = ""
+        cmbNota.Text = ""
         txtCommessa.Text = ""
         txtSottoCommessa.Text = ""
         txtFase.Text = ""
         txtSottoFase.Text = ""
         rdbClienteConfig.Checked = True
-        rdbVuota.Checked = True
+
+        lblBordoCliente.BackColor = Color.Silver
+        lblBordoCodCliente.BackColor = Color.Silver
+        lblBordoNota.BackColor = Color.Silver
+        lblBordoCommessa.BackColor = Color.Silver
+        lblBordoSottoCommessa.BackColor = Color.Silver
     End Sub
-    Private Sub txtCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCliente.KeyPress
+    Private Sub txtCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
-    Private Sub txtCodCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCodCliente.KeyPress
+    Private Sub txtCodCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
-    Private Sub txtCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtCommessa.KeyPress
+    Private Sub txtCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
-    Private Sub txtSottoCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtSottoCommessa.KeyPress
+    Private Sub txtSottoCommessa_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
-    Private Sub txtFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtFase.KeyPress
+    Private Sub txtFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
-    Private Sub txtSottoFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtSottoFase.KeyPress
+    Private Sub txtSottoFase_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
         End If
     End Sub
+    Dim corretto As Boolean
     Private Sub btnInserisci_Click(sender As Object, e As EventArgs) Handles btnInserisci.Click
-        Dim cliente As String = txtCliente.Text
-        Dim CodCliente As String = txtCodCliente.Text
-        Dim commessa As String = txtCommessa.Text
-        Dim SottoCommessa As String = txtSottoCommessa.Text
-        Dim fase As String = txtFase.Text
-        Dim SottoFase As String = txtSottoFase.Text
-
-        If cliente = "" Then
-            MsgBox("Inserisci un cliente")
+        lblCliente.Focus()
+        corretto = True
+        If Not verificaDati() Then
             Exit Sub
         End If
-        If btnInserisci.Text <> "Inserisci Cliente" Then
-            If CodCliente = "" Then
-                MsgBox("Inserisci un codice cliente")
-                Exit Sub
-            End If
-            If commessa = "" Then
-                MsgBox("Inserisci una commessa")
-                Exit Sub
-            End If
-            If SottoCommessa = "" Then
-                MsgBox("Inserisci una sotto commessa")
-                Exit Sub
-            End If
-        End If
 
+        Dim cliente As String = txtCliente.Text.Replace("'", "").Trim
+        Dim CodCliente As String = txtCodCliente.Text.Replace("'", "").Trim
+        Dim nota As String = cmbNota.Text.Replace("'", "").Replace(",", "").Trim
+        Dim commessa As String = txtCommessa.Text.Replace("'", "").Trim
+        Dim SottoCommessa As String = txtSottoCommessa.Text.Replace("'", "").Trim
+        Dim fase As String = txtFase.Text.Replace("'", "").Trim
+        Dim SottoFase As String = txtSottoFase.Text.Replace("'", "").Trim
 
-        Dim nota As String = ""
         Dim link As String
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti WHERE Cliente = '" & cliente & "'"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
+        Using logFile As New System.IO.StreamWriter(logConfig, True)
+            logFile.WriteLine(dataOraLog + "------------------------------------------")
+            logFile.WriteLine(dataOraLog + "Inizio scrittura log ConfigClienti:")
+        End Using
+
+        If btnInserisci.Text = "Inserisci Commessa" Then
+            If tabella.Rows.Count = 0 Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' non esiste")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                End Using
+                ToolTip1.Show("Questo cliente non esiste", lblInsCliente, -18, 30, 3000)
+                lblBordoCliente.BackColor = Color.Red
+                Exit Sub
+            End If
+        End If
+        If btnInserisci.Text <> "Inserisci Commessa" Then
+            If tabella.Rows.Count = 1 Then
+                Using logFile As New System.IO.StreamWriter(logConfig, True)
+                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' esiste già")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                End Using
+                ToolTip1.Show("Questo cliente esiste già.", lblInsCliente, -18, 30, 3000)
+                lblBordoCliente.BackColor = Color.Red
+                Exit Sub
+            End If
+        End If
 
         cn = New OleDbConnection(strConn)
         cn.Open()
@@ -146,37 +258,26 @@ Public Class frmInserisciCliente
             vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
         Next
 
-        dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
         Using logFile As New System.IO.StreamWriter(logConfig, True)
-            logFile.WriteLine(dataOraLog + "------------------------------------------")
-            logFile.WriteLine(dataOraLog + "Inizio scrittura log ConfigClienti:")
-
             Dim conta As Integer = 0
-            Dim notaInput As String
-            If rdbVuota.Checked = True Then
-                nota = ""
-            ElseIf rdbFixed.Checked = True Then
-                nota = "Fixed"
-            ElseIf rdbFormazione.Checked = True Then
-                nota = "Formazione"
-            ElseIf rdbAltro.Checked = True Then
-                notaInput = InputBox("Inserisci una nota").Trim.ToLower
-                notaInput = StrConv(notaInput, VbStrConv.ProperCase)
 
-                If notaInput.Length > 150 Then
-                    logFile.WriteLine(dataOraLog + "Nota '" & notaInput & "' non valida (Max 150 car.)")
-                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                    logFile.Close()
-                    MsgBox("Nota non valida (Max 150 car.)")
+            nota = cmbNota.Text.Trim.ToLower
+            nota = cmbNota.Text.Replace("'", "")
+            nota = cmbNota.Text.Replace(",", "")
+            nota = StrConv(cmbNota.Text, VbStrConv.ProperCase)
+
+            If nota.Length > 150 Then
+                logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (Max 150 car.)")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                logFile.Close()
+                lblBordoNota.BackColor = Color.Red
                 Exit Sub
-            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Or notaInput.ToLower.Contains("extra") Then
-                    logFile.WriteLine(dataOraLog + "Nota '" & notaInput & "' non valida (non puoi inserire questa commessa)")
-                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                    logFile.Close()
-                    MsgBox("Nota non valida (non puoi inserire questa commessa)")
+            ElseIf nota.ToLower.Contains("criticità") Or nota.ToLower.Contains("extra") Then
+                logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (non puoi inserire questa commessa)")
+                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                logFile.Close()
+                lblBordoNota.BackColor = Color.Red
                 Exit Sub
-                End If
-                nota = notaInput
             End If
 
             For i = 0 To tabella.Rows.Count - 1
@@ -189,46 +290,18 @@ Public Class frmInserisciCliente
                 logFile.WriteLine(dataOraLog + "La commessa '" & nota & "' è già presente per il cliente '" & cliente & "'")
                 logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
                 logFile.Close()
-                MsgBox("Questa commessa è gia presente per questo cliente")
+                ToolTip1.Show("Questa commessa è gia presente per questo cliente", lblInsNota, -80, 30, 3000)
+                lblBordoNota.BackColor = Color.Red
                 Exit Sub
             End If
         End Using
 
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT Cliente FROM Clienti WHERE Cliente = '" & cliente & "'"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
-
-        If btnInserisci.Text = "Inserisci Commessa" Then
-            If tabella.Rows.Count = 0 Then
-                Using logFile As New System.IO.StreamWriter(logConfig, True)
-                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' non esiste")
-                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                End Using
-                MsgBox("Questo cliente non esiste.")
-                Exit Sub
-            End If
-        End If
-
         If btnInserisci.Text <> "Inserisci Commessa" Then
-            If tabella.Rows.Count = 1 Then
-                Using logFile As New System.IO.StreamWriter(logConfig, True)
-                    logFile.WriteLine(dataOraLog + "Il cliente '" & cliente & "' esiste già")
-                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                End Using
-                MsgBox("Questo cliente esiste già.")
+            inserisciCliente(cliente)
+            If btnInserisci.Text = "Inserisci Cliente" Then
+                MsgBox("Il cliente " & cliente & " è stato aggiunto!")
+                pulisciCampi()
                 Exit Sub
-            Else
-                inserisciCliente(cliente)
-                If btnInserisci.Text = "Inserisci Cliente" Then
-                    MsgBox("Il cliente " & cliente & " è stato aggiunto!")
-                    pulisciCampi()
-                    Exit Sub
-                End If
             End If
         End If
 
@@ -238,6 +311,38 @@ Public Class frmInserisciCliente
 
         pulisciCampi()
     End Sub
+    Function verificaDati()
+        If rdbCliente.Checked Then
+            txtCliente.Text.Replace("'", "")
+            If txtCliente.Text.Trim = "" Then
+                lblBordoCliente.BackColor = Color.Red
+            End If
+            If lblBordoCliente.BackColor = Color.Red Then
+                corretto = False
+            End If
+        Else
+            txtCliente.Text.Replace("'", "")
+            If txtCliente.Text.Trim = "" Then
+                lblBordoCliente.BackColor = Color.Red
+            End If
+            txtCodCliente.Text.Replace("'", "")
+            If txtCodCliente.Text.Trim = "" Then
+                lblBordoCodCliente.BackColor = Color.Red
+            End If
+            txtCommessa.Text.Replace("'", "")
+            If txtCommessa.Text.Trim = "" Then
+                lblBordoCommessa.BackColor = Color.Red
+            End If
+            txtSottoCommessa.Text.Replace("'", "")
+            If txtSottoCommessa.Text.Trim = "" Then
+                lblBordoSottoCommessa.BackColor = Color.Red
+            End If
+            If lblBordoCliente.BackColor = Color.Red Or lblBordoCodCliente.BackColor = Color.Red Or lblBordoCommessa.BackColor = Color.Red Or lblBordoSottoCommessa.BackColor = Color.Red Then
+                corretto = False
+            End If
+        End If
+        Return corretto
+    End Function
 
     Sub inserisciCliente(cliente As String)
         Dim cn As OleDbConnection
@@ -278,13 +383,11 @@ Public Class frmInserisciCliente
             cn.Close()
 
             frmModifica.cmbCliente.Items.Clear()
-            frmConsuntivazione.cmbCliente.Items.Clear()
-            frmCommesse.cmbCliente.Items.Clear()
-            For i = 0 To tabella.Rows.Count - 1
+        frmConsuntivazione.cmbCliente.Items.Clear()
+        For i = 0 To tabella.Rows.Count - 1
                 frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-                frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-                frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            Next
+            frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+        Next
     End Sub
     Sub inserisciConfig(cliente As String, nota As String, link As String)
         Dim cn As OleDbConnection
@@ -488,11 +591,9 @@ Public Class frmInserisciCliente
 
         frmModifica.cmbCliente.Items.Clear()
         frmConsuntivazione.cmbCliente.Items.Clear()
-        frmCommesse.cmbCliente.Items.Clear()
         For i = 0 To tabella.Rows.Count - 1
             frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-            frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
         inserito = True
     End Sub
@@ -623,35 +724,284 @@ Public Class frmInserisciCliente
     End Sub
     Private Sub rdbCliente_CheckedChanged(sender As Object, e As EventArgs) Handles rdbCliente.CheckedChanged
         If rdbCliente.Checked = True Then
+            lblCodCliente.Enabled = False
             txtCodCliente.Enabled = False
-            gboxNota.Enabled = False
+            lblBordoCodCliente.BackColor = Color.Silver
+            lblInsCodCliente.BackColor = lblBordoCodCliente.BackColor
+            txtCodCliente.Text = ""
+            lblInsCodCliente.Text = ""
+
+            lblNota.Enabled = False
+            cmbNota.Enabled = False
+            lblBordoNota.BackColor = Color.Silver
+            lblInsNota.BackColor = lblBordoNota.BackColor
+            cmbNota.Text = ""
+            lblInsNota.Text = ""
+
             gboxCommessa.Enabled = False
+            lblBordoCommessa.BackColor = Color.Silver
+            lblBordoSottoCommessa.BackColor = Color.Silver
+            txtCommessa.Text = ""
+            lblInsCommessa.BackColor = lblBordoCommessa.BackColor
+            lblInsSottoCommessa.BackColor = lblBordoSottoCommessa.BackColor
+            txtSottoCommessa.Text = ""
+            lblInsFase.BackColor = lblBordoFase.BackColor
+            txtFase.Text = ""
+            lblInsSottoFase.BackColor = lblBordoSottoFase.BackColor
+            txtSottoFase.Text = ""
+
             btnInserisci.Text = "Inserisci Cliente"
         End If
     End Sub
 
     Private Sub rdbClienteConfig_CheckedChanged(sender As Object, e As EventArgs) Handles rdbClienteConfig.CheckedChanged
         If rdbClienteConfig.Checked = True Then
+            lblCodCliente.Enabled = True
             txtCodCliente.Enabled = True
-            gboxNota.Enabled = True
+            lblInsCodCliente.BackColor = Me.BackColor
+
+            lblNota.Enabled = True
+            cmbNota.Enabled = True
+            lblInsNota.BackColor = Me.BackColor
+
             gboxCommessa.Enabled = True
+            lblInsCommessa.BackColor = Me.BackColor
+            lblInsSottoCommessa.BackColor = Me.BackColor
+            lblInsFase.BackColor = Me.BackColor
+            lblInsSottoFase.BackColor = Me.BackColor
+
             btnInserisci.Text = "Inserisci Cliente e Commessa"
         End If
     End Sub
 
     Private Sub rdbConfig_CheckedChanged(sender As Object, e As EventArgs) Handles rdbConfig.CheckedChanged
         If rdbConfig.Checked = True Then
+            lblCodCliente.Enabled = True
             txtCodCliente.Enabled = True
-            gboxNota.Enabled = True
+            lblInsCodCliente.BackColor = Me.BackColor
+
+            lblNota.Enabled = True
+            cmbNota.Enabled = True
+            lblInsNota.BackColor = Me.BackColor
+
             gboxCommessa.Enabled = True
+            lblInsCommessa.BackColor = Me.BackColor
+            lblInsSottoCommessa.BackColor = Me.BackColor
+            lblInsFase.BackColor = Me.BackColor
+            lblInsSottoFase.BackColor = Me.BackColor
+
             btnInserisci.Text = "Inserisci Commessa"
         End If
     End Sub
-    Private Sub btnClienti_Click(sender As Object, e As EventArgs) Handles btnClienti.Click
+    Private Sub btnClienti_Click(sender As Object, e As EventArgs)
         frmClienti.ShowDialog()
     End Sub
 
-    Private Sub btnCommesse_Click(sender As Object, e As EventArgs) Handles btnCommesse.Click
+    Private Sub btnCommesse_Click(sender As Object, e As EventArgs)
         frmCommesse.ShowDialog()
+    End Sub
+
+    Private Sub btnAnnulla_Click(sender As Object, e As EventArgs) Handles btnAnnulla.Click
+        Me.Close()
+    End Sub
+
+    Private Sub inviaModifiche_KeyDown(sender As Object, e As KeyEventArgs) Handles txtCliente.KeyDown, txtCodCliente.KeyDown, cmbNota.KeyDown, txtCommessa.KeyDown, txtSottoCommessa.KeyDown, txtFase.KeyDown, txtSottoFase.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            btnInserisci_Click(sender, e)
+        End If
+    End Sub
+
+    Dim allLabels As New List(Of Label)
+    Private Sub caricaLabels()
+        allLabels.AddRange({lblInsCliente, lblInsCodCliente, lblInsNota, lblInsCommessa, lblInsSottoCommessa, lblInsFase, lblInsSottoFase})
+    End Sub
+    Private Sub lblInsCliente_Click(sender As Object, e As EventArgs) Handles lblInsCliente.Click
+        txtCliente.Focus()
+        lblInsCliente.Text = txtCliente.Text & "|"
+
+        allLabels.Remove(lblInsCliente)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsCliente)
+    End Sub
+    Private Sub lblInsCodCliente_Click(sender As Object, e As EventArgs) Handles lblInsCodCliente.Click
+        txtCodCliente.Focus()
+        lblInsCodCliente.Text = txtCodCliente.Text & "|"
+
+        allLabels.Remove(lblInsCodCliente)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsCodCliente)
+    End Sub
+    Private Sub lblInsNota_Click(sender As Object, e As EventArgs) Handles lblInsNota.Click
+        cmbNota.Focus()
+        lblInsNota.Text = cmbNota.Text & "|"
+
+        allLabels.Remove(lblInsNota)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsNota)
+    End Sub
+    Private Sub lblInsCommessa_Click(sender As Object, e As EventArgs) Handles lblInsCommessa.Click
+        txtCommessa.Focus()
+        lblInsCommessa.Text = txtCommessa.Text & "|"
+
+        allLabels.Remove(lblInsCommessa)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsCommessa)
+    End Sub
+    Private Sub lblInsSottoCommessa_Click(sender As Object, e As EventArgs) Handles lblInsSottoCommessa.Click
+        txtSottoCommessa.Focus()
+        lblInsSottoCommessa.Text = txtSottoCommessa.Text & "|"
+
+        allLabels.Remove(lblInsSottoCommessa)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsSottoCommessa)
+    End Sub
+    Private Sub lblInsFase_Click(sender As Object, e As EventArgs) Handles lblInsFase.Click
+        txtFase.Focus()
+        lblInsFase.Text = txtFase.Text & "|"
+
+        allLabels.Remove(lblInsFase)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsFase)
+    End Sub
+    Private Sub lblInsSottoFase_Click(sender As Object, e As EventArgs) Handles lblInsSottoFase.Click
+        txtSottoFase.Focus()
+        lblInsSottoFase.Text = txtSottoFase.Text & "|"
+
+        allLabels.Remove(lblInsSottoFase)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsSottoFase)
+    End Sub
+    Private Sub txtInserimento_TextChanged(sender As Object, e As EventArgs) Handles txtCliente.TextChanged, txtCodCliente.TextChanged, cmbNota.TextChanged, txtCommessa.TextChanged, txtSottoCommessa.TextChanged, txtFase.TextChanged, txtSottoFase.TextChanged
+        UpdateLabels()
+
+        If txtCliente.Focused And Not txtCliente.Text.Contains("|") Then
+            AddPipe(lblInsCliente)
+            lblBordoCliente.BackColor = Color.Silver
+        ElseIf txtCodCliente.Focused And Not txtCodCliente.Text.Contains("|") Then
+            AddPipe(lblInsCodCliente)
+            lblBordoCodCliente.BackColor = Color.Silver
+        ElseIf cmbNota.Focused And Not cmbNota.Text.Contains("|") Then
+            AddPipe(lblInsNota)
+            lblBordoNota.BackColor = Color.Silver
+        ElseIf txtCommessa.Focused And Not txtCommessa.Text.Contains("|") Then
+            AddPipe(lblInsCommessa)
+            lblBordoCommessa.BackColor = Color.Silver
+        ElseIf txtSottoCommessa.Focused And Not txtSottoCommessa.Text.Contains("|") Then
+            AddPipe(lblInsSottoCommessa)
+            lblBordoSottoCommessa.BackColor = Color.Silver
+        ElseIf txtSottoCommessa.Focused And Not txtSottoCommessa.Text.Contains("|") Then
+            AddPipe(lblInsSottoCommessa)
+            lblBordoSottoCommessa.BackColor = Color.Silver
+        ElseIf txtFase.Focused And Not txtFase.Text.Contains("|") Then
+            AddPipe(lblInsFase)
+            lblBordoFase.BackColor = Color.Silver
+        ElseIf txtSottoFase.Focused And Not txtSottoFase.Text.Contains("|") Then
+            AddPipe(lblInsSottoFase)
+            lblBordoSottoFase.BackColor = Color.Silver
+        End If
+    End Sub
+    Private Sub txtInserimento_GotFocused(sender As Object, e As EventArgs) Handles txtCliente.GotFocus, txtCodCliente.GotFocus, cmbNota.GotFocus, txtCommessa.GotFocus, txtSottoCommessa.GotFocus, txtFase.GotFocus, txtSottoFase.GotFocus
+        UpdateLabels()
+
+        If txtCliente.Focused Then
+            txtCliente.SelectionStart = txtCliente.Text.Length
+            AddPipe(lblInsCliente)
+            lblBordoCliente.BackColor = Color.Silver
+        ElseIf txtCodCliente.Focused Then
+            txtCodCliente.Text = ""
+            txtCodCliente.SelectionStart = txtCodCliente.Text.Length
+            AddPipe(lblInsCodCliente)
+            lblBordoCodCliente.BackColor = Color.Silver
+        ElseIf cmbNota.Focused Then
+            cmbNota.SelectionStart = cmbNota.Text.Length
+            AddPipe(lblInsNota)
+            lblBordoNota.BackColor = Color.Silver
+        ElseIf txtCommessa.Focused Then
+            txtCommessa.SelectionStart = txtCommessa.Text.Length
+            AddPipe(lblInsCommessa)
+            lblBordoCommessa.BackColor = Color.Silver
+        ElseIf txtSottoCommessa.Focused Then
+            txtSottoCommessa.SelectionStart = txtSottoCommessa.Text.Length
+            AddPipe(lblInsSottoCommessa)
+            lblBordoSottoCommessa.BackColor = Color.Silver
+        ElseIf txtSottoCommessa.Focused Then
+            txtSottoCommessa.SelectionStart = txtSottoCommessa.Text.Length
+            AddPipe(lblInsSottoCommessa)
+            lblBordoSottoCommessa.BackColor = Color.Silver
+        ElseIf txtFase.Focused Then
+            txtFase.SelectionStart = txtFase.Text.Length
+            AddPipe(lblInsFase)
+            lblBordoFase.BackColor = Color.Silver
+        ElseIf txtSottoFase.Focused Then
+            txtSottoFase.SelectionStart = txtSottoFase.Text.Length
+            AddPipe(lblInsSottoFase)
+            lblBordoSottoFase.BackColor = Color.Silver
+        End If
+    End Sub
+    Private Sub txtInserimento_LostFocus(sender As Object, e As EventArgs) Handles txtCliente.LostFocus, txtCodCliente.LostFocus, cmbNota.LostFocus, txtCommessa.LostFocus, txtSottoCommessa.LostFocus, txtFase.LostFocus, txtSottoFase.LostFocus
+        If Not txtCliente.Focused And Not txtCodCliente.Focused And Not cmbNota.Focused And Not txtCommessa.Focused And Not txtSottoCommessa.Focused And Not txtFase.Focused And Not txtSottoFase.Focused Then
+            RemovePipes(allLabels)
+        End If
+
+        If Not controllaFormAttivo() Then
+            Me.Close()
+        End If
+    End Sub
+    Private Sub txtCliente_LostFocus(sender As Object, e As EventArgs) Handles txtCliente.LostFocus
+        txtCliente.Text.Replace("'", "")
+        If txtCliente.Text.Trim = "" Then
+            lblBordoCliente.BackColor = Color.Red
+        End If
+    End Sub
+    Private Sub txtCodCliente_LostFocus(sender As Object, e As EventArgs) Handles txtCodCliente.LostFocus
+        txtCodCliente.Text.Replace("'", "")
+        If txtCodCliente.Text.Trim = "" Then
+            lblBordoCodCliente.BackColor = Color.Red
+        End If
+    End Sub
+    Private Sub txtCommessa_LostFocus(sender As Object, e As EventArgs) Handles txtCommessa.LostFocus
+        txtCommessa.Text.Replace("'", "")
+        If txtCommessa.Text.Trim = "" Then
+            lblBordoCommessa.BackColor = Color.Red
+        End If
+    End Sub
+    Private Sub txtSottoCommessa_LostFocus(sender As Object, e As EventArgs) Handles txtSottoCommessa.LostFocus
+        txtSottoCommessa.Text.Replace("'", "")
+        If txtSottoCommessa.Text.Trim = "" Then
+            lblBordoSottoCommessa.BackColor = Color.Red
+        End If
+    End Sub
+    Private Sub RemovePipes(ByVal labels As List(Of Label))
+        ' Rimuove tutti i caratteri "|" dal testo delle etichette specificate.
+        For Each label In labels
+            label.Text = label.Text.Replace("|", "")
+        Next label
+    End Sub
+    Private Sub UpdateLabels()
+        lblInsCliente.Text = txtCliente.Text
+        lblInsCodCliente.Text = txtCodCliente.Text
+        lblInsNota.Text = cmbNota.Text
+        lblInsCommessa.Text = txtCommessa.Text
+        lblInsSottoCommessa.Text = txtSottoCommessa.Text
+        lblInsFase.Text = txtFase.Text
+        lblInsSottoFase.Text = txtSottoFase.Text
+    End Sub
+    Private Sub AddPipe(label As Label)
+        ' Aggiunge un carattere "|" alla fine del testo dell'etichetta specificata.
+        If Not label.Text.Contains("|") Then
+            label.Text &= "|"
+        End If
+    End Sub
+
+    Private Sub btnClientiCommesse_Click(sender As Object, e As EventArgs) Handles btnClientiCommesse.Click
+        Me.Visible = False
+
+        frmClienti.Show()
+        frmClienti.Visible = False
+        frmCommesse.Show()
+        frmCommesse.Visible = False
+
+        frmCommesse.Visible = True
+        frmClienti.Visible = True
     End Sub
 End Class

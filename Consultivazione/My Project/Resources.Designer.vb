@@ -63,6 +63,26 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property commesse_25x25_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("commesse_25x25_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property commesse_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("commesse_25x25_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property commesse_32x32_bianco() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("commesse_32x32_bianco", resourceCulture)
@@ -83,6 +103,26 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property documentazione_25x25_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("documentazione_25x25_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property documentazione_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("documentazione_25x25_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property documentazione_32x32_bianco() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("documentazione_32x32_bianco", resourceCulture)
@@ -96,6 +136,36 @@ Namespace My.Resources
         Friend ReadOnly Property documentazione_32x32_nero() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("documentazione_32x32_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property edit_16x16_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("edit_16x16_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property impostazioni_25x25_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("impostazioni_25x25_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property impostazioni_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("impostazioni_25x25_nero", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -183,6 +253,46 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property OreExtra() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("OreExtra", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property OreLavorate() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("OreLavorate", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property pennello_25x25_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("pennello_25x25_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property pennello_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("pennello_25x25_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property pennello_32x32_bianco() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("pennello_32x32_bianco", resourceCulture)
@@ -203,6 +313,76 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property report_25x25_binaco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("report_25x25_binaco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property report_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("report_25x25_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property report_32x32_binaco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("report_32x32_binaco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property report_32x32_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("report_32x32_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property ticket() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("ticket", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property ticket_25x25_bianco() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("ticket_25x25_bianco", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property ticket_25x25_nero() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("ticket_25x25_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property ticket_32x32_bianco() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("ticket_32x32_bianco", resourceCulture)
@@ -216,6 +396,16 @@ Namespace My.Resources
         Friend ReadOnly Property ticket_32x32_nero() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("ticket_32x32_nero", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property user() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("user", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

@@ -1,15 +1,27 @@
 ﻿Imports System.Data.OleDb
 Imports System.IO
+Imports System.Runtime.InteropServices
 Public Class frmCommesse
     ReadOnly strConn As String = frmConsuntivazione.strConn
     ReadOnly logCommesseClienti As String = frmConsuntivazione.logCommesseClienti
     Dim dataOraLog As String = ""
+    <DllImport("Gdi32.dll", EntryPoint:="CreateRoundRectRgn")>
+    Private Shared Function CreateRoundRectRgn(ByVal iLeft As Integer, ByVal iTop As Integer, ByVal iRight As Integer, ByVal iBottom As Integer, ByVal iWidth As Integer, ByVal iHeight As Integer) As IntPtr
+    End Function
     Private Sub frmCommesse_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim imageColumn As New DataGridViewImageColumn()
+        dgvCommesse.Columns.Add(imageColumn)
+
         dgvCommesse.RowCount = 2
         dgvCommesse.ColumnCount = 9
         dgvCommesse.Rows(0).Visible = False
-        dgvCommesse.Columns(0).Visible = False
         dgvCommesse.Columns(8).Visible = False
+
+        dgvCommesse.Columns(0).HeaderText() = ""
+        dgvCommesse.Columns(0).SortMode = DataGridViewColumnSortMode.NotSortable
+        dgvCommesse.Columns(0).Width = 30
+        dgvCommesse.Columns(0).Resizable = DataGridViewTriState.False
+
         dgvCommesse.Columns(1).HeaderText() = "CLIENTE"
         dgvCommesse.Columns(2).HeaderText() = "NOTA"
         dgvCommesse.Columns(3).HeaderText() = "COD.CLIENTE"
@@ -20,7 +32,35 @@ Public Class frmCommesse
         dgvCommesse.Columns(8).HeaderText() = "ID"
         aggiornaDG()
         impostaConfig()
+        impostaLocation()
+        arrotondaBordi()
     End Sub
+    Sub arrotondaBordi()
+        Me.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Me.Width, Me.Height, 15, 15))
+    End Sub
+    Sub impostaLocation()
+        Dim locationY As Integer = frmConsuntivazione.Location.Y + 31
+        Dim locationX As Integer = frmConsuntivazione.Location.X + 8
+        locationY += (frmConsuntivazione.Height / 2) - Me.Height / 2 - 10
+        locationX += (frmConsuntivazione.Width / 2) + (frmClienti.Width / 2) - (Me.Width / 2) + 5
+
+        Me.Location = New Point(locationX, locationY)
+    End Sub
+    Sub impostaSfondoNero()
+        frmSfondoNero.BringToFront()
+        Me.BringToFront()
+    End Sub
+    Function controllaFormAttivo()
+        Dim formAttivo As Boolean = False
+        For Each control As Control In Me.Controls
+            If control.ContainsFocus Then
+                formAttivo = True
+                Exit For
+            End If
+        Next
+        Return formAttivo
+    End Function
+
     ReadOnly fileConfig As String = frmConsuntivazione.fileConfig
     Sub impostaConfig()
         Dim sr As New StreamReader(fileConfig)
@@ -38,13 +78,6 @@ Public Class frmCommesse
             If selezionaModifica = "ItemColor" Then
                 If appoggio.Contains("Form_BackColor") Then
                     Me.BackColor = ColorTranslator.FromHtml(value)
-
-                ElseIf appoggio.Contains("From_ForeColor") Then
-                    lblCliente.ForeColor = ColorTranslator.FromHtml(value)
-
-                    ckbVuota.ForeColor = ColorTranslator.FromHtml(value)
-                    ckbFixed.ForeColor = ColorTranslator.FromHtml(value)
-                    ckbFormazione.ForeColor = ColorTranslator.FromHtml(value)
                 End If
             End If
             appoggio = sr.ReadLine()
@@ -87,6 +120,7 @@ Public Class frmCommesse
         dgvCommesse.RowCount = 1
         dgvCommesse.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
+            dgvCommesse.Rows(i + 1).Cells(0).Value = Consuntivazione.My.Resources.Resources.edit_16x16_nero
             dgvCommesse.Rows(i + 1).Cells(1).Value = tabella.Rows(i).Item("Cliente").ToString
             dgvCommesse.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("Nota").ToString
             dgvCommesse.Rows(i + 1).Cells(3).Value = vetCodCliente(i)
@@ -97,7 +131,7 @@ Public Class frmCommesse
             dgvCommesse.Rows(i + 1).Cells(8).Value = tabella.Rows(i).Item("ID").ToString
         Next
     End Sub
-    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
         If e.KeyChar = "'" Then
             e.KeyChar = ""
             Exit Sub
@@ -136,9 +170,9 @@ Public Class frmCommesse
         End Using
 
         cn = New OleDbConnection(strConn)
-            cn.Open()
-            str = "UPDATE LinkGR SET Link = '" & link & "' WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
-            cmd = New OleDbCommand(str, cn)
+        cn.Open()
+        str = "UPDATE LinkGR SET Link = '" & link & "' WHERE ID = " & dgvCommesse.Rows(r).Cells(8).Value
+        cmd = New OleDbCommand(str, cn)
         Try
             str = cmd.ExecuteNonQuery
         Catch ex As Exception
@@ -166,7 +200,7 @@ Public Class frmCommesse
             Try
                 str = cmd.ExecuteNonQuery
             Catch ex As Exception
-            logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
+                logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine scrittura log Commesse - KO")
                 logFile.Close()
                 MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
@@ -201,7 +235,7 @@ Public Class frmCommesse
                 End If
             ElseIf e.ColumnIndex = 1 Or e.ColumnIndex = 2 Then
                 frmConsuntivazione.tabellaCondivisa = "LinkGR"
-                frmConsuntivazione.colonnaCondivisa = dgvCommesse.Columns(e.ColumnIndex).HeaderText
+                'frmConsuntivazione.colonnaCondivisa = dgvCommesse.Columns(e.ColumnIndex).HeaderText
                 frmConsuntivazione.idCondiviso = dgvCommesse.Rows(e.RowIndex).Cells(8).Value
                 frmConsuntivazione.rigaCondivisa = e.RowIndex
                 frmModifica.ShowDialog()
@@ -233,49 +267,21 @@ Public Class frmCommesse
         End If
     End Sub
 
-    Private Sub btnCerca_Click(sender As Object, e As EventArgs) Handles btnCerca.Click
-        Dim cliente As String = cmbCliente.Text
-        Dim vuota As Boolean = ckbVuota.Checked
-        Dim fixed As Boolean = ckbFixed.Checked
-        Dim formazione As Boolean = ckbFormazione.Checked
+    Private Sub Cerca(sender As Object, e As EventArgs)
+        Dim cliente As String = "" 'cmbCliente.Text
 
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
         Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
-        Dim str As String = ""
+        Dim str As String
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        If cliente = "" And ((vuota = True And fixed = True And formazione = True) Or (vuota = False And fixed = False And formazione = False)) Then
+        If cliente = "" Then
             str = "SELECT * FROM LinkGR ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And ((vuota = True And fixed = True And formazione = True) Or (vuota = False And fixed = False And formazione = False)) Then
+        Else
             str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = True And fixed = False And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Nota IS NULL ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = True And fixed = True And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Nota IS NULL OR Nota = 'Fixed' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = True And fixed = False And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Nota IS NULL OR Nota = 'Formazione' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = False And fixed = True And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Nota = 'Fixed' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = False And fixed = True And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Nota = 'Formazione' OR Nota = 'Fixed' ORDER BY Cliente, Nota"
-        ElseIf cliente = "" And vuota = False And fixed = False And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Nota = 'Formazione' ORDER BY Cliente, Nota"
-
-        ElseIf cliente <> "" And vuota = True And fixed = False And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota IS NULL ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = True And fixed = True And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND (Nota IS NULL OR Nota = 'Fixed') ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = True And fixed = False And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND (Nota IS NULL OR Nota = 'Formazione') ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = False And fixed = True And formazione = False Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota = 'Fixed' ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = False And fixed = True And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND (Nota = 'Formazione' OR Nota = 'Fixed') ORDER BY Cliente, Nota"
-        ElseIf cliente <> "" And vuota = False And fixed = False And formazione = True Then
-            str = "SELECT * FROM LinkGR WHERE Cliente = '" & cliente & "' AND Nota = 'Formazione' ORDER BY Cliente, Nota"
         End If
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
@@ -313,10 +319,24 @@ Public Class frmCommesse
             dgvCommesse.Rows(i + 1).Cells(8).Value = tabella.Rows(i).Item("ID").ToString
         Next
     End Sub
+    Private Async Sub txtCommesseHidden_LostFocus(sender As Object, e As EventArgs) Handles txtCommesseHidden.LostFocus, dgvCommesse.LostFocus, Me.LostFocus
+        If Not Me.Visible Or Not frmClienti.Visible Then
+            Exit Sub
+        End If
 
-    Private Sub cmbCliente_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliente.KeyDown
-        If e.KeyCode = Keys.Enter Then
-            btnCerca_Click(sender, e)
+        Dim frmClientiAttivo As Boolean = frmClienti.controllaFormAttivo()
+        Dim frmCommesseAttivo As Boolean = controllaFormAttivo()
+        frmClienti.sfondoNeroClick = False
+
+        Await Task.Delay(1)
+        If Not frmClientiAttivo And Not frmCommesseAttivo Then
+            If Not frmInserisciCliente.Visible Then
+                Me.Close()
+                frmClienti.Close()
+                If Not frmClienti.sfondoNeroClick Then
+                    frmInserisciCliente.Close()
+                End If
+            End If
         End If
     End Sub
 End Class

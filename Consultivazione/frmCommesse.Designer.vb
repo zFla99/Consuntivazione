@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmCommesse
     Inherits System.Windows.Forms.Form
 
     'Form esegue l'override del metodo Dispose per pulire l'elenco dei componenti.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,17 +20,15 @@ Partial Class frmCommesse
     'NOTA: la procedura che segue è richiesta da Progettazione Windows Form
     'Può essere modificata in Progettazione Windows Form.  
     'Non modificarla mediante l'editor del codice.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmCommesse))
         Me.dgvCommesse = New System.Windows.Forms.DataGridView()
-        Me.lblCliente = New System.Windows.Forms.Label()
-        Me.cmbCliente = New System.Windows.Forms.ComboBox()
-        Me.ckbVuota = New System.Windows.Forms.CheckBox()
-        Me.ckbFixed = New System.Windows.Forms.CheckBox()
-        Me.ckbFormazione = New System.Windows.Forms.CheckBox()
-        Me.btnCerca = New System.Windows.Forms.Button()
+        Me.txtCommesseHidden = New System.Windows.Forms.TextBox()
         CType(Me.dgvCommesse, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -38,117 +36,66 @@ Partial Class frmCommesse
         '
         Me.dgvCommesse.AllowUserToAddRows = False
         Me.dgvCommesse.AllowUserToDeleteRows = False
-        Me.dgvCommesse.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.dgvCommesse.AllowUserToResizeRows = False
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
+        Me.dgvCommesse.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.dgvCommesse.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-        Me.dgvCommesse.BackgroundColor = System.Drawing.SystemColors.Control
+        Me.dgvCommesse.BackgroundColor = System.Drawing.SystemColors.Window
+        Me.dgvCommesse.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvCommesse.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
+        Me.dgvCommesse.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.Color.WhiteSmoke
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvCommesse.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
+        Me.dgvCommesse.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.dgvCommesse.Cursor = System.Windows.Forms.Cursors.Hand
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvCommesse.DefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
+        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.ControlLight
+        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCommesse.DefaultCellStyle = DataGridViewCellStyle3
+        Me.dgvCommesse.EnableHeadersVisualStyles = False
         Me.dgvCommesse.Location = New System.Drawing.Point(12, 12)
         Me.dgvCommesse.Name = "dgvCommesse"
         Me.dgvCommesse.ReadOnly = True
-        Me.dgvCommesse.Size = New System.Drawing.Size(749, 236)
+        Me.dgvCommesse.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.[Single]
+        Me.dgvCommesse.RowHeadersVisible = False
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI Historic", 9.0!)
+        Me.dgvCommesse.RowsDefaultCellStyle = DataGridViewCellStyle4
+        Me.dgvCommesse.RowTemplate.Height = 28
+        Me.dgvCommesse.Size = New System.Drawing.Size(765, 276)
         Me.dgvCommesse.TabIndex = 19
         '
-        'lblCliente
+        'txtCommesseHidden
         '
-        Me.lblCliente.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.lblCliente.AutoSize = True
-        Me.lblCliente.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCliente.ForeColor = System.Drawing.Color.Black
-        Me.lblCliente.Location = New System.Drawing.Point(53, 280)
-        Me.lblCliente.Name = "lblCliente"
-        Me.lblCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCliente.Size = New System.Drawing.Size(59, 20)
-        Me.lblCliente.TabIndex = 21
-        Me.lblCliente.Text = "Cliente"
-        '
-        'cmbCliente
-        '
-        Me.cmbCliente.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.cmbCliente.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
-        Me.cmbCliente.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-        Me.cmbCliente.Font = New System.Drawing.Font("Microsoft YaHei UI", 9.0!)
-        Me.cmbCliente.Location = New System.Drawing.Point(118, 277)
-        Me.cmbCliente.MaxLength = 30
-        Me.cmbCliente.Name = "cmbCliente"
-        Me.cmbCliente.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmbCliente.Size = New System.Drawing.Size(110, 25)
-        Me.cmbCliente.TabIndex = 1
-        '
-        'ckbVuota
-        '
-        Me.ckbVuota.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.ckbVuota.AutoSize = True
-        Me.ckbVuota.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.ckbVuota.Location = New System.Drawing.Point(301, 282)
-        Me.ckbVuota.Name = "ckbVuota"
-        Me.ckbVuota.Size = New System.Drawing.Size(59, 20)
-        Me.ckbVuota.TabIndex = 3
-        Me.ckbVuota.Text = "Vuota"
-        Me.ckbVuota.UseVisualStyleBackColor = True
-        '
-        'ckbFixed
-        '
-        Me.ckbFixed.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.ckbFixed.AutoSize = True
-        Me.ckbFixed.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.ckbFixed.Location = New System.Drawing.Point(366, 282)
-        Me.ckbFixed.Name = "ckbFixed"
-        Me.ckbFixed.Size = New System.Drawing.Size(54, 20)
-        Me.ckbFixed.TabIndex = 3
-        Me.ckbFixed.Text = "Fixed"
-        Me.ckbFixed.UseVisualStyleBackColor = True
-        '
-        'ckbFormazione
-        '
-        Me.ckbFormazione.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.ckbFormazione.AutoSize = True
-        Me.ckbFormazione.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 9.0!)
-        Me.ckbFormazione.Location = New System.Drawing.Point(426, 282)
-        Me.ckbFormazione.Name = "ckbFormazione"
-        Me.ckbFormazione.Size = New System.Drawing.Size(89, 20)
-        Me.ckbFormazione.TabIndex = 3
-        Me.ckbFormazione.Text = "Formazione"
-        Me.ckbFormazione.UseVisualStyleBackColor = True
-        '
-        'btnCerca
-        '
-        Me.btnCerca.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-        Me.btnCerca.Font = New System.Drawing.Font("Segoe UI Variable Display Semib", 12.0!)
-        Me.btnCerca.Location = New System.Drawing.Point(581, 269)
-        Me.btnCerca.Name = "btnCerca"
-        Me.btnCerca.Size = New System.Drawing.Size(107, 40)
-        Me.btnCerca.TabIndex = 2
-        Me.btnCerca.Text = "Cerca"
-        Me.btnCerca.UseVisualStyleBackColor = True
+        Me.txtCommesseHidden.Location = New System.Drawing.Point(338, 146)
+        Me.txtCommesseHidden.Name = "txtCommesseHidden"
+        Me.txtCommesseHidden.Size = New System.Drawing.Size(100, 20)
+        Me.txtCommesseHidden.TabIndex = 20
+        Me.txtCommesseHidden.Visible = False
         '
         'frmCommesse
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(773, 340)
-        Me.Controls.Add(Me.btnCerca)
-        Me.Controls.Add(Me.ckbFormazione)
-        Me.Controls.Add(Me.ckbFixed)
-        Me.Controls.Add(Me.ckbVuota)
-        Me.Controls.Add(Me.lblCliente)
-        Me.Controls.Add(Me.cmbCliente)
+        Me.ClientSize = New System.Drawing.Size(789, 300)
         Me.Controls.Add(Me.dgvCommesse)
+        Me.Controls.Add(Me.txtCommesseHidden)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.MaximumSize = New System.Drawing.Size(789, 379)
-        Me.MinimumSize = New System.Drawing.Size(789, 379)
         Me.Name = "frmCommesse"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Commesse"
+        Me.TopMost = True
         CType(Me.dgvCommesse, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -156,10 +103,5 @@ Partial Class frmCommesse
     End Sub
 
     Friend WithEvents dgvCommesse As DataGridView
-    Friend WithEvents lblCliente As Label
-    Friend WithEvents cmbCliente As ComboBox
-    Friend WithEvents ckbVuota As CheckBox
-    Friend WithEvents ckbFixed As CheckBox
-    Friend WithEvents ckbFormazione As CheckBox
-    Friend WithEvents btnCerca As Button
+    Friend WithEvents txtCommesseHidden As TextBox
 End Class

@@ -5,6 +5,14 @@ Imports System.Xml
 Imports System.Runtime.InteropServices
 
 Public Class frmConsuntivazione
+    <DllImport("Gdi32.dll", EntryPoint:="CreateRoundRectRgn")>
+    Private Shared Function CreateRoundRectRgn(ByVal iLeft As Integer, ByVal iTop As Integer, ByVal iRight As Integer, ByVal iBottom As Integer, ByVal iWidth As Integer, ByVal iHeight As Integer) As IntPtr
+    End Function
+    Private Sub disabilitaFreccie(sender As Object, e As KeyEventArgs) Handles txtTicket.KeyDown, cmbCliente.KeyDown, cmbTempo.KeyDown, cmbNota.KeyDown, txtTicketFiltro.KeyDown, cmbClienteFiltro.KeyDown, txtConsuntivazioneFiltro.KeyDown, cmbNotaFiltro.KeyDown, txtAnno.KeyDown, txtMese.KeyDown
+        If e.KeyCode = Keys.Left OrElse e.KeyCode = Keys.Right OrElse e.KeyCode = Keys.Up OrElse e.KeyCode = Keys.Down Then
+            e.Handled = True
+        End If
+    End Sub
     ReadOnly giornoOggi As String = Now.ToShortDateString
     Public strConn As String
     Public fileConfig As String
@@ -21,7 +29,7 @@ Public Class frmConsuntivazione
     Public logInsMassivComm As String
 
     Public dataOraLog As String = ""
-    Dim updatePath As String = Application.ExecutablePath.Replace("Consuntivazione.exe", "CheckUpdates.exe")
+    ReadOnly updatePath As String = Application.ExecutablePath.Replace("Consuntivazione.exe", "CheckUpdates.exe")
 
     Public Sub Consuntivazione_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         modDebug = Application.StartupPath.EndsWith("Debug")
@@ -57,17 +65,29 @@ Public Class frmConsuntivazione
             End If
         End If
 
+        Call arrotondaBordi()
+
         caricaClientiTempo()
         DataGrid()
-        dgvCalendario.ClearSelection()
-        txtTicket.Focus()
-        lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
+        inizializzaCampi()
+        caricaLabels()
 
         Using logFile As New System.IO.StreamWriter(logLoad, True)
             logFile.WriteLine(dataOraLog + "Fine scrittura log Consuntivazione Load - OK")
         End Using
     End Sub
-
+    Sub inizializzaCampi()
+        lblData.Text = StrConv(dtpData.Value.ToString("dd MMM, yyyy"), VbStrConv.ProperCase)
+        dgvCalendario.ClearSelection()
+        txtTicket.Focus()
+        lblTicketMassivi.BackColor = lblSfondoColorato.BackColor
+        txtMese.Mask = "99"
+        txtMese.ValidatingType = GetType(System.Int32)
+        txtAnno.Mask = "9999"
+        txtAnno.ValidatingType = GetType(System.Int32)
+        txtConsuntivazioneFiltro.Mask = "LL"
+        txtConsuntivazioneFiltro.ValidatingType = GetType(System.String)
+    End Sub
     Sub inizializzazioneLogPath()
         If modDebug Then
             logPath = Application.StartupPath.Replace("\bin\Debug", "\Log")
@@ -267,9 +287,10 @@ Cambialo!", MsgBoxStyle.Critical)
 
                     If appoggio.Contains("InserisciMenu_BackColor") Then
                         lblSfondoColorato.BackColor = ColorTranslator.FromHtml(value)
-                        lblSlide.BackColor = ColorTranslator.FromHtml(value)
+                        'lblSlide.BackColor = ColorTranslator.FromHtml(value)
                         pnlInserisci.BackColor = ColorTranslator.FromHtml(value)
                         pnlMenu.BackColor = ColorTranslator.FromHtml(value)
+                        lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
 
                         logFile.WriteLine(dataOraLog + "Impostati colori [InserisciMenu_BackColor]")
                     ElseIf appoggio.Contains("InserisciMenu_ForeColor") Then
@@ -281,7 +302,7 @@ Cambialo!", MsgBoxStyle.Critical)
                         lblNota.ForeColor = ColorTranslator.FromHtml(value)
                         ckbHome.ForeColor = ColorTranslator.FromHtml(value)
 
-                        lblTicketMssivi.ForeColor = ColorTranslator.FromHtml(value)
+                        lblTicketMassivi.ForeColor = ColorTranslator.FromHtml(value)
                         lblCommesseMassive.ForeColor = ColorTranslator.FromHtml(value)
                         lblSeparatore.ForeColor = ColorTranslator.FromHtml(value)
                         lblTema.ForeColor = ColorTranslator.FromHtml(value)
@@ -292,25 +313,30 @@ Cambialo!", MsgBoxStyle.Critical)
                     ElseIf appoggio.Contains("Form_BackColor") Then
                         Me.BackColor = ColorTranslator.FromHtml(value)
 
-                        Dim red As Integer = ColorTranslator.FromHtml(value).R
-                        Dim green As Integer = ColorTranslator.FromHtml(value).G
-                        Dim blu As Integer = ColorTranslator.FromHtml(value).B
+                        'Dim red As Integer = ColorTranslator.FromHtml(value).R
+                        'Dim green As Integer = ColorTranslator.FromHtml(value).G
+                        'Dim blu As Integer = ColorTranslator.FromHtml(value).B
 
-                        Call colorHover(red, green, blu)
-                        pnlFiltri.BackColor = Color.FromArgb(red, green, blu)
+                        'Call colorHover(red, green, blu)
+                        'pnlFiltri.BackColor = Color.FromArgb(red, green, blu)
+                        pnlFiltri.BackColor = ColorTranslator.FromHtml(value)
+                        lblFiltriSelezionati.BackColor = ColorTranslator.FromHtml(value)
+
+                        btnDividiXCliente.BackColor = ColorTranslator.FromHtml(value)
+                        btnConsuntivaTutto.BackColor = ColorTranslator.FromHtml(value)
 
                         Dim t As Double = ColorTranslator.FromHtml(value).GetBrightness
                         If t <= 0.41 Then
                             lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_bianco
+                            lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
                         Else
                             lblFiltri.Image = Consuntivazione.My.Resources.Resources.menuChiuso_16x16_nero
+                            lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
                         End If
 
                         logFile.WriteLine(dataOraLog + "Impostati colori [Form_BackColor]")
                     ElseIf appoggio.Contains("From_ForeColor") Then
                         lblFiltriSelezionati.ForeColor = ColorTranslator.FromHtml(value)
-                        lblGiorno_Mese.ForeColor = ColorTranslator.FromHtml(value)
-                        lblTempoTot.ForeColor = ColorTranslator.FromHtml(value)
 
                         lblTicketFiltro.ForeColor = ColorTranslator.FromHtml(value)
                         lblClienteFiltro.ForeColor = ColorTranslator.FromHtml(value)
@@ -327,19 +353,21 @@ Cambialo!", MsgBoxStyle.Critical)
                 If selezionaModifica = "IconColor" Then
                     If appoggio.Contains("IconsColor") Then
                         If appoggio.Contains("white") Then
-                            imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_bianco
-                            imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_bianco
-                            imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_bianco
-                            imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_bianco
-                            imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_bianco
+                            lblCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_25x25_bianco
+                            lblDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_25x25_bianco
+                            lblTema.Image = Consuntivazione.My.Resources.Resources.pennello_25x25_bianco
+                            lblTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_25x25_bianco
+                            lblImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_25x25_bianco
+                            lblReport.Image = Consuntivazione.My.Resources.Resources.report_25x25_binaco
                             lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
                             coloreIcone = "white"
                         Else
-                            imgCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_32x32_nero
-                            imgDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_32x32_nero
-                            imgTema.Image = Consuntivazione.My.Resources.Resources.pennello_32x32_nero
-                            imgTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_32x32_nero
-                            imgImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_32x32_nero
+                            lblCommesseMassive.Image = Consuntivazione.My.Resources.Resources.commesse_25x25_nero
+                            lblDocumentazione.Image = Consuntivazione.My.Resources.Resources.documentazione_25x25_nero
+                            lblTema.Image = Consuntivazione.My.Resources.Resources.pennello_25x25_nero
+                            lblTicketMassivi.Image = Consuntivazione.My.Resources.Resources.ticket_25x25_nero
+                            lblImpostazioni.Image = Consuntivazione.My.Resources.Resources.impostazioni_25x25_nero
+                            lblReport.Image = Consuntivazione.My.Resources.Resources.report_25x25_nero
                             lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
                             coloreIcone = "black"
                         End If
@@ -364,25 +392,49 @@ Cambialo!", MsgBoxStyle.Critical)
             logFile.WriteLine(dataOraLog + "Fine impostazione config - OK")
         End Using
     End Sub
-    Private Sub Consuntivazione_Resize(sender As Object, e As EventArgs) Handles Me.Resize
-        frmSfondoNero.Location = New Point(Me.Location.X + 206, Me.Location.Y + 31)
-        If Me.Width > Me.MinimumSize.Width Then
-            frmSfondoNero.Size = New Size(Me.Width - 214, Me.Height - 39)
-        Else
-            frmSfondoNero.Size = New Size(Me.Width - 216, Me.Height - 39)
-        End If
+    Sub arrotondaBordi()
+        btnCarica.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCarica.Width, btnCarica.Height, 5, 5))
+        lblBordoCarica.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblBordoCarica.Width, lblBordoCarica.Height, 5, 5))
+
+        lblSfondoColorato.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblSfondoColorato.Width, lblSfondoColorato.Height, 15, 15))
+        pnlClientiSeguiti.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, pnlClientiSeguiti.Width, pnlClientiSeguiti.Height, 15, 15))
+        pnlTicketFatti.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, pnlTicketFatti.Width, pnlTicketFatti.Height, 15, 15))
+        pnlOreLavorate.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, pnlOreLavorate.Width, pnlOreLavorate.Height, 15, 15))
+        pnlDataGrid.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, pnlDataGrid.Width, pnlDataGrid.Height, 15, 15))
+
+        lblFiltriSelezionati.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, lblFiltriSelezionati.Width, lblFiltriSelezionati.Height, 5, 5))
+        pnlFiltri.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, pnlFiltri.Width, pnlFiltri.Height, 10, 10))
+
+        btnDividiXCliente.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnDividiXCliente.Width, btnDividiXCliente.Height, 5, 5))
+
+        btnConsuntivaTutto.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, btnConsuntivaTutto.Width, btnConsuntivaTutto.Height, 5, 5))
     End Sub
-    Private Sub frmConsuntivazione_Move(sender As Object, e As EventArgs) Handles Me.Move
-        frmSfondoNero.Location = New Point(Me.Location.X + 206, Me.Location.Y + 31)
-        If Me.Width > Me.MinimumSize.Width Then
-            frmSfondoNero.Size = New Size(Me.Width - 214, Me.Height - 39)
-        Else
-            frmSfondoNero.Size = New Size(Me.Width - 216, Me.Height - 39)
+    Private Sub frmConsuntivazione_Move(sender As Object, e As EventArgs) Handles Me.Move, Me.Resize
+        frmSfondoNero.Location = New Point(Me.Location.X + 208, Me.Location.Y + 31)
+        frmSfondoNero.Size = New Size(Me.Width - 216, Me.Height - 39)
+
+        FlowLayoutPanel1.Height = pnlMenu.Height - 205
+
+        pnlClientiSeguiti.Width = (pnlDataGrid.Width - 12) / 3
+        pnlTicketFatti.Width = (pnlDataGrid.Width - 12) / 3
+        pnlOreLavorate.Width = (pnlDataGrid.Width - 12) / 3
+        pnlTicketFatti.Left = pnlClientiSeguiti.Left + pnlClientiSeguiti.Width + 6
+        pnlOreLavorate.Left = pnlTicketFatti.Left + pnlTicketFatti.Width + 6
+
+        If lblFiltriSelezionati.Visible() Then
+            impostaLunghezzaFiltriSelezionati()
         End If
+        arrotondaBordi()
     End Sub
     Private Sub frmConsuntivazione_Deactivate(sender As Object, e As EventArgs) Handles Me.Deactivate
         If pnlMenu.Width = 200 Then
             lblSlide_Click(sender, e)
+        End If
+        If Application.OpenForms().OfType(Of Form)().Any(Function(frm) String.Compare(frm.Name, "frmModifica", True) = 0) Then
+            frmModifica.Close()
+        End If
+        If Application.OpenForms().OfType(Of Form)().Any(Function(frm) String.Compare(frm.Name, "frmInserisciCliente", True) = 0) Then
+            frmInserisciCliente.Close()
         End If
     End Sub
     Private Sub Consuntivazione_Click(sender As Object, e As EventArgs) Handles Me.Click
@@ -392,6 +444,7 @@ Cambialo!", MsgBoxStyle.Critical)
             lblFiltri_Click(sender, e)
         End If
     End Sub
+
     Private Sub pnlMensile_Click(sender As Object, e As EventArgs) Handles pnlMensile.Click
         dgvCalendario.ClearSelection()
         txtTicket.Focus()
@@ -436,12 +489,10 @@ Cambialo!", MsgBoxStyle.Critical)
             cmbCliente.Items.Clear()
             cmbClienteFiltro.Items.Clear()
             frmModifica.cmbCliente.Items.Clear()
-            frmCommesse.cmbCliente.Items.Clear()
             For i = 0 To tabella.Rows.Count - 1
                 cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
                 cmbClienteFiltro.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
                 frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
-                frmCommesse.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             Next
 
             'Tempo
@@ -473,7 +524,7 @@ Cambialo!", MsgBoxStyle.Critical)
             e.Handled = True
         End If
     End Sub
-    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress, cmbClienteFiltro.KeyPress, cmbConsuntivazioneFiltro.KeyPress, cmbNotaFiltro.KeyPress
+    Private Sub cmbCliente_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles cmbCliente.KeyPress, cmbClienteFiltro.KeyPress, cmbNotaFiltro.KeyPress
         If e.KeyChar = "'" Or e.KeyChar = "," Then
             e.KeyChar = ""
             Exit Sub
@@ -492,28 +543,111 @@ Cambialo!", MsgBoxStyle.Critical)
             Exit Sub
         End If
     End Sub
+    Private thread1 As Threading.Thread
+    Private thread2 As Threading.Thread
+    Private Sub btnCarica_MouseEnter(sender As Object, e As EventArgs) Handles btnCarica.MouseEnter
+        Dim formColor As Color = Me.BackColor
+        Dim btnVerde As Color = Color.FromArgb(29, 174, 169)
+        Dim velocita As Integer = 5
+        Dim sleep As Integer = 20
+
+        Dim stepBackR As Double
+        If btnVerde.R > formColor.R Then
+            stepBackR = (btnVerde.R - formColor.R) / velocita
+        Else
+            stepBackR = ((formColor.R - btnVerde.R) / velocita) * -1
+        End If
+
+        Dim stepBackG As Double
+        If btnVerde.G > formColor.G Then
+            stepBackG = (btnVerde.G - formColor.G) / velocita
+        Else
+            stepBackG = ((formColor.G - btnVerde.G) / velocita) * -1
+        End If
+
+        Dim stepBackB As Double
+        If btnVerde.B > formColor.B Then
+            stepBackB = (btnVerde.B - formColor.B) / velocita
+        Else
+            stepBackB = ((formColor.B - btnVerde.B) / velocita) * -1
+        End If
+
+        thread1 = New Threading.Thread(Sub()
+                                           Dim i, j, k As Double
+                                           i = formColor.R
+                                           j = formColor.G
+                                           k = formColor.B
+
+                                           For z = 1 To velocita
+                                               i += stepBackR
+                                               j += stepBackG
+                                               k += stepBackB
+
+                                               Me.Invoke(Sub()
+                                                             btnCarica.BackColor = Color.FromArgb(i, j, k)
+                                                             lblBordoCarica.BackColor = Color.FromArgb(i, j, k)
+                                                         End Sub)
+                                               Threading.Thread.Sleep(sleep)
+                                           Next
+                                       End Sub)
+
+        thread2 = New Threading.Thread(Sub()
+                                           Dim i As Double
+                                           For i = 0 To 1 Step 1 / velocita
+                                               Me.Invoke(Sub()
+                                                             If thread2 IsNot Nothing AndAlso thread2.IsAlive Then
+                                                                 btnCarica.ForeColor = Color.FromArgb(i * formColor.R, i * formColor.G, i * formColor.B)
+                                                             End If
+                                                         End Sub)
+                                               Threading.Thread.Sleep(sleep)
+                                           Next
+                                       End Sub)
+
+        thread1.Start()
+        thread2.Start()
+    End Sub
+
+
+    Private Sub btnCarica_MouseLeave(sender As Object, e As EventArgs) Handles btnCarica.MouseLeave
+        If thread1 IsNot Nothing AndAlso thread1.IsAlive Then
+            thread1.Abort()
+        End If
+
+        If thread2 IsNot Nothing AndAlso thread2.IsAlive Then
+            thread2.Abort()
+        End If
+
+        btnCarica.BackColor = Me.BackColor
+        lblBordoCarica.BackColor = Color.Silver
+        btnCarica.ForeColor = Color.Black
+    End Sub
+
 
     Dim notaExtra As String = ""
     Private Sub BtnCarica_Click(sender As Object, e As EventArgs) Handles btnCarica.Click
-
         If txtTicket.Text = "" Then
-            MsgBox("Inserisci un Ticket")
+            lblBordoTicket.BackColor = Color.Red
+            If cmbCliente.Text = "" Then
+                lblBordoCliente.BackColor = Color.Red
+            End If
+            If cmbTempo.Text = "" OrElse IsNumeric(cmbTempo.Text) = False Then
+                lblBordoTempo.BackColor = Color.Red
+            End If
             txtTicket.Focus()
             Exit Sub
-        End If
-        If cmbCliente.Text = "" Then
-            MsgBox("Inserisci un Cliente")
+        ElseIf cmbCliente.Text = "" Then
+            lblBordoCliente.BackColor = Color.Red
+            If cmbTempo.Text = "" OrElse IsNumeric(cmbTempo.Text) = False Then
+                lblBordoTempo.BackColor = Color.Red
+            End If
             cmbCliente.Focus()
             Exit Sub
-        End If
-        If cmbTempo.Text = "" Then
-            MsgBox("Inserisci un tempo di risoluzione")
+        ElseIf cmbTempo.Text = "" OrElse IsNumeric(cmbTempo.Text) = False Then
+            lblBordoTempo.BackColor = Color.Red
             cmbTempo.Focus()
             Exit Sub
-        ElseIf IsNumeric(cmbTempo.Text) = False Then
-            MsgBox("Inserisci un tempo di risoluzione valido")
-            Exit Sub
         End If
+
 
         ticket = txtTicket.Text.Replace("'", "").Trim.ToUpper
         If ticket.Contains("/") Then
@@ -523,31 +657,37 @@ Cambialo!", MsgBoxStyle.Critical)
         tempo = cmbTempo.Text.Replace(".", ",").Trim
         giorno = dtpData.Text
 
-        If tempo + CDbl(lblTempoTot.Text) > 8 Then
-            Dim tempo1 As Double = 8 - CDbl(lblTempoTot.Text)
-            Dim tempo2 As Double = tempo - tempo1
-            For i = 1 To dgvCalendario.Rows.Count - 1
-                Dim notaRiga As String = dgvCalendario.Rows(i).Cells(6).Value
-                If notaRiga.ToLower.Contains("extra") Then
-                    Dim indice As Integer = notaRiga.IndexOf("(") + 1
-                    notaRiga = notaRiga.Replace(")", "")
-                    tempo2 -= CDbl(notaRiga.Substring(indice, notaRiga.Length - indice))
-                End If
-            Next
-            notaExtra = "Extra(" & tempo2 & ")"
-        End If
+        'If tempo + CDbl(lblTempoTot.Text) > 8 Then
+        '    Dim tempo1 As Double = 8 - CDbl(lblTempoTot.Text)
+        '    Dim tempo2 As Double = tempo - tempo1
+        '    For i = 1 To dgvCalendario.Rows.Count - 1
+        '        Dim notaRiga As String = dgvCalendario.Rows(i).Cells(6).Value
+        '        If notaRiga.ToLower.Contains("extra") Then
+        '            Dim indice As Integer = notaRiga.IndexOf("(") + 1
+        '            notaRiga = notaRiga.Replace(")", "")
+        '            tempo2 -= CDbl(notaRiga.Substring(indice, notaRiga.Length - indice))
+        '        End If
+        '    Next
+        '    notaExtra = "Extra(" & tempo2 & ")"
+        'End If
 
         Call InserisciTicket()
         Call AggiornaDG(giorno, AggAutGiornoAttuale)
         Call PulisciCampi()
     End Sub
     Sub DataGrid()
+        Dim imageColumn As New DataGridViewImageColumn()
+        dgvCalendario.Columns.Add(imageColumn)
+
         dgvCalendario.RowCount = 2
         dgvCalendario.ColumnCount = 8
         dgvCalendario.Rows(0).Visible = False
-        dgvCalendario.Columns(0).Visible = False
         dgvCalendario.Columns(7).Visible = False
 
+        dgvCalendario.Columns(0).HeaderText() = ""
+        dgvCalendario.Columns(0).SortMode = DataGridViewColumnSortMode.NotSortable
+        dgvCalendario.Columns(0).Width = 30
+        dgvCalendario.Columns(0).Resizable = DataGridViewTriState.False
         dgvCalendario.Columns(1).HeaderText() = "TICKET"
         dgvCalendario.Columns(1).SortMode = DataGridViewColumnSortMode.NotSortable
         dgvCalendario.Columns(2).HeaderText() = "CLIENTE"
@@ -764,7 +904,13 @@ Cambialo!", MsgBoxStyle.Critical)
 
             logFile.WriteLine(dataOraLog + "Inserito [Ticket: " & ticket & "] - [Cliente: " & cliente & "] - [Tempo: " & tempo & "] - [Data: " & giorno & "] - [Nota: " & If(nota = "", "''", nota) & "]")
         End Using
-        Call modificaTutteNote(id)
+
+        'MODIFICA DI TUTTE LE NOTE IN HOME O NON RIMOSSO PER I MEZZI GIORNI
+        'Call modificaTutteNote(id)
+
+        Using logFile As New System.IO.StreamWriter(logTicket, True)
+            logFile.WriteLine(dataOraLog + "Fine inserimento ticket - OK")
+        End Using
     End Sub
 
 
@@ -875,7 +1021,7 @@ Cambialo!", MsgBoxStyle.Critical)
     End Sub
 
     Dim sommaExtra As Double = 0
-    Sub AggiornaDG(ByVal giorno As String, ByVal controllo As Boolean)
+    Sub AggiornaDG(giorno As String, controllo As Boolean)
         If controllo = True Then
             Call VisTemp()
             Exit Sub
@@ -890,10 +1036,11 @@ Cambialo!", MsgBoxStyle.Critical)
         Dim somma As Double
         Dim extra As Double = 0
         Dim dataGiorno As Date = giorno
+        Dim condizioneWhere As String = "WHERE DATA=#" & Format(dataGiorno, "MM/dd/yyyy") & "#"
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA=#" & Format(dataGiorno, "MM/dd/yyyy") & "# ORDER BY ID"
+        str = "SELECT * FROM Consuntivazione " & condizioneWhere & " ORDER BY ID"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -904,6 +1051,7 @@ Cambialo!", MsgBoxStyle.Critical)
         dgvCalendario.RowCount = 1
         dgvCalendario.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
+            dgvCalendario.Rows(i + 1).Cells(0).Value = Consuntivazione.My.Resources.Resources.edit_16x16_nero
             ticketLink.Value = tabella.Rows(i).Item("TICKET").ToString
             dgvCalendario.Rows(i + 1).Cells(1).Value = ticketLink.Value
             dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
@@ -921,9 +1069,34 @@ Cambialo!", MsgBoxStyle.Critical)
             End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
-        lblTempoTot.Text = somma
+        'lblTempoTot.Text = somma
+        aggiornaDati(condizioneWhere)
         sommaExtra = extra
         Call RedimDGV()
+    End Sub
+    Sub aggiornaDati(condizioneWhere As String)
+        Dim cn As OleDbConnection
+        Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
+        Dim tabella As New DataTable
+        Dim str As String
+
+        cn = New OleDbConnection(strConn)
+        cn.Open()
+        str = "SELECT COUNT(CLIENTE) As Num_Clienti,(SELECT COUNT(*) FROM Consuntivazione " & condizioneWhere & ") As Num_Ticket, IIf(SUM(TEMPO) IS NULL, 0, SUM(TEMPO)) As Ore_Lavorate FROM (SELECT CLIENTE, SUM(TEMPO_RISOLUZIONE) As TEMPO FROM Consuntivazione " & condizioneWhere & " GROUP BY CLIENTE)"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
+
+        Dim clientiSeguiti As Integer = tabella.Rows(0).Item("Num_Clienti").ToString
+        Dim ticketFatti As Integer = tabella.Rows(0).Item("Num_Ticket").ToString
+        Dim oreLavorate As Double = tabella.Rows(0).Item("Ore_Lavorate").ToString
+
+        lblNumClientiSeguiti.Text = clientiSeguiti
+        lblNumTicketFatti.Text = ticketFatti
+        lblOreLavorate.Text = oreLavorate
     End Sub
 
     Sub AggiornaConsuntivato(cliente As String, ticket As String, data As Date, consuntivato As String)
@@ -934,6 +1107,7 @@ Cambialo!", MsgBoxStyle.Critical)
 
         Dim cn As OleDbConnection
         Dim cmd As OleDbCommand
+        Dim da As OleDbDataAdapter
         Dim tabella As New DataTable
         Dim str As String
 
@@ -942,10 +1116,23 @@ Cambialo!", MsgBoxStyle.Critical)
         For i = 0 To numTicket - 1
             cn.Open()
             If ticketVet(i) = "Criticità" Then
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
+                str = "Select ID FROM Consuntivazione WHERE TICKET = '/' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
             Else
-                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
+                str = "SELECT ID FROM Consuntivazione WHERE TICKET = '" & ticketVet(i) & "' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
             End If
+            cmd = New OleDbCommand(str, cn)
+            da = New OleDbDataAdapter(cmd)
+            tabella.Clear()
+            da.Fill(tabella)
+
+            If ticketVet(i) = "Criticità" Then
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '/' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
+            ElseIf tabella.Rows.Count > 0 Then
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE TICKET = '" & ticketVet(i) & "' AND DATA = #" & Format(data, "MM/dd/yyyy") & "# AND CLIENTE = '" & cliente & "'"
+            Else
+                str = "UPDATE Consuntivazione SET CONSUNTIVATO = '" & consuntivato & "' WHERE CLIENTE = '" & ticketVet(i) & "' AND DATA = #" & Format(data, "MM/dd/yyyy") & "#"
+            End If
+
             cmd = New OleDbCommand(str, cn)
             Try
                 str = cmd.ExecuteNonQuery
@@ -965,7 +1152,12 @@ Cambialo!", MsgBoxStyle.Critical)
         cmbCliente.Text = ""
         cmbTempo.Text = ""
         cmbNota.Text = ""
+
         txtTicket.Focus()
+
+        lblBordoTicket.BackColor = SystemColors.Window
+        lblBordoCliente.BackColor = SystemColors.Window
+        lblBordoTempo.BackColor = SystemColors.Window
     End Sub
     Private Sub dtpData_ValueChanged(sender As Object, e As EventArgs) Handles dtpData.ValueChanged
         If aggiornaByData = False Then
@@ -974,8 +1166,15 @@ Cambialo!", MsgBoxStyle.Critical)
         If TimerVisualizzazione.Enabled Then
             Exit Sub
         End If
+        lblData.Text = StrConv(dtpData.Value.ToString("dd MMM, yyyy"), VbStrConv.ProperCase)
         giorno = dtpData.Text
         Call AggiornaDG(giorno, False)
+    End Sub
+    Private Sub dtpDataDaFiltro_ValueChanged(sender As Object, e As EventArgs) Handles dtpDataDaFiltro.ValueChanged
+        lblInsDataDaFiltro.Text = StrConv(dtpDataDaFiltro.Value.ToString("dd MMM, yyyy"), VbStrConv.ProperCase)
+    End Sub
+    Private Sub dtpDataAFiltro_ValueChanged(sender As Object, e As EventArgs) Handles dtpDataAFiltro.ValueChanged
+        lblInsDataAFiltro.Text = StrConv(dtpDataAFiltro.Value.ToString("dd MMM, yyyy"), VbStrConv.ProperCase)
     End Sub
 
     Dim resoconto As Boolean = False
@@ -986,6 +1185,7 @@ Cambialo!", MsgBoxStyle.Critical)
         End If
 
         If e.Button = MouseButtons.Left Then
+            consuntivaTutto = False
             clickSinistro(sender, e)
         ElseIf e.Button = MouseButtons.Right Then
             clickDestro(sender, e)
@@ -1021,7 +1221,7 @@ Cambialo!", MsgBoxStyle.Critical)
 
                 dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
                 Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
-                    If RDC > 0 Then
+                    If Not consuntivaTutto Then
                         logFile.WriteLine(dataOraLog + "--------------------------")
                         logFile.WriteLine(dataOraLog + "Inizio consuntivazione ticket:")
                         logFile.WriteLine(dataOraLog + "Ticket da consuntivare: 1")
@@ -1103,7 +1303,7 @@ Cambialo!", MsgBoxStyle.Critical)
 
                     Call AggiornaConsuntivato(cliente, ticket, data, consuntivato)
                     dgvCalendario.Rows(e.RowIndex).Cells(5).Value = consuntivato
-                    If RDC > 0 Then
+                    If consuntivaTutto Then
                         logFile.WriteLine("Consuntivato [Ticket: " & ticket.Replace("%2C", ",") & "] - [Cliente: " & cliente & "] - [Tempo: " & If(IsNumeric(tempo), tempo, "0") & "] - TempoExtra: [" & If(IsNumeric(tempoExtra), tempoExtra, "0") & "] - [Data: " & data & "] - [Nota: " & If(nota = "", "''", nota) & "] - [Luogo: " & home & "]")
                     Else
                         logFile.WriteLine(dataOraLog & "1/1 - Consuntivato [Ticket: " & ticket.Replace("%2C", ",") & "] - [Cliente: " & cliente & "] - [Tempo: " & If(IsNumeric(tempo), tempo, "0") & "] - TempoExtra: [" & If(IsNumeric(tempoExtra), tempoExtra, "0") & "] - [Data: " & data & "] - [Nota: " & If(nota = "", "''", nota) & "] - [Luogo: " & home & "]")
@@ -1124,11 +1324,13 @@ Cambialo!", MsgBoxStyle.Critical)
 
     Dim vetRConsuntivare() As Integer
     Dim RDC As Integer = 0
+    Dim consuntivaTutto As Boolean = False
     Private Async Sub BtnConsuntivaTutto_Click(sender As Object, e As EventArgs) Handles btnConsuntivaTutto.Click
         If MsgBox("Sei sicuro di voler consuntivare TUTTE le righe?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
             Exit Sub
         End If
 
+        consuntivaTutto = True
         dataOraLog = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - "
         Using logFile As New System.IO.StreamWriter(logConsuntivaTutto, True)
             logFile.WriteLine(dataOraLog + "--------------------------")
@@ -1211,7 +1413,7 @@ Cambialo!", MsgBoxStyle.Critical)
             Else
                 Exit Sub
             End If
-            If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Dettaglio)" Then
+            If lblGiorno_Mese.Text.Trim = "Espandi " & vbCrLf & "Visualizzazione" Then
                 Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
             Else
                 Call AggiornaDG(giorno, AggAutGiornoAttuale)
@@ -1230,7 +1432,7 @@ Cambialo!", MsgBoxStyle.Critical)
             Else
                 Exit Sub
             End If
-        ElseIf lblFiltriSelezionati.Visible = True And dgvCalendario.Columns(e.ColumnIndex).HeaderText() = "TEMPO" Then
+        ElseIf lblFiltriSelezionati.Visible = True And e.ColumnIndex = 0 Then
             If MsgBox("Qui non puoi modificare. Vuoi essere reindirizzato al giorno?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                 lblGiorno_Mese_Click(sender, e)
                 dtpData.Text = giorno
@@ -1241,89 +1443,34 @@ Cambialo!", MsgBoxStyle.Critical)
             End If
         End If
 
-        Dim colonna As String = dgvCalendario.Columns(c).HeaderText
-        If colonna = "TICKET" Then
-            If MsgBox("Vuoi sostituire il valore di questa cella?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
+        If c = 0 Then
+            id = dgvCalendario.Rows(r).Cells(7).Value
+            giorno = dgvCalendario.Rows(r).Cells(4).Value
+            Call ModificaRiga(r, id)
+            If annulla = True Then
+                annulla = False
                 Exit Sub
             End If
-        End If
-
-        id = dgvCalendario.Rows(r).Cells(7).Value
-        giorno = dgvCalendario.Rows(r).Cells(4).Value
-        giornoCondiviso = giorno
-
-        Call ModificaRiga(c, r, id)
-        If annulla = True Then
-            annulla = False
-            Exit Sub
-        End If
-        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Dettaglio)" Then
-            If AggAutDettaglio = True Then
-                Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
+            If lblGiorno_Mese.Text.Trim = "Espandi " & vbCrLf & "Visualizzazione" Then
+                If AggAutDettaglio = True Then
+                    Call AggiornaDGMensile(giorno.Substring(3, 2), giorno.Substring(6, 4))
+                End If
+            Else
+                Call AggiornaDG(giorno, AggAutGiornoAttuale)
+                Call PulisciCampi()
             End If
-        Else
-            Call AggiornaDG(giorno, AggAutGiornoAttuale)
-            Call PulisciCampi()
         End If
     End Sub
 
     Public Shared tabellaCondivisa As String
-    Public Shared colonnaCondivisa As String
-    Public Shared clienteCondiviso As String
-    Public Shared giornoCondiviso As String
     Public Shared rigaCondivisa As Integer
     Public Shared idCondiviso As String
     Public Shared annulla As Boolean = False
-    Sub ModificaRiga(c As Integer, r As Integer, id As Integer)
-        Dim cn As OleDbConnection
-        Dim cmd As OleDbCommand
-        Dim tabella As New DataTable
-        Dim str As String
+    Sub ModificaRiga(r As Integer, id As Integer)
         tabellaCondivisa = "Consuntivazione"
-        colonnaCondivisa = dgvCalendario.Columns(c).HeaderText
-        clienteCondiviso = dgvCalendario.Rows(r).Cells(2).Value
         rigaCondivisa = r
         idCondiviso = id
-
-        If colonnaCondivisa <> "TICKET" And colonnaCondivisa <> "CONSUNTIVATO" Then
-            frmModifica.ShowDialog()
-            Exit Sub
-        Else
-            Dim dato As String
-            If colonnaCondivisa = "TICKET" Then
-                dato = InputBox("Inserisci un numero ticket")
-                dato = dato.Replace("'", "").Trim.ToUpper
-                If dato = "" Or dato.Length > txtTicket.MaxLength Then
-                    MsgBox("Ticket non valido (Max " & txtTicket.MaxLength & " car.)")
-                    annulla = True
-                    Exit Sub
-                End If
-            Else
-                dato = dgvCalendario.Rows(r).Cells(c).Value
-                If dato = "NO" Then
-                    dato = "SI"
-                Else
-                    dato = "NO"
-                End If
-            End If
-
-
-            cn = New OleDbConnection(strConn)
-            cn.Open()
-            str = "UPDATE Consuntivazione SET " & colonnaCondivisa & "='" & dato & "' WHERE ID = " & id
-            cmd = New OleDbCommand(str, cn)
-            Try
-                str = cmd.ExecuteNonQuery
-            Catch ex As Exception
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-                cn.Close()
-                Exit Sub
-            End Try
-            cn.Close()
-            If AggAutDettaglio = False Then
-                dgvCalendario.Rows(r).Cells(c).Value = dato
-            End If
-        End If
+        frmModifica.Show()
     End Sub
     Sub EliminaRiga(id As Integer)
         Dim cn As OleDbConnection
@@ -1337,10 +1484,10 @@ Cambialo!", MsgBoxStyle.Critical)
             logFile.WriteLine(dataOraLog + "Inizio scrittura log Modifica:")
 
             cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "DELETE * FROM Consuntivazione WHERE ID =" & id
-        cmd = New OleDbCommand(str, cn)
-        Try
+            cn.Open()
+            str = "DELETE * FROM Consuntivazione WHERE ID =" & id
+            cmd = New OleDbCommand(str, cn)
+            Try
                 str = cmd.ExecuteNonQuery
             Catch ex As Exception
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
@@ -1360,30 +1507,31 @@ Cambialo!", MsgBoxStyle.Critical)
         If noSpam = True Then
             Exit Sub
         End If
-        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
-            lblGiorno_Mese.Text = "Totale 
-ore di lavoro
-(Dettaglio)"
+        If lblGiorno_Mese.Text.Trim = "Espandi " & vbCrLf & "Visualizzazione" Then
+            lblGiorno_Mese.Text = "Riduci " & vbCrLf & "Visualizzazione"
             Call PulisciCampi()
             pnlInserisci.Visible = False
             lblSfondoColorato.Visible = False
-            lblSlide.Visible = False
-            pnlMenu.Width = 0
-            lstMesi.Visible = True
+            'lblSlide.Visible = False
+            'pnlMenu.Width = 0
             lblMesi.Visible = True
             lblAnno.Visible = True
-            nudAnno.Visible = True
-            nudAnno.Enabled = True
+            txtAnno.Visible = True
+            txtMese.Visible = True
+            ckbDataSelezionata.Checked = False
             lblFiltri.Visible = True
             pnlFiltri.Visible = True
+            dgvCalendario.Top += 15
+            dgvCalendario.Height -= 15
             dtpDataDaFiltro.Value = Now().AddYears(-2)
             dtpDataAFiltro.Value = Now()
             lblFiltriSelezionati.Visible = True
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnDividiXCliente.Visible = True
 
-            pnlMensile.Left = 0
-            pnlMensile.Width = Me.Width - 15
+            'pnlMensile.Left = 0
+            pnlMensile.Left = 40
+            pnlMensile.Width = Me.Width - 55
             pnlFiltri.Width = dgvCalendario.Width
             Dim Mese As String
             Dim Anno As Integer
@@ -1394,40 +1542,38 @@ ore di lavoro
                 Mese = giorno.Substring(3, 2)
                 Anno = giorno.Substring(6, 4)
             End If
-            If Mese < 10 Then
-                lstMesi.SelectedIndex = Mese.Replace(0, "") - 1
-            Else
-                lstMesi.SelectedIndex = Mese - 1
-            End If
-            nudAnno.Value = Anno
+            txtMese.Text = Mese
+            txtAnno.Text = Anno
             Call AggiornaDGMensile(Mese, Anno)
 
             lblFiltriSelezionati.Text = "Anno: " & Anno & "   -   Mese: " & Mese
+            filtriSelezionati = lblFiltriSelezionati.Text
             strWhere = "WHERE Month(DATA) = " & Mese & " AND Year(DATA) = " & Anno
         Else
-            lblGiorno_Mese.Text = "Totale 
-ore di lavoro
-(Giornaliero)"
+            lblGiorno_Mese.Text = "Espandi " & vbCrLf & "Visualizzazione"
             pnlInserisci.Visible = True
             lblSfondoColorato.Visible = True
             lblSlide.Visible = True
             lblSlide.Left = 2
-            lstMesi.Visible = False
             lblMesi.Visible = False
             lblAnno.Visible = False
-            nudAnno.Visible = False
-            nudAnno.Enabled = False
+            txtAnno.Visible = False
+            txtAnno.Enabled = False
+            txtMese.Visible = False
+            txtMese.Enabled = False
 
             pnlFiltri.Visible = False
             If menuFiltriChiuso = False Then
                 lblFiltri_Click(sender, e)
             End If
             lblFiltri.Visible = False
+            dgvCalendario.Top -= 15
+            dgvCalendario.Height += 15
             lblFiltriSelezionati.Visible = False
             txtTicketFiltro.Clear()
             cmbClienteFiltro.Text = ""
             cmbNotaFiltro.Text = ""
-            cmbConsuntivazioneFiltro.Text = ""
+            txtConsuntivazioneFiltro.Text = ""
 
             btnConsuntivaTutto.Visible = False
             btnDividiXCliente.Text = "Dividi per Cliente"
@@ -1439,9 +1585,17 @@ ore di lavoro
             AggiornaDG(giornoOggi, False)
             aggiornaByData = True
 
-            pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 35
-            pnlFiltri.Width = pnlMensile.Width
+            pnlMensile.Location = New Point((pnlInserisci.Location.X + pnlInserisci.Width) + 10, 19)
+            Call AggiornaDG(giornoOggi, False)
+            pnlMensile.Width = Me.Width - lblSfondoColorato.Width - 95
+            pnlFiltri.Width = dgvCalendario.Width
         End If
+        pnlClientiSeguiti.Width = (pnlDataGrid.Width - 12) / 3
+        pnlTicketFatti.Width = (pnlDataGrid.Width - 12) / 3
+        pnlOreLavorate.Width = (pnlDataGrid.Width - 12) / 3
+        pnlTicketFatti.Left = pnlClientiSeguiti.Left + pnlClientiSeguiti.Width + 6
+        pnlOreLavorate.Left = pnlTicketFatti.Left + pnlTicketFatti.Width + 6
+        arrotondaBordi()
     End Sub
     Sub AggiornaDGMensile(Mese As String, Anno As String)
         Dim cn As OleDbConnection
@@ -1452,11 +1606,12 @@ ore di lavoro
         Dim i As Integer
         Dim somma As Double
         Dim extra As Double
+        Dim condizioneWhere As String = "WHERE DATA LIKE '%/" & Mese & "/" & Anno & "'"
 
 
         cn = New OleDbConnection(strConn)
         cn.Open()
-        str = "SELECT * FROM Consuntivazione WHERE DATA LIKE '%/" & Mese & "/" & Anno & "' ORDER BY DATA, CLIENTE, NOTA"
+        str = "SELECT * FROM Consuntivazione " & condizioneWhere & " ORDER BY DATA, CLIENTE, NOTA"
         cmd = New OleDbCommand(str, cn)
         da = New OleDbDataAdapter(cmd)
         tabella.Clear()
@@ -1466,6 +1621,7 @@ ore di lavoro
         dgvCalendario.RowCount = 1
         dgvCalendario.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
+            dgvCalendario.Rows(i + 1).Cells(0).Value = Consuntivazione.My.Resources.Resources.edit_16x16_nero
             dgvCalendario.Rows(i + 1).Cells(1).Value = tabella.Rows(i).Item("TICKET").ToString
             dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
             dgvCalendario.Rows(i + 1).Cells(3).Value = tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
@@ -1482,8 +1638,9 @@ ore di lavoro
             End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
-        lblTempoTot.Text = somma
+        'lblTempoTot.Text = somma
         sommaExtra = extra
+        aggiornaDati(condizioneWhere)
         btnDividiXCliente.Text = "Dividi per Cliente"
         btnConsuntivaTutto.Visible = False
         Call RedimDGV()
@@ -1574,9 +1731,9 @@ ore di lavoro
         cn.Close()
 
         If tabella.Rows.Count = 0 Then
-            MsgBox("Non c'è niente da dividere")
             btnDividiXCliente.Text = "Dividi per Cliente"
             btnConsuntivaTutto.Visible = False
+            MsgBox("Non c'è niente da dividere")
             Exit Sub
         End If
 
@@ -1626,7 +1783,7 @@ ore di lavoro
         Dim commPrec As Boolean = False
         Dim notaCommPrec As String
 
-        Call riordinaTabella(vetClienteComm, vetNotaComm, tabella, notaComm)
+        Call riordinaTabella(vetClienteComm, vetNotaComm, vetLinkComm, tabella, notaComm)
 
         For i = 0 To tabella.Rows.Count - 1
             cliente = tabella.Rows(i).Item("CLIENTE").ToString
@@ -1639,13 +1796,13 @@ ore di lavoro
                     TabellaNoDoppi -= 1
                 ElseIf vetClienteComm(k) = cliente And nota.Contains(vetNotaComm(k)) Then
                     If vetNotaComm(k) = "" And nota = "" Then
-                            comm = True
-                            notaComm = vetClienteComm(k)
-                        ElseIf vetNotaComm(k) <> "" Then
-                            comm = True
-                            notaComm = vetClienteComm(k)
-                        End If
+                        comm = True
+                        notaComm = vetClienteComm(k)
+                    ElseIf vetNotaComm(k) <> "" Then
+                        comm = True
+                        notaComm = vetClienteComm(k)
                     End If
+                End If
             Next
 
             If i > 0 Then
@@ -1694,7 +1851,7 @@ ore di lavoro
         Dim conta As Integer = -1
         Dim j As Integer = 1
 
-        Call riordinaTabella(vetClienteComm, vetNotaComm, tabella, notaComm)
+        Call riordinaTabella(vetClienteComm, vetNotaComm, vetLinkComm, tabella, notaComm)
 
         For i = 0 To DateLavorative.Length - 2
             Do
@@ -1750,7 +1907,7 @@ ore di lavoro
         End If
     End Sub
 
-    Sub riordinaTabella(vetClienteComm() As String, vetNotaComm() As String, ByRef tabella As DataTable, ByRef notaComm As String)
+    Sub riordinaTabella(vetClienteComm() As String, vetNotaComm() As String, vetLinkComm() As String, ByRef tabella As DataTable, ByRef notaComm As String)
         Dim c As String
         Dim n As String
         Dim conta As Integer = 0
@@ -1771,6 +1928,9 @@ ore di lavoro
                 c = riga.Field(Of String)("CLIENTE")
                 n = If(riga.Field(Of String)("NOTA"), "")
 
+                If CheckNoComm(vetClienteComm, vetNotaComm, vetLinkComm, c, n) Then
+                    n = ""
+                End If
                 If CheckComm(vetClienteComm, vetNotaComm, c, n, notaComm) Then
                     Dim newRow As DataRow = tabella.NewRow()
                     newRow.ItemArray = riga.ItemArray
@@ -1897,7 +2057,7 @@ ore di lavoro
             End If
         End If
 
-            tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
+        tempo += tabella.Rows(conta).Item("TEMPO_RISOLUZIONE").ToString
     End Sub
 
     Sub UpdateDgvCalendario(row As Integer, ByRef ticket As String, cliente As String, ByRef tempo As Double, dataLavorativa As String, consuntivato As String)
@@ -2139,7 +2299,7 @@ ore di lavoro
         End If
     End Sub
 
-    Private Sub cmbConsuntivazioneFiltro_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbConsuntivazioneFiltro.KeyDown
+    Private Sub cmbConsuntivazioneFiltro_KeyDown(sender As Object, e As KeyEventArgs)
         If e.KeyCode = Keys.Enter Then
             BtnCerca_Click(sender, e)
         End If
@@ -2151,10 +2311,10 @@ ore di lavoro
     End Sub
 
     Private Sub lblAggiungiCliente_Click(sender As Object, e As EventArgs) Handles lblAggiungiCliente.Click
-        frmInserisciCliente.ShowDialog()
+        frmInserisciCliente.Show()
     End Sub
 
-    Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click, imgDocumentazione.Click
+    Private Sub lblDocumentazione_Click(sender As Object, e As EventArgs) Handles lblDocumentazione.Click
         Dim path As String = Application.StartupPath
         If path.EndsWith("Debug") Then
             path = path.Replace("bin\Debug", "Documentazione\documentazione.html")
@@ -2164,7 +2324,7 @@ ore di lavoro
         Process.Start(path)
     End Sub
 
-    Private Sub lblTicketMssivi_Click(sender As Object, e As EventArgs) Handles lblTicketMssivi.Click, imgTicketMassivi.Click
+    Private Sub lblTicketMssivi_Click(sender As Object, e As EventArgs) Handles lblTicketMassivi.Click
         Dim msgResult As MsgBoxResult = MsgBox("Vuoi scaricare il Template per l'inserimento massivo?", MsgBoxStyle.YesNoCancel)
         If msgResult = MsgBoxResult.Yes Then
             Call scaricaTemplate()
@@ -2409,17 +2569,13 @@ ore di lavoro
         inserito = True
     End Sub
 
-    Dim menuChiuso As Boolean = True
+    Public menuChiuso As Boolean = True
     Public Sub lblSlide_Click(sender As Object, e As EventArgs) Handles lblSlide.Click
-        If pnlMenu.Width = 0 Then
+        If pnlMenu.Width = 40 Then
             menuChiuso = True
             frmSfondoNero.Show()
-            frmSfondoNero.Location = New Point(Me.Location.X + 8, Me.Location.Y + 31) 'X = + 206
-            If Me.Width > Me.MinimumSize.Width Then
-                frmSfondoNero.Size = New Size(Me.Width - 14, Me.Height - 39) 'width = - 214
-            Else
-                frmSfondoNero.Size = New Size(Me.Width - 16, Me.Height - 39) 'width = - 216
-            End If
+            frmSfondoNero.Location = New Point(Me.Location.X + 8, Me.Location.Y + 31)
+            frmSfondoNero.Size = New Size(Me.Width - 16, Me.Height - 39)
         Else
             menuChiuso = False
             frmSfondoNero.Close()
@@ -2430,50 +2586,51 @@ ore di lavoro
 
     Private Sub TimerSlide_Tick(sender As Object, e As EventArgs) Handles TimerSlide.Tick
         If menuChiuso = True Then
-            pnlMenu.Width += 20
-            If lblSlide.Left < 168 Then
-                lblSlide.Left += 16.5
+            If pnlMenu.Width = 40 Then
+                frmSfondoNero.Left += 40
+                frmSfondoNero.Width -= 40
             End If
-            frmSfondoNero.Left += 20
-            frmSfondoNero.Width -= 20
+            pnlMenu.Width += 16
+
+            frmSfondoNero.Left += 16
+            frmSfondoNero.Width -= 16
+
             If pnlMenu.Width = 200 Then
                 If coloreIcone = "white" Then
                     lblSlide.Image = Consuntivazione.My.Resources.Resources.menuAperto_32x32_bianco
                 Else
                     lblSlide.Image = Consuntivazione.My.Resources.Resources.menuAperto_32x32_nero
                 End If
-                frmSfondoNero.Left = Me.Location.X + 206
-                If Me.Width > Me.MinimumSize.Width Then
-                    frmSfondoNero.Width = Me.Width - 214
-                Else
-                    frmSfondoNero.Width = Me.Width - 216
-                End If
+                menuChiuso = False
                 TimerSlide.Stop()
             End If
         Else
-            pnlMenu.Width -= 20
-            lblSlide.Left -= 16.5
-            If pnlMenu.Width = 0 Then
+            pnlMenu.Width -= 16
+            If pnlMenu.Width = 40 Then
                 If coloreIcone = "white" Then
                     lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_bianco
                 Else
                     lblSlide.Image = Consuntivazione.My.Resources.Resources.menuChiuso_32x32_nero
                 End If
+                menuChiuso = True
                 TimerSlide.Stop()
             End If
         End If
     End Sub
 
-    Private Sub lblCommesseMassive_Click(sender As Object, e As EventArgs) Handles lblCommesseMassive.Click, imgCommesseMassive.Click
+    Private Sub lblCommesseMassive_Click(sender As Object, e As EventArgs) Handles lblCommesseMassive.Click
         frmInserisciCliente.InserisciMassivamente()
     End Sub
-    Private Sub lblTema_Click(sender As Object, e As MouseEventArgs) Handles lblTema.Click, imgTema.Click
+    Private Sub lblReport_Click(sender As Object, e As EventArgs) Handles lblReport.Click
+        frmReport.Show()
+    End Sub
+    Private Sub lblTema_Click(sender As Object, e As MouseEventArgs) Handles lblTema.Click
         frmTema.ShowDialog()
         If frmTema.coloriModificati = True Then
             Me.Close()
         End If
     End Sub
-    Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click, imgImpostazioni.Click
+    Private Sub lblImpostazioni_Click(sender As Object, e As EventArgs) Handles lblImpostazioni.Click
         frmImpostazioni.ShowDialog()
         If frmImpostazioni.modifica = True Or frmImpostazioni.trasferito = True Then
             Me.Close()
@@ -2498,38 +2655,75 @@ ore di lavoro
             blu -= 20
         End If
     End Sub
-    Private Sub lblTicketMssivi_MouseHover(sender As Object, e As EventArgs) Handles lblTicketMssivi.MouseHover, imgTicketMassivi.MouseHover
-        Dim red As Integer = lblTicketMssivi.BackColor.R
-        Dim green As Integer = lblTicketMssivi.BackColor.G
-        Dim blu As Integer = lblTicketMssivi.BackColor.B
+    Private Sub lblTicketMssivi_MouseHover(sender As Object, e As EventArgs) Handles lblTicketMassivi.MouseHover, pnlTicketMassivi.MouseHover
+        Dim red As Integer = lblTicketMassivi.BackColor.R
+        Dim green As Integer = lblTicketMassivi.BackColor.G
+        Dim blu As Integer = lblTicketMassivi.BackColor.B
 
         Call colorHover(red, green, blu)
 
-        lblTicketMssivi.BackColor = Color.FromArgb(red, green, blu)
-        imgTicketMassivi.BackColor = Color.FromArgb(red, green, blu)
+        lblTicketMassivi.BackColor = Color.FromArgb(red, green, blu)
+        pnlTicketMassivi.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblTicketMassivi, "Inserisci Ticket Massivamente")
+        Else
+            ToolTipMenu.Active = False
+        End If
     End Sub
 
-    Private Sub lblTicketMssivi_MouseLeave(sender As Object, e As EventArgs) Handles lblTicketMssivi.MouseLeave, imgTicketMassivi.MouseLeave
-        lblTicketMssivi.BackColor = lblSfondoColorato.BackColor
-        imgTicketMassivi.BackColor = lblSfondoColorato.BackColor
+    Private Sub lblTicketMssivi_MouseLeave(sender As Object, e As EventArgs) Handles lblTicketMassivi.MouseLeave, pnlTicketMassivi.MouseLeave
+        lblTicketMassivi.BackColor = lblSfondoColorato.BackColor
+        pnlTicketMassivi.BackColor = lblSfondoColorato.BackColor
     End Sub
 
-    Private Sub lblCommesseMassive_MouseHover(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseHover, imgCommesseMassive.MouseHover
-        Dim red As Integer = lblCommesseMassive.BackColor.R
-        Dim green As Integer = lblCommesseMassive.BackColor.G
-        Dim blu As Integer = lblCommesseMassive.BackColor.B
+    Private Sub lblCommesseMassive_MouseHover(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseHover, pnlCommesseMassive.MouseHover
+        Dim red As Integer = lblTicketMassivi.BackColor.R
+        Dim green As Integer = lblTicketMassivi.BackColor.G
+        Dim blu As Integer = lblTicketMassivi.BackColor.B
 
         Call colorHover(red, green, blu)
 
         lblCommesseMassive.BackColor = Color.FromArgb(red, green, blu)
-        imgCommesseMassive.BackColor = Color.FromArgb(red, green, blu)
+        pnlCommesseMassive.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblCommesseMassive, "Inserisci Commesse Massivamente")
+        Else
+            ToolTipMenu.Active = False
+        End If
     End Sub
 
-    Private Sub lblCommesseMassive_MouseLeave(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseLeave, imgCommesseMassive.MouseLeave
+    Private Sub lblCommesseMassive_MouseLeave(sender As Object, e As EventArgs) Handles lblCommesseMassive.MouseLeave, pnlCommesseMassive.MouseLeave
         lblCommesseMassive.BackColor = lblSfondoColorato.BackColor
-        imgCommesseMassive.BackColor = lblSfondoColorato.BackColor
+        pnlCommesseMassive.BackColor = lblSfondoColorato.BackColor
     End Sub
-    Private Sub lblTema_MouseHover(sender As Object, e As EventArgs) Handles lblTema.MouseHover, imgTema.MouseHover
+    Private Sub lblReport_MouseHover(sender As Object, e As EventArgs) Handles lblReport.MouseHover, pnlReport.MouseHover
+        Dim red As Integer = lblTema.BackColor.R
+        Dim green As Integer = lblTema.BackColor.G
+        Dim blu As Integer = lblTema.BackColor.B
+
+        Call colorHover(red, green, blu)
+
+        lblReport.BackColor = Color.FromArgb(red, green, blu)
+        pnlReport.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblReport, lblReport.Text.Trim)
+        Else
+            ToolTipMenu.Active = False
+        End If
+    End Sub
+
+    Private Sub lblReport_MouseLeave(sender As Object, e As EventArgs) Handles lblReport.MouseLeave, pnlReport.MouseLeave
+        lblReport.BackColor = lblSfondoColorato.BackColor
+        pnlReport.BackColor = lblSfondoColorato.BackColor
+    End Sub
+
+    Private Sub lblTema_MouseHover(sender As Object, e As EventArgs) Handles lblTema.MouseHover, pnlTema.MouseHover
         Dim red As Integer = lblTema.BackColor.R
         Dim green As Integer = lblTema.BackColor.G
         Dim blu As Integer = lblTema.BackColor.B
@@ -2537,31 +2731,45 @@ ore di lavoro
         Call colorHover(red, green, blu)
 
         lblTema.BackColor = Color.FromArgb(red, green, blu)
-        imgTema.BackColor = Color.FromArgb(red, green, blu)
+        pnlTema.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblTema, lblTema.Text.Trim)
+        Else
+            ToolTipMenu.Active = False
+        End If
     End Sub
 
-    Private Sub lblTema_MouseLeave(sender As Object, e As EventArgs) Handles lblTema.MouseLeave, imgTema.MouseLeave
+    Private Sub lblTema_MouseLeave(sender As Object, e As EventArgs) Handles lblTema.MouseLeave, pnlTema.MouseLeave
         lblTema.BackColor = lblSfondoColorato.BackColor
-        imgTema.BackColor = lblSfondoColorato.BackColor
+        pnlTema.BackColor = lblSfondoColorato.BackColor
     End Sub
 
-    Private Sub lblImpostazioni_MouseHover(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseHover, imgImpostazioni.MouseHover
-        Dim red As Integer = lblImpostazioni.BackColor.R
-        Dim green As Integer = lblImpostazioni.BackColor.G
-        Dim blu As Integer = lblImpostazioni.BackColor.B
+    Private Sub lblImpostazioni_MouseHover(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseHover, pnlImpostazioni.MouseHover
+        Dim red As Integer = lblReport.BackColor.R
+        Dim green As Integer = lblReport.BackColor.G
+        Dim blu As Integer = lblReport.BackColor.B
 
         Call colorHover(red, green, blu)
 
         lblImpostazioni.BackColor = Color.FromArgb(red, green, blu)
-        imgImpostazioni.BackColor = Color.FromArgb(red, green, blu)
+        pnlImpostazioni.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblImpostazioni, lblImpostazioni.Text.Trim)
+        Else
+            ToolTipMenu.Active = False
+        End If
     End Sub
 
-    Private Sub lblImpostazioni_MouseLeave(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseLeave, imgImpostazioni.MouseLeave
+    Private Sub lblImpostazioni_MouseLeave(sender As Object, e As EventArgs) Handles lblImpostazioni.MouseLeave, pnlImpostazioni.MouseLeave
         lblImpostazioni.BackColor = lblSfondoColorato.BackColor
-        imgImpostazioni.BackColor = lblSfondoColorato.BackColor
+        pnlImpostazioni.BackColor = lblSfondoColorato.BackColor
     End Sub
 
-    Private Sub lblDocumentazione_MouseHover(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseHover, imgDocumentazione.MouseHover
+    Private Sub lblDocumentazione_MouseHover(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseHover, pnlDocumentazione.MouseHover
         Dim red As Integer = lblDocumentazione.BackColor.R
         Dim green As Integer = lblDocumentazione.BackColor.G
         Dim blu As Integer = lblDocumentazione.BackColor.B
@@ -2569,44 +2777,62 @@ ore di lavoro
         Call colorHover(red, green, blu)
 
         lblDocumentazione.BackColor = Color.FromArgb(red, green, blu)
-        imgDocumentazione.BackColor = Color.FromArgb(red, green, blu)
+        pnlDocumentazione.BackColor = Color.FromArgb(red, green, blu)
+
+        If menuChiuso Then
+            ToolTipMenu.Active = True
+            ToolTipMenu.SetToolTip(lblDocumentazione, lblDocumentazione.Text.Trim)
+        Else
+            ToolTipMenu.Active = False
+        End If
     End Sub
 
-    Private Sub lblDocumentazione_MouseLeave(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseLeave, imgDocumentazione.MouseLeave
+    Private Sub lblDocumentazione_MouseLeave(sender As Object, e As EventArgs) Handles lblDocumentazione.MouseLeave, pnlDocumentazione.MouseLeave
         lblDocumentazione.BackColor = lblSfondoColorato.BackColor
-        imgDocumentazione.BackColor = lblSfondoColorato.BackColor
+        pnlDocumentazione.BackColor = lblSfondoColorato.BackColor
     End Sub
     Dim menuFiltriChiuso As Boolean = True
     Private Sub lblFiltri_Click(sender As Object, e As EventArgs) Handles lblFiltri.Click
         If pnlFiltri.Height = 0 Then
             menuFiltriChiuso = False
-            pnlFiltri.Top = 10
-            pnlFiltri.Height = 130
-            lblFiltri.Top += 130
-            lblFiltriSelezionati.Top += 130
-            dgvCalendario.Height -= 130
-            dgvCalendario.Top += 130
+            pnlFiltri.Top = pnlDataGrid.Location.Y + 10
+            pnlFiltri.Height = 210
+            lblFiltri.Top += 220
+            lblFiltriSelezionati.Top += 220
+            dgvCalendario.Height -= 220
+            dgvCalendario.Top += 220
         Else
             menuFiltriChiuso = True
             pnlFiltri.Top = 0
             pnlFiltri.Height = 0
-            lblFiltri.Top -= 130
-            lblFiltriSelezionati.Top -= 130
-            dgvCalendario.Height += 130
-            dgvCalendario.Top -= 130
+            lblFiltri.Top -= 220
+            lblFiltriSelezionati.Top -= 220
+            dgvCalendario.Height += 220
+            dgvCalendario.Top -= 220
         End If
+        arrotondaBordi()
     End Sub
     Private Sub ckbDataSelezionata_CheckedChanged(sender As Object, e As EventArgs) Handles ckbDataSelezionata.CheckedChanged
         If ckbDataSelezionata.Checked = True Then
             dtpDataDaFiltro.Enabled = True
             dtpDataAFiltro.Enabled = True
-            nudAnno.Enabled = False
-            lstMesi.Enabled = False
+            txtAnno.Enabled = False
+            txtMese.Enabled = False
+
+            lblInsDataDaFiltro.ForeColor = Color.Black
+            lblInsDataAFiltro.ForeColor = Color.Black
+            lblInsAnnoFiltro.ForeColor = Color.Gray
+            lblInsMeseFiltro.ForeColor = Color.Gray
         Else
             dtpDataDaFiltro.Enabled = False
             dtpDataAFiltro.Enabled = False
-            nudAnno.Enabled = True
-            lstMesi.Enabled = True
+            txtAnno.Enabled = True
+            txtMese.Enabled = True
+
+            lblInsDataDaFiltro.ForeColor = Color.Gray
+            lblInsDataAFiltro.ForeColor = Color.Gray
+            lblInsAnnoFiltro.ForeColor = Color.Black
+            lblInsMeseFiltro.ForeColor = Color.Black
         End If
     End Sub
 
@@ -2624,8 +2850,8 @@ ore di lavoro
         If cmbClienteFiltro.Text <> "" Then
             filtriSel += "Cliente: " & cmbClienteFiltro.Text & ";"
         End If
-        If cmbConsuntivazioneFiltro.Text <> "" Then
-            filtriSel += "Consuntivato: " & cmbConsuntivazioneFiltro.Text & ";"
+        If txtConsuntivazioneFiltro.Text <> "" Then
+            filtriSel += "Consuntivato: " & txtConsuntivazioneFiltro.Text & ";"
         End If
         If cmbNotaFiltro.Text <> "" Then
             filtriSel += "Nota: " & cmbNotaFiltro.Text & ";"
@@ -2634,12 +2860,12 @@ ore di lavoro
             filtriSel += "Data Da: " & dtpDataDaFiltro.Text & ";"
             filtriSel += "Data A: " & dtpDataAFiltro.Text & ";"
         Else
-            Dim mese As String = lstMesi.SelectedItem.ToString.Trim
+            Dim mese As String = txtMese.Text
             If mese.Length = 1 Then
                 mese = "0" + mese
             End If
 
-            filtriSel += "Anno: " & nudAnno.Text & ";"
+            filtriSel += "Anno: " & txtAnno.Text & ";"
             filtriSel += "Mese: " & mese & ";"
         End If
 
@@ -2672,11 +2898,11 @@ ore di lavoro
                 strWhere += "AND Data BETWEEN #" & Format(dtpDataDaFiltro.Value, "MM/dd/yyyy") & "# AND #" & Format(dtpDataAFiltro.Value, "MM/dd/yyyy") & "#"
             End If
             If vetFiltri(i).Contains("Anno") Then
-                Dim mese As String = lstMesi.SelectedItem.ToString.Trim
+                Dim mese As String = txtMese.Text
                 If mese.Length = 1 Then
                     mese = "0" + mese
                 End If
-                strWhere += "AND Data LIKE '%/" & mese & "/" & nudAnno.Value & "' "
+                strWhere += "AND Data LIKE '%/" & mese & "/" & txtAnno.Text & "' "
             End If
         Next
         If strWhere.Trim.StartsWith("AND") Then
@@ -2687,6 +2913,17 @@ ore di lavoro
         If menuFiltriChiuso = False Then
             lblFiltri_Click(sender, e)
         End If
+        filtriSelezionati = lblFiltriSelezionati.Text
+        impostaLunghezzaFiltriSelezionati()
+    End Sub
+    Dim filtriSelezionati As String = ""
+    Sub impostaLunghezzaFiltriSelezionati()
+        lblFiltriSelezionati.Text = filtriSelezionati
+        lblFiltriSelezionati.AutoSize = False
+        Do Until lblFiltriSelezionati.PreferredWidth < btnConsuntivaTutto.Location.X - lblFiltriSelezionati.Location.X - 20
+            lblFiltriSelezionati.Text = lblFiltriSelezionati.Text.Substring(0, lblFiltriSelezionati.Text.Length - 4) & "..."
+        Loop
+        lblFiltriSelezionati.AutoSize = True
     End Sub
     Sub visualizzaFiltri(strWhere As String, dataDa As String, dataA As String)
         Dim cn As OleDbConnection
@@ -2716,6 +2953,7 @@ ore di lavoro
         dgvCalendario.RowCount = 1
         dgvCalendario.RowCount = tabella.Rows.Count + 1
         For i = 0 To tabella.Rows.Count - 1
+            dgvCalendario.Rows(i + 1).Cells(0).Value = Consuntivazione.My.Resources.Resources.edit_16x16_nero
             dgvCalendario.Rows(i + 1).Cells(1).Value = tabella.Rows(i).Item("TICKET").ToString
             dgvCalendario.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("CLIENTE").ToString
             dgvCalendario.Rows(i + 1).Cells(3).Value = tabella.Rows(i).Item("TEMPO_RISOLUZIONE").ToString
@@ -2732,30 +2970,31 @@ ore di lavoro
             End If
             dgvCalendario.Rows(i + 1).Cells(7).Value = tabella.Rows(i).Item("ID").ToString
         Next
-        lblTempoTot.Text = somma
+        'lblTempoTot.Text = somma
+        aggiornaDati(strWhere)
         sommaExtra = extra
         Call RedimDGV()
     End Sub
-    Private Sub lblTempoTot_MouseHover(sender As Object, e As EventArgs) Handles lblTempoTot.MouseHover
-        ToolTip1.Active = True
-        If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
-            If sommaExtra > 0 And CDbl(lblTempoTot.Text) < 8 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Rimasto: " & 8 - CDbl(lblTempoTot.Text))
-            ElseIf sommaExtra > 0 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra)
-            ElseIf CDbl(lblTempoTot.Text) < 8 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Rimasto: " & 8 - lblTempoTot.Text)
-            Else
-                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1)
-            End If
-        Else
-            If sommaExtra > 0 Then
-                ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Ordinario: " & CDbl(lblTempoTot.Text) - sommaExtra)
-            Else
-                ToolTip1.Active = False
-            End If
-        End If
-    End Sub
+    'Private Sub lblTempoTot_MouseHover(sender As Object, e As EventArgs) Handles lblTempoTot.MouseHover
+    '    ToolTip1.Active = True
+    '    If lblGiorno_Mese.Text.Trim = "Totale " & vbCrLf & "ore di lavoro" & vbCrLf & "(Giornaliero)" Then
+    '        If sommaExtra > 0 And CDbl(lblTempoTot.Text) < 8 Then
+    '            ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Rimasto: " & 8 - CDbl(lblTempoTot.Text))
+    '        ElseIf sommaExtra > 0 Then
+    '            ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra)
+    '        ElseIf CDbl(lblTempoTot.Text) < 8 Then
+    '            ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Rimasto: " & 8 - lblTempoTot.Text)
+    '        Else
+    '            ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1)
+    '        End If
+    '    Else
+    '        If sommaExtra > 0 Then
+    '            ToolTip1.SetToolTip(lblTempoTot, "Num. Ticket: " & dgvCalendario.RowCount - 1 & vbCrLf & "Tempo Extra: " & sommaExtra & vbCrLf & "Tempo Ordinario: " & CDbl(lblTempoTot.Text) - sommaExtra)
+    '        Else
+    '            ToolTip1.Active = False
+    '        End If
+    '    End If
+    'End Sub
 
     Private Sub cmbCliente_SelectedValueChanged(sender As Object, e As EventArgs) Handles cmbCliente.SelectedValueChanged
         Dim cn As OleDbConnection
@@ -2789,5 +3028,316 @@ ore di lavoro
                 p.Kill()
             Next
         End If
+    End Sub
+
+    Dim allLabels As New List(Of Label)
+    Private Sub caricaLabels()
+        allLabels.AddRange({lblInsTicket, lblInsTempo, lblInsCliente, lblInsNota, lblInsTicketFiltro, lblInsNotaFiltro, lblInsMeseFiltro, lblInsConsuntivatoFiltro, lblInsClienteFiltro, lblInsAnnoFiltro})
+    End Sub
+
+    Private Sub lblData_Click(sender As Object, e As EventArgs) Handles lblData.Click
+        dtpData.Select()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsDataAFiltro_Click(sender As Object, e As EventArgs) Handles lblInsDataAFiltro.Click
+        dtpDataAFiltro.Select()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsDataDaFiltro_Click(sender As Object, e As EventArgs) Handles lblInsDataDaFiltro.Click
+        dtpDataDaFiltro.Select()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsTicket_Click(sender As Object, e As EventArgs) Handles lblInsTicket.Click
+        txtTicket.Select()
+        SendKeys.Send("%{DOWN}")
+        lblInsTicket.Text = txtTicket.Text & "|"
+
+        allLabels.Remove(lblInsTicket)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsTicket)
+    End Sub
+    Private Sub lblInsTicketFiltro_Click(sender As Object, e As EventArgs) Handles lblInsTicketFiltro.Click
+        txtTicketFiltro.Select()
+        SendKeys.Send("%{DOWN}")
+        lblInsTicketFiltro.Text = txtTicketFiltro.Text & "|"
+
+        allLabels.Remove(lblInsTicketFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsTicketFiltro)
+    End Sub
+
+    Private Sub lblInsCliente_Click(sender As Object, e As EventArgs) Handles lblInsCliente.Click
+        cmbCliente.Focus()
+        lblInsCliente.Text = cmbCliente.Text & "|"
+
+        allLabels.Remove(lblInsCliente)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsCliente)
+    End Sub
+
+    Private Sub lblInsCliente_DoubleClick(sender As Object, e As EventArgs) Handles lblInsCliente.DoubleClick
+        cmbCliente.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsClienteFiltro_Click(sender As Object, e As EventArgs) Handles lblInsClienteFiltro.Click
+        cmbClienteFiltro.Focus()
+        lblInsClienteFiltro.Text = cmbClienteFiltro.Text & "|"
+
+        allLabels.Remove(lblInsClienteFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsClienteFiltro)
+    End Sub
+
+    Private Sub lblInsClienteFiltro_DoubleClick(sender As Object, e As EventArgs) Handles lblInsClienteFiltro.DoubleClick
+        cmbClienteFiltro.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsTempo_Click(sender As Object, e As EventArgs) Handles lblInsTempo.Click
+        cmbTempo.Focus()
+        lblInsTempo.Text = cmbTempo.Text & "|"
+
+        allLabels.Remove(lblInsTempo)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsTempo)
+    End Sub
+
+    Private Sub lblInsTempo_DoubleClick(sender As Object, e As EventArgs) Handles lblInsTempo.DoubleClick
+        cmbTempo.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsNota_Click(sender As Object, e As EventArgs) Handles lblInsNota.Click
+        cmbNota.Focus()
+        lblInsNota.Text = cmbNota.Text & "|"
+
+        allLabels.Remove(lblInsNota)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsNota)
+    End Sub
+
+    Private Sub lblInsNota_DoubleClick(sender As Object, e As EventArgs) Handles lblInsNota.DoubleClick
+        cmbNota.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsNotaFiltro_Click(sender As Object, e As EventArgs) Handles lblInsNotaFiltro.Click
+        cmbNotaFiltro.Focus()
+        lblInsNotaFiltro.Text = cmbNotaFiltro.Text & "|"
+
+        allLabels.Remove(lblInsNotaFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsNotaFiltro)
+    End Sub
+
+    Private Sub lblInsNotaFiltro_DoubleClick(sender As Object, e As EventArgs) Handles lblInsNotaFiltro.DoubleClick
+        cmbNotaFiltro.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsConsuntivatoFiltro_Click(sender As Object, e As EventArgs) Handles lblInsConsuntivatoFiltro.Click
+        txtConsuntivazioneFiltro.Focus()
+        lblInsConsuntivatoFiltro.Text = txtConsuntivazioneFiltro.Text.ToUpper & "|"
+
+        allLabels.Remove(lblInsConsuntivatoFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsConsuntivatoFiltro)
+    End Sub
+
+    Private Sub lblInsConsuntivatoFiltro_DoubleClick(sender As Object, e As EventArgs) Handles lblInsConsuntivatoFiltro.DoubleClick
+        txtConsuntivazioneFiltro.Focus()
+        SendKeys.Send("%{DOWN}")
+    End Sub
+
+    Private Sub lblInsAnnoFiltro_Click(sender As Object, e As EventArgs) Handles lblInsAnnoFiltro.Click
+        If Not txtAnno.Enabled Then
+            Exit Sub
+        End If
+
+        txtAnno.Focus()
+        lblInsAnnoFiltro.Text = txtAnno.Text & "|"
+
+        allLabels.Remove(lblInsAnnoFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsAnnoFiltro)
+    End Sub
+
+    Private Sub lblInsMeseFiltro_Click(sender As Object, e As EventArgs) Handles lblInsMeseFiltro.Click
+        If Not txtMese.Enabled Then
+            Exit Sub
+        End If
+
+        txtMese.Focus()
+        lblInsMeseFiltro.Text = txtMese.Text & "|"
+
+        allLabels.Remove(lblInsMeseFiltro)
+        RemovePipes(allLabels)
+        allLabels.Add(lblInsMeseFiltro)
+    End Sub
+
+
+    Private Sub txtInserimento_TextChanged(sender As Object, e As EventArgs) Handles txtTicket.TextChanged, cmbCliente.TextChanged, cmbTempo.TextChanged, cmbNota.TextChanged, txtTicketFiltro.TextChanged, cmbClienteFiltro.TextChanged, txtConsuntivazioneFiltro.TextChanged, cmbNotaFiltro.TextChanged, txtAnno.TextChanged, txtMese.TextChanged
+        UpdateLabels()
+
+        If txtTicket.Focused Then
+            AddPipe(lblInsTicket)
+            lblBordoTicket.BackColor = SystemColors.Window
+        ElseIf cmbCliente.Focused Then
+            AddPipe(lblInsCliente)
+            lblBordoCliente.BackColor = SystemColors.Window
+        ElseIf cmbTempo.Focused Then
+            AddPipe(lblInsTempo)
+            lblBordoTempo.BackColor = SystemColors.Window
+        ElseIf cmbNota.Focused Then
+            AddPipe(lblInsNota)
+        ElseIf txtTicketFiltro.Focused Then
+            AddPipe(lblInsTicketFiltro)
+        ElseIf cmbClienteFiltro.Focused Then
+            AddPipe(lblInsClienteFiltro)
+        ElseIf txtConsuntivazioneFiltro.Focused Then
+            AddPipe(lblInsConsuntivatoFiltro)
+        ElseIf cmbNotaFiltro.Focused Then
+            AddPipe(lblInsNotaFiltro)
+        ElseIf txtAnno.Focused Then
+            AddPipe(lblInsAnnoFiltro)
+        ElseIf txtMese.Focused Then
+            AddPipe(lblInsMeseFiltro)
+        End If
+    End Sub
+
+    Private Sub txtInserimento_GotFocused(sender As Object, e As EventArgs) Handles txtTicket.GotFocus, cmbCliente.GotFocus, cmbTempo.GotFocus, cmbNota.GotFocus, txtTicketFiltro.GotFocus, cmbClienteFiltro.GotFocus, txtConsuntivazioneFiltro.GotFocus, cmbNotaFiltro.GotFocus, txtAnno.GotFocus, txtMese.GotFocus
+        UpdateLabels()
+
+        If txtTicket.Focused Then
+            AddPipe(lblInsTicket)
+        ElseIf cmbCliente.Focused Then
+            AddPipe(lblInsCliente)
+        ElseIf cmbTempo.Focused Then
+            AddPipe(lblInsTempo)
+        ElseIf cmbNota.Focused Then
+            AddPipe(lblInsNota)
+        ElseIf txtTicketFiltro.Focused Then
+            AddPipe(lblInsTicketFiltro)
+        ElseIf cmbClienteFiltro.Focused Then
+            AddPipe(lblInsClienteFiltro)
+        ElseIf txtConsuntivazioneFiltro.Focused Then
+            txtConsuntivazioneFiltro.Text = ""
+            txtConsuntivazioneFiltro.SelectionStart = 0
+            AddPipe(lblInsConsuntivatoFiltro)
+        ElseIf cmbNotaFiltro.Focused Then
+            AddPipe(lblInsNotaFiltro)
+        ElseIf txtAnno.Focused Then
+            txtAnno.Text = ""
+            txtAnno.SelectionStart = 0
+            AddPipe(lblInsAnnoFiltro)
+        ElseIf txtMese.Focused Then
+            txtMese.Text = ""
+            txtMese.SelectionStart = 0
+            AddPipe(lblInsMeseFiltro)
+        End If
+    End Sub
+
+    Private Sub txtInserimento_LostFocus(sender As Object, e As EventArgs) Handles txtTicket.LostFocus, cmbCliente.LostFocus, cmbTempo.LostFocus, cmbNota.LostFocus, txtTicketFiltro.LostFocus, cmbClienteFiltro.LostFocus, txtConsuntivazioneFiltro.LostFocus, cmbNotaFiltro.LostFocus, txtAnno.LostFocus, txtMese.LostFocus
+        If Not txtTicket.Focused And Not cmbCliente.Focused And Not cmbTempo.Focused And Not cmbNota.Focused And Not txtTicketFiltro.Focused And Not cmbClienteFiltro.Focused And Not txtConsuntivazioneFiltro.Focused And Not cmbNotaFiltro.Focused And Not txtAnno.Focused And Not txtMese.Focused Then
+            RemovePipes(allLabels)
+        End If
+    End Sub
+    Private Sub txtControlIns_LostFocus(sender As Object, e As EventArgs) Handles txtTicket.LostFocus, cmbCliente.LostFocus, cmbTempo.LostFocus
+        Dim control As Control = DirectCast(sender, Control)
+        Dim lblControl As Label = Nothing
+        Select Case control.Name
+            Case "txtTicket"
+                lblControl = lblBordoTicket
+            Case "cmbCliente"
+                lblControl = lblBordoCliente
+            Case "cmbTempo"
+                lblControl = lblBordoTempo
+        End Select
+        If control.Text = "" Then
+            lblControl.BackColor = Color.Red
+        Else
+            lblControl.BackColor = SystemColors.Window
+        End If
+    End Sub
+
+
+    Private Sub UpdateLabels()
+        ' Aggiorna il testo delle etichette con i valori corrispondenti.
+        'lbl del pnlInserimento
+        lblInsTicket.Text = txtTicket.Text
+        lblInsCliente.Text = cmbCliente.Text
+        lblInsTempo.Text = cmbTempo.Text
+        lblInsNota.Text = cmbNota.Text
+
+        'lbl del pnlFiltri
+        lblInsTicketFiltro.Text = txtTicketFiltro.Text
+        lblInsClienteFiltro.Text = cmbClienteFiltro.Text
+        lblInsConsuntivatoFiltro.Text = txtConsuntivazioneFiltro.Text
+        lblInsNotaFiltro.Text = cmbNotaFiltro.Text
+        lblInsAnnoFiltro.Text = txtAnno.Text
+        lblInsMeseFiltro.Text = txtMese.Text
+    End Sub
+
+    Private Sub AddPipe(label As Label)
+        ' Aggiunge un carattere "|" alla fine del testo dell'etichetta specificata.
+        If Not label.Text.Contains("|") Then
+            label.Text &= "|"
+        End If
+    End Sub
+
+    Private Sub RemovePipes(ByVal labels As List(Of Label))
+        ' Rimuove tutti i caratteri "|" dal testo delle etichette specificate.
+        For Each label In labels
+            label.Text = label.Text.Replace("|", "")
+        Next label
+    End Sub
+
+    Private Sub txtMese_TypeValidationCompleted(sender As Object, e As TypeValidationEventArgs) Handles txtMese.TypeValidationCompleted
+        Dim dato As Integer = If(e.ReturnValue, 0)
+        If dato >= 1 And dato <= 12 Then
+            If dato.ToString.Length < 2 Then
+                txtMese.Text = "0" & dato
+            End If
+        Else
+            txtMese.Text = giornoOggi.Substring(3, 2)
+        End If
+    End Sub
+
+    Private Sub txtAnno_TypeValidationCompleted(sender As Object, e As TypeValidationEventArgs) Handles txtAnno.TypeValidationCompleted
+        Dim dato As Integer = If(e.ReturnValue, 100)
+        If dato < 2000 Then
+            If dato.ToString.Length = 2 Then
+                txtAnno.Text = giornoOggi.Substring(6, 2) & dato
+            ElseIf dato.ToString.Length = 1 Then
+                txtAnno.Text = giornoOggi.Substring(6, 3) & dato
+            Else
+                txtAnno.Text = giornoOggi.Substring(6, 4)
+            End If
+        ElseIf dato > 2100 Then
+            txtAnno.Text = giornoOggi.Substring(6, 4)
+        End If
+    End Sub
+
+    Private Sub txtConsuntivazioneFiltro_TypeValidationCompleted(sender As Object, e As TypeValidationEventArgs) Handles txtConsuntivazioneFiltro.TypeValidationCompleted
+        Dim dato As String = If(e.ReturnValue, txtConsuntivazioneFiltro.Text)
+        If dato.Length = 1 And (dato.ToLower = "s" Or dato.ToLower = "n") Then
+            If dato.ToLower = "s" Then
+                txtConsuntivazioneFiltro.Text = "SI"
+            Else
+                txtConsuntivazioneFiltro.Text = "NO"
+            End If
+        ElseIf dato.ToLower = "si" Or dato.ToLower = "no" Then
+            txtConsuntivazioneFiltro.Text = dato.ToUpper
+        Else
+            txtConsuntivazioneFiltro.Text = ""
+        End If
+    End Sub
+
+    Private Sub dgvCalendario_GotFocus(sender As Object, e As EventArgs) Handles dgvCalendario.GotFocus
+        lblGiorno.Focus()
     End Sub
 End Class

@@ -37,6 +37,7 @@ Partial Class frmSfondoNero
         Me.Name = "frmSfondoNero"
         Me.Opacity = 0.5R
         Me.ShowIcon = False
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "SfondoNero"
         Me.TopMost = True
