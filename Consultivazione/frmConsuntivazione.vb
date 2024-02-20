@@ -55,15 +55,15 @@ Public Class frmConsuntivazione
         End Using
 
         Dim processName As String = Path.GetFileNameWithoutExtension(updatePath)
-        If CheckForUpdates() Then
-            If Process.GetProcessesByName(processName).Length = 0 Then
-                Process.Start(updatePath)
-            End If
-            If obbligatorio Then
-                Me.Close()
-                Exit Sub
-            End If
-        End If
+        'If CheckForUpdates() Then
+        '    If Process.GetProcessesByName(processName).Length = 0 Then
+        '        Process.Start(updatePath)
+        '    End If
+        '    If obbligatorio Then
+        '        Me.Close()
+        '        Exit Sub
+        '    End If
+        'End If
 
         Call arrotondaBordi()
 
@@ -747,7 +747,6 @@ Cambialo!", MsgBoxStyle.Critical)
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 Exit Sub
             End Try
 
@@ -790,19 +789,19 @@ Cambialo!", MsgBoxStyle.Critical)
 
             If notaInput <> "" And notaInput <> "Criticità" Then
                 If notaInput.Length > 150 Then
-                    MsgBox("Nota non valida (Max 150 car.)", MsgBoxStyle.Exclamation)
+                    lblBordoNota.BackColor = Color.Red
                     logFile.WriteLine(dataOraLog + "Errore: Nota non valida (Max 150 car.)")
                     logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                     logFile.Close()
                     Exit Sub
                 ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Then
-                    MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)", MsgBoxStyle.Exclamation)
+                    lblBordoNota.BackColor = Color.Red
                     logFile.WriteLine(dataOraLog + "Errore: Nota non valida (non puo essere uno dei valori gia predefiniti)")
                     logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                     logFile.Close()
                     Exit Sub
                 ElseIf notaInput.ToLower.Contains("extra") Then
-                    MsgBox("Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)", MsgBoxStyle.Exclamation)
+                    lblBordoNota.BackColor = Color.Red
                     logFile.WriteLine(dataOraLog + "Errore: Nota non valida (in fase di inserimento, la nota extra viene settata in automatico)")
                     logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                     logFile.Close()
@@ -816,7 +815,7 @@ Cambialo!", MsgBoxStyle.Critical)
                 Next
 
                 If conta > 1 And nota <> "" Then
-                    MsgBox("Non è consentito inserire 2 commesse nelle note!", MsgBoxStyle.Exclamation)
+                    lblBordoNota.BackColor = Color.Red
                     logFile.WriteLine(dataOraLog + "Errore: Non è consentito inserire 2 commesse nelle note!")
                     logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                     logFile.Close()
@@ -838,7 +837,7 @@ Cambialo!", MsgBoxStyle.Critical)
                 Next
             End If
             If conta = 0 Then
-                MsgBox("Questo cliente non ha la commessa standard", MsgBoxStyle.Exclamation)
+                lblBordoNota.BackColor = Color.Red
                 logFile.WriteLine(dataOraLog + "Errore: " & cliente & " non ha la commessa standard")
                 logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                 logFile.Close()
@@ -895,7 +894,6 @@ Cambialo!", MsgBoxStyle.Critical)
 
                 id = tabella.Rows(0).Item("ID_MAX")
             Catch ex As Exception
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                 logFile.Close()
@@ -935,7 +933,6 @@ Cambialo!", MsgBoxStyle.Critical)
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 Exit Sub
             End Try
 
@@ -985,7 +982,6 @@ Cambialo!", MsgBoxStyle.Critical)
                         logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                         logFile.WriteLine(dataOraLog + "Fine inserimento ticket - KO")
                         logFile.Close()
-                        MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                         Exit Sub
                     End Try
                     cn.Close()
@@ -1137,7 +1133,6 @@ Cambialo!", MsgBoxStyle.Critical)
             Try
                 str = cmd.ExecuteNonQuery
             Catch ex As Exception
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 Exit Sub
             End Try
@@ -1373,7 +1368,6 @@ Cambialo!", MsgBoxStyle.Critical)
                     logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                     logFile.WriteLine(dataOraLog + "Fine consuntivazione ticket - KO")
                     logFile.Close()
-                    MsgBox("Errore: " & ex.Message & ". Chiedere a Flavio")
                     RDC = 0
                     Exit Sub
                 End Try
@@ -1493,7 +1487,6 @@ Cambialo!", MsgBoxStyle.Critical)
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 Exit Sub
             End Try
@@ -1675,7 +1668,6 @@ Cambialo!", MsgBoxStyle.Critical)
             Catch ex As Exception
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 Exit Sub
             End Try
@@ -1694,7 +1686,6 @@ Cambialo!", MsgBoxStyle.Critical)
             Catch ex As Exception
                 logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 Exit Sub
             End Try
@@ -1997,7 +1988,6 @@ Cambialo!", MsgBoxStyle.Critical)
     '                    tabella.Rows.InsertAt(newRow, ultimaRigaClienteCorrente)
     '                Next
     '            Catch ex As Exception
-    '                MsgBox(ex.Message & " Data: " & dataUnivoca & " Cliente: " & clienteUnivoco & ". Chiedere a Flavio di verificare")
     '                Exit Sub
     '            End Try
     '        Next
@@ -2557,7 +2547,6 @@ Cambialo!", MsgBoxStyle.Critical)
                 Catch ex As Exception
                     logFile.WriteLine(dataOraLog + "Operazione non conclusa con successo. Codice errore: " & ex.Message)
                     logFile.WriteLine(dataOraLog + "Fine scrittura ticket - KO")
-                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                     cn.Close()
                     inserito = False
                     Exit Sub

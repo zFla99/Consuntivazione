@@ -176,10 +176,28 @@
     <Compile Include="frmInserisciCliente.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmMessaggio.Designer.vb">
+      <DependentUpon>frmMessaggio.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmMessaggio.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmModifica.Designer.vb">
       <DependentUpon>frmModifica.vb</DependentUpon>
     </Compile>
     <Compile Include="frmModifica.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmModificaCliente.Designer.vb">
+      <DependentUpon>frmModificaCliente.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmModificaCliente.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmModificaCommessa.Designer.vb">
+      <DependentUpon>frmModificaCommessa.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmModificaCommessa.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmReport.Designer.vb">
@@ -236,9 +254,18 @@
     <EmbeddedResource Include="frmInserisciCliente.resx">
       <DependentUpon>frmInserisciCliente.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmMessaggio.resx">
+      <DependentUpon>frmMessaggio.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmModifica.resx">
       <DependentUpon>frmModifica.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmModificaCliente.resx">
+      <DependentUpon>frmModificaCliente.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmModificaCommessa.resx">
+      <DependentUpon>frmModificaCommessa.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmReport.resx">
       <DependentUpon>frmReport.vb</DependentUpon>
@@ -291,12 +318,18 @@
     <Content Include="Documentazione\Immagini\templateCommesse.png" />
     <Content Include="Documentazione\Immagini\templateTicket.png" />
     <Content Include="Documentazione\Immagini\visDettaglio.png" />
+    <None Include="Immagini\commesse_25x25_bianco.png" />
+    <None Include="Immagini\commesse_25x25_nero.png" />
     <Content Include="Immagini\commesse_32x32_bianco.png" />
     <Content Include="Immagini\commesse_32x32_nero.png" />
-    <None Include="Immagini\customers.png" />
+    <None Include="Immagini\documentazione_25x25_bianco.png" />
+    <None Include="Immagini\documentazione_25x25_nero.png" />
     <Content Include="Immagini\documentazione_32x32_bianco.png" />
     <Content Include="Immagini\documentazione_32x32_nero.png" />
+    <None Include="Immagini\edit_16x16_nero.png" />
     <Content Include="Immagini\icona.ico" />
+    <None Include="Immagini\impostazioni_25x25_bianco.png" />
+    <None Include="Immagini\impostazioni_25x25_nero.png" />
     <Content Include="Immagini\impostazioni_32x32_bianco.png" />
     <Content Include="Immagini\impostazioni_32x32_nero.png" />
     <Content Include="Immagini\menuAperto_32x32_bianco.png" />
@@ -307,11 +340,17 @@
     <Content Include="Immagini\menuChiuso_32x32_nero.png" />
     <None Include="Immagini\OreExtra.png" />
     <None Include="Immagini\OreLavorate.png" />
+    <None Include="Immagini\pennello_25x25_bianco.png" />
+    <None Include="Immagini\pennello_25x25_nero.png" />
     <Content Include="Immagini\pennello_32x32_bianco.png" />
     <Content Include="Immagini\pennello_32x32_nero.png" />
     <None Include="Immagini\report_32x32_binaco.png" />
     <None Include="Immagini\report_32x32_nero.png" />
     <None Include="Immagini\ticket.png" />
+    <None Include="Immagini\report_25x25_binaco.png" />
+    <None Include="Immagini\report_25x25_nero.png" />
+    <None Include="Immagini\ticket_25x25_bianco.png" />
+    <None Include="Immagini\ticket_25x25_nero.png" />
     <Content Include="Immagini\ticket_32x32_bianco.png" />
     <Content Include="Immagini\ticket_32x32_nero.png" />
     <None Include="Immagini\user.png" />

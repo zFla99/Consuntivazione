@@ -493,7 +493,6 @@ Public Class frmModifica
                 Try
                     str = cmd.ExecuteNonQuery
                 Catch ex As Exception
-                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                     cn.Close()
                     Exit Sub
                 End Try
@@ -642,7 +641,6 @@ Public Class frmModifica
                             logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                             logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
                         End Using
-                        MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                         cn.Close()
                         corretto = False
                         Exit Sub
@@ -763,21 +761,18 @@ Public Class frmModifica
     '                logFile.WriteLine(dataOraLog + "Nota non valida (Max 150 car.)")
     '                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
     '                logFile.Close()
-    '                MsgBox("Nota non valida (Max 150 car.)")
     '                corretto = False
     '                Exit Sub
     '            ElseIf notaInput.ToLower.Contains("criticità") Or notaInput.ToLower.Contains("home") Or notaInput.ToLower.Contains("fixed") Or notaInput.ToLower.Contains("formazione") Then
     '                logFile.WriteLine(dataOraLog + "Nota non valida (non puo essere uno dei valori gia predefiniti)")
     '                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
     '                logFile.Close()
-    '                MsgBox("Nota non valida (non puo essere uno dei valori gia predefiniti)")
     '                corretto = False
     '                Exit Sub
     '            ElseIf notaInput.ToLower.Contains("extra") Then
     '                logFile.WriteLine(dataOraLog + "Non puoi inserire '" & notaInput & "' come commessa")
     '                logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
     '                logFile.Close()
-    '                MsgBox("Non puoi inserire questa commessa")
     '                Exit Sub
     '                corretto = False
     '            End If
@@ -792,7 +787,6 @@ Public Class frmModifica
     '            logFile.WriteLine(dataOraLog + "Questa commessa è gia presente")
     '            logFile.WriteLine(dataOraLog + "Fine Modifica - KO")
     '            logFile.Close()
-    '            MsgBox("Questa commessa è gia presente")
     '            corretto = False
     '            Exit Sub
     '        End If

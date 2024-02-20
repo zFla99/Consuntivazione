@@ -185,6 +185,9 @@ Public Class frmInserisciCliente
     End Sub
     Dim corretto As Boolean
     Private Sub btnInserisci_Click(sender As Object, e As EventArgs) Handles btnInserisci.Click
+        txtCliente.Text = StrConv(txtCliente.Text.Replace("'", "").Trim, VbStrConv.ProperCase)
+        cmbNota.Text = StrConv(cmbNota.Text.Replace("'", "").Trim, VbStrConv.ProperCase)
+
         lblCliente.Focus()
         corretto = True
         If Not verificaDati() Then
@@ -244,57 +247,59 @@ Public Class frmInserisciCliente
             End If
         End If
 
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
-        cmd = New OleDbCommand(str, cn)
-        da = New OleDbDataAdapter(cmd)
-        tabella.Clear()
-        da.Fill(tabella)
-        cn.Close()
+        If btnInserisci.Text <> "Inserisci Cliente" Then
+            cn = New OleDbConnection(strConn)
+            cn.Open()
+            str = "SELECT Cliente, Nota FROM LinkGR WHERE Cliente = '" & cliente & "'"
+            cmd = New OleDbCommand(str, cn)
+            da = New OleDbDataAdapter(cmd)
+            tabella.Clear()
+            da.Fill(tabella)
+            cn.Close()
 
-        Dim vetCommNota(tabella.Rows.Count) As String
-        For i = 0 To tabella.Rows.Count - 1
-            vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
-        Next
-
-        Using logFile As New System.IO.StreamWriter(logConfig, True)
-            Dim conta As Integer = 0
-
-            nota = cmbNota.Text.Trim.ToLower
-            nota = cmbNota.Text.Replace("'", "")
-            nota = cmbNota.Text.Replace(",", "")
-            nota = StrConv(cmbNota.Text, VbStrConv.ProperCase)
-
-            If nota.Length > 150 Then
-                logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (Max 150 car.)")
-                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                logFile.Close()
-                lblBordoNota.BackColor = Color.Red
-                Exit Sub
-            ElseIf nota.ToLower.Contains("criticità") Or nota.ToLower.Contains("extra") Then
-                logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (non puoi inserire questa commessa)")
-                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                logFile.Close()
-                lblBordoNota.BackColor = Color.Red
-                Exit Sub
-            End If
-
+            Dim vetCommNota(tabella.Rows.Count) As String
             For i = 0 To tabella.Rows.Count - 1
-                If vetCommNota(i).ToLower = nota.ToLower Then
-                    conta += 1
-                End If
+                vetCommNota(i) = tabella.Rows(i).Item("Nota").ToString
             Next
 
-            If conta > 0 Then
-                logFile.WriteLine(dataOraLog + "La commessa '" & nota & "' è già presente per il cliente '" & cliente & "'")
-                logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
-                logFile.Close()
-                ToolTip1.Show("Questa commessa è gia presente per questo cliente", lblInsNota, -80, 30, 3000)
-                lblBordoNota.BackColor = Color.Red
-                Exit Sub
-            End If
-        End Using
+            Using logFile As New System.IO.StreamWriter(logConfig, True)
+                Dim conta As Integer = 0
+
+                nota = cmbNota.Text.Trim.ToLower
+                nota = cmbNota.Text.Replace("'", "")
+                nota = cmbNota.Text.Replace(",", "")
+                nota = StrConv(cmbNota.Text, VbStrConv.ProperCase)
+
+                If nota.Length > 150 Then
+                    logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (Max 150 car.)")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                    logFile.Close()
+                    lblBordoNota.BackColor = Color.Red
+                    Exit Sub
+                ElseIf nota.ToLower.Contains("criticità") Or nota.ToLower.Contains("extra") Then
+                    logFile.WriteLine(dataOraLog + "Nota '" & nota & "' non valida (non puoi inserire questa commessa)")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                    logFile.Close()
+                    lblBordoNota.BackColor = Color.Red
+                    Exit Sub
+                End If
+
+                For i = 0 To tabella.Rows.Count - 1
+                    If vetCommNota(i).ToLower = nota.ToLower Then
+                        conta += 1
+                    End If
+                Next
+
+                If conta > 0 Then
+                    logFile.WriteLine(dataOraLog + "La commessa '" & nota & "' è già presente per il cliente '" & cliente & "'")
+                    logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
+                    logFile.Close()
+                    ToolTip1.Show("Questa commessa è gia presente per questo cliente", lblInsNota, -80, 30, 3000)
+                    lblBordoNota.BackColor = Color.Red
+                    Exit Sub
+                End If
+            End Using
+        End If
 
         If btnInserisci.Text <> "Inserisci Commessa" Then
             inserisciCliente(cliente)
@@ -363,7 +368,6 @@ Public Class frmInserisciCliente
                 logFile.WriteLine(dataOraLog + "Errore. Il cliente '" & cliente & "' non è stato inserito per questo motivo: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 inserito = False
                 Exit Sub
@@ -374,18 +378,18 @@ Public Class frmInserisciCliente
         End Using
 
         cn = New OleDbConnection(strConn)
-            cn.Open()
-            str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
-            cmd = New OleDbCommand(str, cn)
-            da = New OleDbDataAdapter(cmd)
-            tabella.Clear()
-            da.Fill(tabella)
-            cn.Close()
+        cn.Open()
+        str = "SELECT Cliente FROM Clienti ORDER BY Cliente"
+        cmd = New OleDbCommand(str, cn)
+        da = New OleDbDataAdapter(cmd)
+        tabella.Clear()
+        da.Fill(tabella)
+        cn.Close()
 
-            frmModifica.cmbCliente.Items.Clear()
+        frmModifica.cmbCliente.Items.Clear()
         frmConsuntivazione.cmbCliente.Items.Clear()
         For i = 0 To tabella.Rows.Count - 1
-                frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
+            frmModifica.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
             frmConsuntivazione.cmbCliente.Items.Add(tabella.Rows(i).Item("Cliente").ToString)
         Next
     End Sub
@@ -411,7 +415,6 @@ Public Class frmInserisciCliente
                 logFile.WriteLine(dataOraLog + "Errore. La commessa con [Cliente='" & cliente & "'] [Nota='" & If(nota <> "", nota, "NULL") & "'] [Link='" & link & "'] non è stata inserita: " & ex.Message)
                 logFile.WriteLine(dataOraLog + "Fine scrittura log ConfigClienti - KO")
                 logFile.Close()
-                MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                 cn.Close()
                 Exit Sub
             End Try
@@ -544,7 +547,6 @@ Public Class frmInserisciCliente
                     logFile.WriteLine(dataOraLog + errore)
                     logFile.WriteLine(dataOraLog + "Fine scrittura log InsMassivComm - KO")
                 End Using
-                MsgBox(errore)
                 rigaExcel = 0
                 Exit Sub
             End If
@@ -711,7 +713,6 @@ Public Class frmInserisciCliente
                 Catch ex As Exception
                     logFile.WriteLine(dataOraLog + "Errore: " & ex.Message)
                     logFile.Close()
-                    MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                     cn.Close()
                     inserito = False
                     Exit Sub

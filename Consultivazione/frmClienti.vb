@@ -100,69 +100,19 @@ Public Class frmClienti
             dgvClienti.Rows(i + 1).Cells(2).Value = tabella.Rows(i).Item("ID").ToString
         Next
     End Sub
-    Sub modificaCliente(cliente As String, r As Integer)
-        Dim cn As OleDbConnection
-        Dim cmd As OleDbCommand
-        Dim str As String
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "UPDATE Clienti SET Cliente = '" & cliente & "' WHERE ID = " & dgvClienti.Rows(r).Cells(2).Value
-        cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-            cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
-    End Sub
-    Sub eliminaCliente(r As Integer)
-        Dim cn As OleDbConnection
-        Dim cmd As OleDbCommand
-        Dim str As String
-
-        cn = New OleDbConnection(strConn)
-        cn.Open()
-        str = "DELETE * FROM Clienti WHERE ID = " & dgvClienti.Rows(r).Cells(2).Value
-        cmd = New OleDbCommand(str, cn)
-        Try
-            str = cmd.ExecuteNonQuery
-        Catch ex As Exception
-            MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
-            cn.Close()
-            Exit Sub
-        End Try
-        cn.Close()
-    End Sub
+    Public dgvModificaClienteClick As Boolean = False
+    Public idCliente As Integer
     Private Sub dgvCalendario_CellMouseDown(sender As Object, e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgvClienti.CellMouseDown
         If e.Button = MouseButtons.Right Then
             If e.RowIndex = -1 Then
                 Exit Sub
             End If
-            If e.ColumnIndex = -1 Then
-                If MsgBox("Vuoi eliminare questo cliente? (non sarà recuperabile)", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
-                    Exit Sub
-                Else
-                    eliminaCliente(e.RowIndex)
-                End If
-            Else
-                If MsgBox("Vuoi modificare questo cliente?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then
-                    Exit Sub
-                End If
-
-                Dim cliente As String = InputBox("Inserisci un cliente:")
-                cliente = cliente.Replace("'", "")
-                If cliente = "" Or cliente.Length > frmConsuntivazione.cmbCliente.MaxLength Then
-                    MsgBox("Nome Cliente non valido (Max " & frmConsuntivazione.cmbCliente.MaxLength & " car.)")
-                    Exit Sub
-                End If
-
-                modificaCliente(cliente, e.RowIndex)
-                modificaCmbClienti()
+            If e.ColumnIndex = 0 Then
+                idCliente = dgvClienti.Rows(e.RowIndex).Cells(2).Value
+                frmModificaCliente.id = idCliente
+                dgvModificaClienteClick = True
+                frmModificaCliente.Show()
             End If
-            aggiornaDG()
         End If
     End Sub
     Sub modificaCmbClienti()
@@ -194,8 +144,9 @@ Public Class frmClienti
     End Sub
 
     Public sfondoNeroClick As Boolean
-    Private Async Sub txtClientiHidden_LostFocus(sender As Object, e As EventArgs) Handles txtClientiHidden.LostFocus, dgvClienti.LostFocus, Me.LostFocus
-        If Not Me.Visible Or Not frmCommesse.Visible Then
+    Public chiudiTutto As Boolean = False
+    Public Async Sub txtClientiHidden_LostFocus(sender As Object, e As EventArgs) Handles txtClientiHidden.LostFocus, dgvClienti.LostFocus, Me.LostFocus
+        If Not Me.Visible Or Not frmCommesse.Visible Or dgvModificaClienteClick Or frmCommesse.dgvModificaCommessaClick Then
             Exit Sub
         End If
 
@@ -204,11 +155,11 @@ Public Class frmClienti
         sfondoNeroClick = False
 
         Await Task.Delay(1)
-        If Not frmClientiAttivo And Not frmCommesseAttivo Then
+        If (chiudiTutto Or frmCommesse.chiudiTutto) Or (Not frmClientiAttivo And Not frmCommesseAttivo) Then
             If Not frmInserisciCliente.Visible Then
                 Me.Close()
                 frmCommesse.Close()
-                If Not sfondoNeroClick Then
+                If Not sfondoNeroClick Or Not frmCommesse.sfondoNeroClick Then
                     frmInserisciCliente.Close()
                 End If
             End If

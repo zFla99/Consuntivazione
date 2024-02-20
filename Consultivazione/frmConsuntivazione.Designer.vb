@@ -546,7 +546,7 @@ Partial Class frmConsuntivazione
         Me.lblCommesseMassive.Cursor = System.Windows.Forms.Cursors.Hand
         Me.lblCommesseMassive.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCommesseMassive.ForeColor = System.Drawing.SystemColors.Control
-        Me.lblCommesseMassive.Image = Global.Consuntivazione.My.Resources.Resources.commesse_25x25_bianco
+        Me.lblCommesseMassive.Image = Global.Consuntivazione.My.Resources.commesse_25x25_bianco
         Me.lblCommesseMassive.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.lblCommesseMassive.Location = New System.Drawing.Point(5, 1)
         Me.lblCommesseMassive.Name = "lblCommesseMassive"

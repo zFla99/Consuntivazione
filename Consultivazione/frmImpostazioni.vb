@@ -304,7 +304,6 @@ Public Class frmImpostazioni
                 Try
                     cn.Open()
                 Catch ex As Exception
-                    MsgBox("Errore di connessione. Codice Errore: " & ex.Message)
                     Exit Sub
                 End Try
                 For j = 0 To vetStrSQL.Length - 1
@@ -312,7 +311,6 @@ Public Class frmImpostazioni
                     Try
                         nRighe = cmd.ExecuteNonQuery
                     Catch ex As Exception
-                        MsgBox("Operazione non conclusa con successo. Codice errore: " & ex.Message)
                         cn.Close()
                         Exit Sub
                     End Try

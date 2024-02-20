@@ -119,3 +119,6 @@ dotnet_naming_style.notazione_pascal.required_prefix =
 dotnet_naming_style.notazione_pascal.required_suffix = 
 dotnet_naming_style.notazione_pascal.word_separator = 
 dotnet_naming_style.notazione_pascal.capitalization = pascal_case
+
+# BC42104: La variabile è stata usata prima dell'assegnazione di un valore
+dotnet_diagnostic.BC42104.severity = none
